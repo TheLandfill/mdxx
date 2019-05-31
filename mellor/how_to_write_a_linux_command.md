@@ -20,13 +20,13 @@ While a few of them are (`cd` usually is), most are not.
 They're programs or scripts that are in a specific folder.
 In fact, you can use either the `which` command or `type -a` to see exactly what folder a command is in.
 For example:
-[!A few examples of `which` and `type -a`](which-type-examples.xcf)
+![A few examples of `which` and `type -a`](which-type-examples.png)
 
 As you can see, besides `cd`, the other Linux commands are actually executables in either /bin/ or /usr/bin/.
 Any executable in either of these folders can be run from anywhere just like a Linux command.
 There are several other directories that also can also have commands, which are contained in the PATH environment variable.
 To see the full list, type `echo $PATH` into your terminal.
-[!List of directories in my PATH](path-examples.xcf)
+![List of directories in my PATH](path-examples.png)
 
 You should see a list of directories separated by colons, as shown above.
 
