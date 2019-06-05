@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<style>
+			body {
+				font-family: Helvetica,Arial,sans-serif;
+				padding-bottom: 3em;
+			}
+			.width-90 {
+				width: 90%;
+			}
+
+			/* Sidebar stuff is from https://www.w3schools.com/howto/howto_css_fixed_sidebar.asp */
+			/* The sidebar menu */
+			.sidenav {
+				height: 100%; /* Full-height: remove this if you want "auto" height */
+				width: 160px; /* Set the width of the sidebar */
+				position: absolute; /* Fixed Sidebar (stay in place on scroll)
+				z-index: 1; /* Stay on top */
+				top: 289px; /* Stay at the top */
+				left: 0;
+				background-color: #111; /* Black */
+				overflow-x: hidden; /* Disable horizontal scroll */
+				padding-top: 20px;
+			}			
+			/* The navigation menu links */
+			.sidenav a {
+			padding: 6px 8px 6px 16px;
+				text-decoration: none;
+				font-size: 25px;
+				color: #818181;
+				display: block;
+			}
+
+			/* When you mouse over the navigation links, change their color */
+			.sidenav a:hover {
+				color: #f1f1f1;
+			}
+
+			/* Style page content */
+			.main {
+				margin-left: 200px; /* Same as the width of the sidebar */
+				width: 800px;
+				padding: 0px 10px;
+			}
+
+			/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+			@media screen and (max-height: 450px) {
+				.sidenav {padding-top: 15px;}
+				.sidenav a {font-size: 18px;}
+			}
+		</style>
+
+		<title>How to Make a Linux Command</title>
+	</head>
+	<body>
+	<div class="jumbotron jumbotron-fluid">
+      <div class="container"> 
+        <p>
+          <a href="../">
+            &larr; Back To Resources
+          </a>
+        </p>
+        <h1 class="display-4">
+          How to Make a Linux Command
+        </h1>
+        <p class="lead">Posted --------
+        </p>
+      </div>
+    </div>
+		<!-- Side navigation -->
+		<div class="sidenav">
+  		<a href="#">About</a>
+  		<a href="#">Services</a>
+  		<a href="#">Clients</a>
+  		<a href="#">Contact</a>
+		</div>
+	<div class="main">
+		<h2>Intro</h2>
+		<p> I'm going to go through a step by step example of how I would generally make a Linux command.
+			For this example, I want the command <code>hello</code> to run the script <code>hello-world.sh</code>, which will print out "Hello World!".
+			For consistency, I will assume <code>hello-world.sh</code> is in the directory <code>~/dev/example/</code>.</p>
+		<h2>What Exactly is a Linux Command?</h2>
+		<p> If you have any experience with Linux or bash, you'll already know a few standard Linux commands, such as <code>cd</code> (change current directory), <code>mv</code> (move or rename files and folders), and <code>cp</code> (copy files).
+			If you're a little more experienced, you might know about some more complex commands, such as <code>sudo</code> (gives a command temporary admin privileges) or <code>python</code> (runs the python interpretor).
+			Because you can't do much in the terminal without these commands and they come on most terminals, people often assume that they're built in.
+			While a few of them are (<code>cd</code> usually is), most are not.
+			They're just programs or scripts in a specific folder.
+			In fact, you can use either the <code>which</code> or <code>type -a</code> to see exactly what folder a command is in.
+			For example:
+		</p>
+	</div>
+	</body>
+</html>
