@@ -44,6 +44,16 @@
 			.terminal {
 				background-color: black;
 				font-family: Monaco,"Lucidia Console",monospace,"Courier New";
+				border-width: 5px;
+				border-color: #777777;
+				border-style: solid;
+				margin-block-end: 1em;
+			}
+
+			div.terminal pre {
+				color: #DC1111;
+				white-space: pre-wrap;
+				word-wrap: break-word;
 			}
 
 			/* Style page content */
@@ -51,6 +61,29 @@
 				margin-left: 200px; /* Same as the width of the sidebar */
 				width: 800px;
 				padding: 0px 10px;
+			}
+
+			.aside {
+				background: #AAAAAA;
+				color: black;
+				padding: 10px 10px 0px 10px;
+				border-color: #777777;
+				border-width: 2px;
+				border-style: solid;
+			}
+
+			div.aside code {
+				color: #FF0000;
+			}
+
+			div.aside hr {
+				color: #444444;
+				background-color: #444444;
+			}
+			
+			.darkmode {
+				background-color: black;
+				color: white;
 			}
 
 			/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
@@ -63,7 +96,7 @@
 		<title>How to Make a Linux Command</title>
 	</head>
 	<body>
-	<div class="jumbotron jumbotron-fluid">
+	<div class="jumbotron jumbotron-fluid" style="color: black; background-color: #777777;">
       <div class="container"> 
         <p>
           <a href="../">
@@ -86,39 +119,63 @@
 		</div>
 	<div class="main">
 		<h2>Intro</h2>
-		<p> I'm going to go through a step by step example of how I would generally make a Linux command.
-			For this example, I want the command <code>hello</code> to run the script <code>hello-world.sh</code>, which will print out "Hello World!".
-			For consistency, I will assume <code>hello-world.sh</code> is in the directory <code>~/dev/example/</code>.</p>
+		<p>I'm going to go through a step by step example of how I would generally make a Linux command.
+			For this example, I will use an actual command I made to help me set up a build system for c++ projects, which I called <a href="https://github.com/TheLandfill/minit">minit</a>.
+			This command automates several things I had to do manually whenever I wanted to create a c/c++ project, including creating the relevant directories, copying a generic Makefile from a specific location (c/c++ thing) into the project, etc.
 		<h2>What Exactly is a Linux Command?</h2>
 		<p> If you have any experience with Linux or bash, you'll already know a few standard Linux commands, such as <code>cd</code> (change current directory), <code>mv</code> (move or rename files and folders), and <code>cp</code> (copy files).
 			If you're a little more experienced, you might know about some more complex commands, such as <code>sudo</code> (gives a command temporary admin privileges) or <code>python</code> (runs the python interpretor).
 			Because you can't do much in the terminal without these commands and they come on most terminals, people often assume that they're built in.
 			While a few of them are (<code>cd</code> usually is because it's directly related to the terminal), most are not.
-			They're just programs or scripts in a specific folder.
-			In fact, you can use either the <code>which</code> or <code>type -a</code> to see exactly what folder a command is in.
+			</p>
+			<p><b>Linux commands are usually either executables in a specific folder or "aliases".</b></p>
+			<div class="aside">
+			<h4>Quick Note on Aliases</h4><hr>
+			<p>You can make an alias out of most things you could type on the command line, but aliases have severe limits on what they can do.
+			They also rely on builtins and other Linux commands.
+			We'll discuss how to create an alias later in the article.
+			Since <code>minit</code> is too complex to be an alias, I had to use a script.
+			</div>
+			Anyway, you can use the <code>which</code> command to see exactly which executable will be run when you type in a command.
+			Commands that are not executable scripts (like <code>cd</code>) won't print out anything when you run <code>which</code>.
+			Instead, you can use the <code>type</code> command to determine what a command is in the general case.
 			For example:
 		</p>
-		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which cd</span>
-<code><span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ type -a cd
+		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ which cd
+<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type -a cd
 cd is a function
 cd ()
 {
 	builtin cd "$@" && chpwd
 }
-cd is a shell builtin
-<span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which mv
+<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which mv
 /bin/mv</span>
-<span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which cp
+<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which cp
 /bin/cp</span>
-<span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which sudo
+<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which sudo
 /usr/bin/sudo</span>
-<span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which python
-/usr/bin/python</span></pre></code>
+<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which python
+/usr/bin/python</span></pre>
 	</div>
 		<p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt only displays the current and parent directory, but it doesn't matter for the tutorial.
 		On most of your computers, <code>cd</code> will just be a shell builtin.
 		Since the only way to write a shell builtin is to write or modify a shell, we aren't going to deal with that here.
 		</p>
-	</div>
+		<p>Most of the other commands are actually just executables in either <code>/bin</code> or <code>/usr/bin/</code>.
+		Any executable in either of these folders can be run from anywhere just like a Linux command.
+		There are several other directories that can also have commands, which are contained in the PATH environment variable.
+		To see the full list, type <code>echo $PATH</code> into your terminal.
+		</p>
+		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ echo $PATH
+/home/joseph/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games</pre></div>
+		<p>You should see a list of directories separated by colons, as shown above.
+		</p>
+		<h2>Making an Executable</h2>
+		<p>Before you can run an executable, you have to tell the system which users can run it by using the <code>chmod</code> command.
+		The <code>chmod</code> command allows you to set who can read, write, and exexecute a file.
+		In most cases, you can use <code>chmod 755 exe</code>, which will allow anyone to execute <code>exe</code>, but only the user can modify it.
+		For more information about the intricacies of the <code>chmod</code> command, see <a href="https://askubuntu.com/questions/932713/what-is-the-difference-between-chmod-x-and-chmod-755">here</a>, <a href="https://www.thegeekstuff.com/2010/06/chmod-command-examples/">here</a>, or read the man page by typing <code>man chmod</code> in the terminal.
+		</p>
 	</body>
+	</div>
 </html>
