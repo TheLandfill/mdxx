@@ -29,7 +29,7 @@
 			}			
 			/* The navigation menu links */
 			.sidenav a {
-			padding: 6px 8px 6px 16px;
+				padding: 6px 8px 6px 16px;
 				text-decoration: none;
 				font-size: 25px;
 				color: #818181;
@@ -39,6 +39,11 @@
 			/* When you mouse over the navigation links, change their color */
 			.sidenav a:hover {
 				color: #f1f1f1;
+			}
+
+			.terminal {
+				background-color: black;
+				font-family: Monaco,"Lucidia Console",monospace,"Courier New";
 			}
 
 			/* Style page content */
@@ -88,10 +93,31 @@
 		<p> If you have any experience with Linux or bash, you'll already know a few standard Linux commands, such as <code>cd</code> (change current directory), <code>mv</code> (move or rename files and folders), and <code>cp</code> (copy files).
 			If you're a little more experienced, you might know about some more complex commands, such as <code>sudo</code> (gives a command temporary admin privileges) or <code>python</code> (runs the python interpretor).
 			Because you can't do much in the terminal without these commands and they come on most terminals, people often assume that they're built in.
-			While a few of them are (<code>cd</code> usually is), most are not.
+			While a few of them are (<code>cd</code> usually is because it's directly related to the terminal), most are not.
 			They're just programs or scripts in a specific folder.
 			In fact, you can use either the <code>which</code> or <code>type -a</code> to see exactly what folder a command is in.
 			For example:
+		</p>
+		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which cd</span>
+<code><span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ type -a cd
+cd is a function
+cd ()
+{
+	builtin cd "$@" && chpwd
+}
+cd is a shell builtin
+<span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which mv
+/bin/mv</span>
+<span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which cp
+/bin/cp</span>
+<span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which sudo
+/usr/bin/sudo</span>
+<span style="color:#E23434"><b>joseph@tutorials</b></span><span style="color:#DC1111">:</span><span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which python
+/usr/bin/python</span></pre></code>
+	</div>
+		<p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt only displays the current and parent directory, but it doesn't matter for the tutorial.
+		On most of your computers, <code>cd</code> will just be a shell builtin.
+		Since the only way to write a shell builtin is to write or modify a shell, we aren't going to deal with that here.
 		</p>
 	</div>
 	</body>
