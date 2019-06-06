@@ -17,11 +17,12 @@
 			/* Sidebar stuff is from https://www.w3schools.com/howto/howto_css_fixed_sidebar.asp */
 			/* The sidebar menu */
 			.sidenav {
-				height: 100%; /* Full-height: remove this if you want "auto" height */
+				float: left;
+				height: 100vh; /* Full-height: remove this if you want "auto" height */
 				width: 160px; /* Set the width of the sidebar */
-				position: absolute; /* Fixed Sidebar (stay in place on scroll)
+				position: relative; /* Fixed Sidebar (stay in place on scroll)
 				z-index: 1; /* Stay on top */
-				top: 289px; /* Stay at the top */
+				top: 0px; /* Stay at the top */
 				left: 0;
 				background-color: #111; /* Black */
 				overflow-x: hidden; /* Disable horizontal scroll */
@@ -42,15 +43,17 @@
 			}
 
 			.terminal {
+				padding: 5px 5px 5px 5px;
 				background-color: black;
 				font-family: Monaco,"Lucidia Console",monospace,"Courier New";
 				border-width: 5px;
 				border-color: #777777;
 				border-style: solid;
 				margin-block-end: 1em;
+				padding-bottom: 0px;
 			}
 
-			div.terminal pre {
+			.terminal pre {
 				color: #DC1111;
 				white-space: pre-wrap;
 				word-wrap: break-word;
@@ -58,9 +61,10 @@
 
 			/* Style page content */
 			.main {
+				padding: 26px 0px;
+				position: relative;
 				margin-left: 200px; /* Same as the width of the sidebar */
 				width: 800px;
-				padding: 0px 10px;
 			}
 
 			.aside {
@@ -70,20 +74,54 @@
 				border-color: #777777;
 				border-width: 2px;
 				border-style: solid;
+				margin-block-end: 1em;
 			}
 
-			div.aside code {
+			code {
+				font-weight: bold;
+			}
+
+			.aside code {
 				color: #FF0000;
 			}
 
-			div.aside hr {
+			.aside hr {
 				color: #444444;
 				background-color: #444444;
+			}
+
+			.aside a {
+				color: #0000FF
 			}
 			
 			.darkmode {
 				background-color: black;
+				color: #DDDDDD;
+			}
+
+			.darkmode .jumbotron {
 				color: white;
+				background: #333333;
+			}
+
+			.darkmode .sidenav {
+				background-color: #222222;
+			}
+
+			.darkmode .sidenav a {
+				color: #AAAAAA;
+			}
+
+			.darkmode .sidenav a:hover {
+				color: #FFFFFF;
+			}
+
+			.darkmode .aside code {
+				color: #DD0000;
+			}
+
+			.jumbotron {
+				margin-bottom: 0px;
 			}
 
 			/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
@@ -95,8 +133,8 @@
 
 		<title>How to Make a Linux Command</title>
 	</head>
-	<body>
-	<div class="jumbotron jumbotron-fluid" style="color: black; background-color: #777777;">
+	<body class="darkmode">
+	<div class="jumbotron jumbotron-fluid">
       <div class="container"> 
         <p>
           <a href="../">
@@ -121,10 +159,15 @@
 		<h2>Intro</h2>
 		<p>I'm going to go through a step by step example of how I would generally make a Linux command.
 			For this example, I will use an actual command I made to help me set up a build system for c++ projects, which I called <a href="https://github.com/TheLandfill/minit">minit</a>.
-			This command automates several things I had to do manually whenever I wanted to create a c/c++ project, including creating the relevant directories, copying a generic Makefile from a specific location (c/c++ thing) into the project, etc.
+			This command automates several things I had to do manually whenever I wanted to create a c/c++ project, including creating the relevant directories, copying a generic Makefile from a specific location (it's a c/c++ thing) into the project, etc.
+			To sucessfully run the command, you need to run <code>install.sh</code> because it needs to figure out where to create the symbolic links and it needs to make sure it's not overwriting any other commands.
+			To make it a command, however, we don't necessarily need it to run correctly.
+			If you do want it to run correctly and use this tutorial, just type <code>./install.sh tutorial</code> into your terminal instead of just <code>./install.sh</code>.
+			You can also uninstall the program completely by running <code>uninstall.sh</code> and then deleting the whole <code>minit</code> directory.
+			I will assume that the <code>minit.sh</code> script is in the directory <code>~/dev/minit</code> as if you ran <code>git clone https://github.com/TheLandfill/minit</code> while in the directory <code>~/dev</code>.
 		<h2>What Exactly is a Linux Command?</h2>
 		<p> If you have any experience with Linux or bash, you'll already know a few standard Linux commands, such as <code>cd</code> (change current directory), <code>mv</code> (move or rename files and folders), and <code>cp</code> (copy files).
-			If you're a little more experienced, you might know about some more complex commands, such as <code>sudo</code> (gives a command temporary admin privileges) or <code>python</code> (runs the python interpretor).
+			If you're a little more experienced, you might know about some more complex commands, such as <code>sudo</code> (gives a command temporary root/admin privileges) or <code>python</code> (runs the python interpretor).
 			Because you can't do much in the terminal without these commands and they come on most terminals, people often assume that they're built in.
 			While a few of them are (<code>cd</code> usually is because it's directly related to the terminal), most are not.
 			</p>
@@ -136,18 +179,19 @@
 			We'll discuss how to create an alias later in the article.
 			Since <code>minit</code> is too complex to be an alias, I had to use a script.
 			</div>
-			Anyway, you can use the <code>which</code> command to see exactly which executable will be run when you type in a command.
+			You can use the <code>which</code> command to see exactly which executable will be run when you type in a command.
 			Commands that are not executable scripts (like <code>cd</code>) won't print out anything when you run <code>which</code>.
 			Instead, you can use the <code>type</code> command to determine what a command is in the general case.
 			For example:
 		</p>
 		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ which cd
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type -a cd
+<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type cd
 cd is a function
 cd ()
 {
 	builtin cd "$@" && chpwd
 }
+cd is a shell builtin
 <span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which mv
 /bin/mv</span>
 <span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which cp
@@ -157,10 +201,14 @@ cd ()
 <span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which python
 /usr/bin/python</span></pre>
 	</div>
-		<p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt only displays the current and parent directory, but it doesn't matter for the tutorial.
+		<div class="aside"><p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt only displays the current and parent directory, but it doesn't matter for the tutorial.
 		On most of your computers, <code>cd</code> will just be a shell builtin.
 		Since the only way to write a shell builtin is to write or modify a shell, we aren't going to deal with that here.
 		</p>
+		<p>I also want you to notice that, in my case, it prints out both that <code>cd is a function</code> and <code>cd is a shell builtin</code>.
+		In other words, there are multiple commands named <code>cd</code>, but only the first one will be run when you type <code>cd</code> into the console.
+		</p>
+		</div>
 		<p>Most of the other commands are actually just executables in either <code>/bin</code> or <code>/usr/bin/</code>.
 		Any executable in either of these folders can be run from anywhere just like a Linux command.
 		There are several other directories that can also have commands, which are contained in the PATH environment variable.
@@ -176,6 +224,63 @@ cd ()
 		In most cases, you can use <code>chmod 755 exe</code>, which will allow anyone to execute <code>exe</code>, but only the user can modify it.
 		For more information about the intricacies of the <code>chmod</code> command, see <a href="https://askubuntu.com/questions/932713/what-is-the-difference-between-chmod-x-and-chmod-755">here</a>, <a href="https://www.thegeekstuff.com/2010/06/chmod-command-examples/">here</a>, or read the man page by typing <code>man chmod</code> in the terminal.
 		</p>
+		<h1>Making a Linux Command</h1>
+		<p>Since any executable must be in one of the directories specified in <code>PATH</code>, we now have a few ways to turn an executable into a Linux command.
+		</p>
+		<ul>
+			<li>Add the directory containing your executable to the <code>PATH</code> variable.</li>
+			<li>Move the executable into one of the directories currently in PATH.</li>
+			<li>Create a symbolic link to your executable in one of the directories in <code>PATH</code>.
+		</ul>
+		<h2>Adding a Directory to the <code>PATH</code> Variable</h2>
+		<div class="aside" style="border-width: 8px;">
+		<h3 style="color: red; text-align: center;">WARNING</h3><hr>
+		<p>Before you modify anything system related, always make sure to back your data up.
+		Modifying <code>PATH</code> isn't too severe, but it could still be annoying. Just make sure to record the value of <code>PATH</code> somewhere so you can revert it back to normal.
+		You can use <code>echo $PATH</code> to print out <code>PATH</code> to the terminal.
+		If you mess up and don't record the value of <code>PATH</code>, record it as it currently is using <code>echo $PATH</code>, then run the command:</p>
+		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ export PATH="$(echo $PATH | sed "s/:[^:]*\/dev\/minit//g")"</pre>
+		</div>
+		<p>This command will search your <code>PATH</code> variable for any string starting with a colon and ending with <code>/dev/minit</code> and remove it from <code>PATH</code>.
+		If your command is in a different directory, replace <code>\/dev\/minit</code> with your path to the directory, making sure that you add a backslash before every slash.
+		</p>
+		</div>
+		<p>Just add the directory to your PATH variable, using the syntax:</p>
+		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ export PATH=$PATH:~/dev/minit</pre></div>
+		<p>It's that simple.
+		Now, every executable in the directory can be called from everywhere.
+		</p>
+		<h3>Multiple Executables in a Directory</h3>
+		We only wanted to create the <code>minit</code> command, but now you have several commands.
+		Some of these commands will not work, but could still lead to some unwanted behavior.
+		Worse, if a file in the directory was executable even though it really shouldn't be executable (such as a text file or a Makefile), you could end up running dangerous code that could modify things you don't want to modify.
+		</p>
+		<div class="aside">
+		<h4>Almost a Tragedy</h4><hr>
+		<p>I ran <code>Makefile</code> just to see what would happen, and it interpreted as a bash script, and it only had one bash command in it: <code>rm -rf $(OBJDIR)/* $(PRODUCT) $(DEBUG_PRODUCT)</code>, which will remove all the intermediate files and all the executables the Makefile generates.
+		Normally, that command does exactly what it's supposed to do.
+		If you don't set any of the variables (<code>$(OBJDIR)</code>, <code>$(PRODUCT)</code>, and <code>$(DEBUG_PRODUCT)</code>) because you didn't use <code>make</code>, however, they are blank, meaning I ran <code><a href="https://www.tecmint.com/10-most-dangerous-commands-you-should-never-execute-on-linux/">rm -rf  /*</a></code>, which is almost the most dangerous command you can run on a Linux system.
+		It's actually worse than deleting system32 on a Windows computer, because at least you still have your personal files.
+		<code>rm -rf /*</code> will actually try to delete everything on your computer.
+		Fortunately, it can't delete any files you would need root privileges to modify.
+		Unfortanately, it can delete any files you can modify without root privileges, which mainly includes your personal files.
+		I didn't lose anything because it didn't have any root privileges and it hadn't reached anything important before I killed it using Ctrl-c.
+		You won't be able to execute the Makefile for this reason.
+		</p></div>
+		<p>Now, you could move the script into a different folder, and add just that folder to the <code>PATH</code>, and you would only have one executable.
+		In practice, having your executable in a different folder could lead to some problems or at least annoyances, as it might disrupt the organization of your project.
+		In a c/c++ project, I would have to change directories every time I wanted to rebuild the project and execute the command, which doesn't sound like a lot until you have to find an error by hand because your debugger isn't working properly or you want to make some slight changes to make sure everything is working properly.
+		Furthermore, I generally have a release and a debug version of a c/c++ program, which means the debug command will also be a command unless I rearrange the build system around it.
+		</p>
+		<h3>Name Clash</h3>
+		<p>When you type in a command to the terminal, the computer will look through all the commands in a specified order.
+		On my terminal, the order seems to be
+		</p>
+		<p style="text-align: center">user-defined functions<font size="+2">&#x2192;</font>builtin functions<font size="+2">&#x2192;</font>executables.
+		</p>
+		<p>
+		</p>
+
 	</body>
 	</div>
 </html>
