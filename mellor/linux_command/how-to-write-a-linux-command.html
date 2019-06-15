@@ -24,10 +24,10 @@
 				z-index: 1; /* Stay on top */
 				top: 0px; /* Stay at the top */
 				left: 0;
-				background-color: #111; /* Black */
 				overflow-x: hidden; /* Disable horizontal scroll */
 				padding-top: 20px;
 			}			
+
 			/* The navigation menu links */
 			.sidenav a {
 				padding: 6px 8px 6px 16px;
@@ -39,7 +39,7 @@
 
 			/* When you mouse over the navigation links, change their color */
 			.sidenav a:hover {
-				color: #f1f1f1;
+				color: #b1b1b1;
 			}
 
 			.terminal {
@@ -183,7 +183,9 @@
         <h1 class="display-4">
           How to Make a Linux Command
         </h1>
-        <p class="lead">Posted --------
+		<h3>Joseph Mellor
+		</h3>
+        <p class="lead">Posted June 15, 2019
         </p>
       </div>
     </div>
@@ -199,34 +201,37 @@
 		<p>I'm going to go through a step by step example of how I would generally make a Linux command.
 			For this example, I will use an actual command I made to help me set up a build system for c++ projects, which I called <a href="https://github.com/TheLandfill/minit">minit</a>.
 			This command automates several things I had to do manually whenever I wanted to create a c/c++ project, including creating the relevant directories, copying a generic Makefile from a specific location (it's a c/c++ thing) into the project, etc.
-			To sucessfully run the command, you need to run <code>install.sh</code> because it needs to figure out where to create the symbolic links and it needs to make sure it's not overwriting any other commands.
+			To successfully run the command, you need to run <code>install.sh</code> because it needs to figure out where to create the symbolic links and it needs to make sure it's not overwriting any other commands.
 			To make it a command, however, we don't necessarily need it to run correctly.
 			If you do want it to run correctly and use this tutorial, just type <code>./install.sh tutorial</code> into your terminal instead of just <code>./install.sh</code>.
 			You can also uninstall the program completely by running <code>uninstall.sh</code> and then deleting the whole <code>minit</code> directory.
 			I will assume that the <code>minit.sh</code> script is in the directory <code>~/dev/minit</code> as if you ran <code>git clone https://github.com/TheLandfill/minit</code> while in the directory <code>~/dev</code>.
 		</p>
 		<h2>What Exactly is a Linux Command?</h2>
-		<p>If you have any experience with Linux or bash, you'll already know a few standard Linux commands, such as <code>cd</code> (change current directory), <code>mv</code> (move or rename files and folders), and <code>cp</code> (copy files).
-			If you're a little more experienced, you might know about some more complex commands, such as <code>sudo</code> (gives a command temporary root/admin privileges) or <code>python</code> (runs the python interpretor).
+		<p>As with most topics involving computers, there is a distiction between what a command is to the user and what a command is to the computer.</p>
+		<p>To the user, <b>Linux commands are things you type into the terminal to accomplish something</b>.
+			If you have any experience with Linux or bash, you'll already know a few standard Linux commands, such as <code>cd</code> (change current directory), <code>mv</code> (move or rename files and directories), and <code>cp</code> (copy files).
+			If you're a little more experienced, you might know about some more complex commands, such as <code>sudo</code> (gives a command temporary root/admin privileges) or <code>python</code> (runs the python interpreter).
 			Because you can't do much in the terminal without these commands and they come on most terminals, people often assume that they're built in.
 			While a few of them are (<code>cd</code> usually is because it's directly related to the terminal), most are not.
 		</p>
-		<p><b>Linux commands are usually either executables in a specific folder or "aliases".</b></p>
+		<p>To the computer, <b>Linux commands are usually either executables in a specific directory or "aliases".</b></p>
 		<div class="aside">
 		<h4>Quick Note on Aliases</h4><hr>
 		<p>You can make an alias out of most things you could type on the command line, but aliases have severe limits on what they can do.
 			They also rely on builtins and other Linux commands.
-			We'll discuss how to create an alias later in the article.
+			We'll discuss how to create an alias <a href="#what-if-i-dont-need-an-entire-executable">later in the article</a>.
 			Since <code>minit</code> is too complex to be an alias, I had to use a script.
 		</p>
 		</div>
 		<p>You can use the <code>which</code> command to see exactly which executable will be run when you type in a command.
 			Commands that are not executables (like <code>cd</code>) won't print out anything when you run <code>which</code>.
 			Instead, you can use the <code>type</code> command to determine what a command is in the general case.
+			Using <code>type -a NAME</code> will display all locations containing an executable named NAME including aliases, builtins, and functions.
 			For example:
 		</p>
 		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ which cd</span>
-<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type cd</span>
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type -a cd</span>
 cd is a function
 cd ()
 {
@@ -251,7 +256,7 @@ cd is a shell builtin
 		</p>
 		</div>
 		<p>Most of the other commands are actually just executables in either <code>/bin</code> or <code>/usr/bin/</code>.
-			Any executable in either of these folders can be run from anywhere just like a Linux command.
+			Any executable in either of these directories can be run from anywhere just like a Linux command.
 			There are several other directories that can also have commands, which are contained in the PATH environment variable.
 			To see the full list, type <code>echo $PATH</code> into your terminal.
 		</p>
@@ -262,7 +267,7 @@ cd is a shell builtin
 		</p>
 		<h2>Making an Executable</h2>
 		<p>Before you can run an executable, you have to tell the system which users can run it by using the <code>chmod</code> command.
-			The <code>chmod</code> command allows you to set who can read, write, and exexecute a file.
+			The <code>chmod</code> command allows you to set who can read, write, and execute a file.
 			In most cases, you can use <code>chmod 755 exe</code>, which will allow anyone to execute <code>exe</code>, but only the user can modify it.
 			For more information about the intricacies of the <code>chmod</code> command, see <a href="https://askubuntu.com/questions/932713/what-is-the-difference-between-chmod-x-and-chmod-755">here</a>, <a href="https://www.thegeekstuff.com/2010/06/chmod-command-examples/">here</a>, or read the man page by typing <code>man chmod</code> in the terminal.
 		</p>
@@ -317,7 +322,7 @@ cd is a shell builtin
 		You will have to type the command every time you log into your computer, unless you have some script that automatically runs when you login.
 		Instead of making your own, though, just add the command to the end of your <code>~/.bash_profile</code> or <code>~/.profile</code> file.
 		It's one of <a href="https://superuser.com/a/183980">several main scripts</a> that runs when you login.
-		I decided to wait to tell you just in case you accidently did something wrong and so you wouldn't touch important system files until you realized what could go wrong.
+		I decided to wait to tell you just in case you accidentally did something wrong and so you wouldn't touch important system files until you realized what could go wrong.
 		Once again, <b style="color: #FF0000">DO NOT MODIFY IMPORTANT SYSTEM FILES OR VARIABLES WITHOUT MAKING SOME SORT OF A BACKUP</b>.
 		</p>
 		<h3>Multiple Executables in a Directory</h3>
@@ -334,12 +339,12 @@ cd is a shell builtin
 			It's actually worse than deleting system32 on a Windows computer, because at least you still have your personal files.
 			<code>rm -rf /*</code> will actually try to delete everything on your computer.
 			Fortunately, it can't delete any files you would need root privileges to modify.
-			Unfortanately, it can delete any files you can modify without root privileges, which mainly includes your personal files.
+			Unfortunately, it can delete any files you can modify without root privileges, which mainly includes your personal files.
 			I didn't lose anything because it didn't have any root privileges and it hadn't reached anything important before I killed it using Ctrl-c.
 			You won't be able to execute the Makefile for this reason.
 		</p></div>
-		<p>Now, you could move the script into a different folder, and add just that folder to the <code>PATH</code>, and you would only have one executable.
-			In practice, having your executable in a different folder could lead to some problems or at least annoyances, as it might disrupt the organization of your project.
+		<p>Now, you could move the script into a different directory, and add just that directory to the <code>PATH</code>, and you would only have one executable.
+			In practice, having your executable in a different directory could lead to some problems or at least annoyances, as it might disrupt the organization of your project.
 			In a c/c++ project, I would have to change directories every time I wanted to rebuild the project and execute the command, which doesn't sound like a lot until you have to find an error by hand because your debugger isn't working properly or you want to make some slight changes to make sure everything is working properly.
 			Furthermore, I generally have a release and a debug version of a c/c++ program, which means the debug command will also be a command unless I rearrange the build system around it.
 		</p>
@@ -359,11 +364,13 @@ cd is a shell builtin
 			We're going to create two empty executables in two different directories specified in <code>PATH</code>, and we'll see which one would be run.
 			To prevent anything bad from happening, we're going to come up with an unused command name.
 			I'm going to use <code>hello-world</code>, since it's not a command on my system.
-			To test if the command isn't on your system, use <code>type -a hello-world</code>, which should say something like "not found" or "does not exist".
+			To test if the command isn't on your system, use <code>type hello-world</code>, which should say something like "not found" or "does not exist".
 			I'm going to pick <code>/usr/games</code> and <code>/usr/local/games</code> since they don't contain anything important (one is empty and the other one contains <a href="https://linux.die.net/man/1/espdiff">espdiff</a>, which I'll let you figure out).
 			We're going to use the <code>touch</code> command, which creates an empty file if the file doesn't exist and does nothing if the file already exists.
 		</p>
-		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo touch /usr/games/hello-world</span>
+		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type hello-world</span>
+bash: type: hello-world: not found
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo touch /usr/games/hello-world</span>
 <span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo chmod 755 /usr/games/hello-world</span>
 <span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo touch /usr/local/games/hello-world</span>
 <span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo chmod 755 /usr/local/games/hello-world</span>
@@ -387,7 +394,7 @@ hello-world is /usr/local/games/hello-world
 		You'll notice that one of the executables in <code>minit</code> was called <code>install.sh</code>.
 		In the context of the <code>minit</code> directory, <code>install.sh</code> makes perfect sense.
 		In the general context of the entire file system, it doesn't.
-		If you have another code base with its own <code>install.sh</code> executable, you could end up accidently running a different <code>install.sh</code>, which, just like the <code>Makefile</code> command earlier, could harm your computer.
+		If you have another code base with its own <code>install.sh</code> executable, you could end up accidentally running a different <code>install.sh</code>, which, just like the <code>Makefile</code> command earlier, could harm your computer.
 	</p>
 	<h3>Extensions on Names</h3>
 	<p>Commands with extensions (<code>.sh</code>, <code>.py</code>, etc.) will keep their extensions if you make them commands using this method.
@@ -416,7 +423,7 @@ hello-world is /usr/local/games/hello-world
 		Your code is now spread into multiple directories.
 		How would you share the code with someone else?
 		You would have to log all the files manually, assemble them, and send them over with instructions on where to put the executables.
-		You also couldn't use git or most other version control systems, as most VCSs require the project to be inside the same folder.
+		You also couldn't use git or most other version control systems, as most VCSs require the project to be inside the same directory.
 		In general, poor organization at any level of a software project could lead to <a href="https://medium.com/existek/what-is-technical-debt-and-how-to-calculate-it-80193e4e746d">technical debt</a>, which can eventually kill your project if you don't pay it off.
 	</p>
 	<h3>Manual Updates</h3>
@@ -432,7 +439,7 @@ hello-world is /usr/local/games/hello-world
 	</p>
 	<h3>Accidental Overwrite</h3>
 	<p>If you're not careful, you could end up overwriting a file that already exists.
-		Before making a command, running <code>type -a</code> on the command will make sure it doesn't exist.
+		Before making a command, running <code>type</code> on the command will make sure it doesn't exist.
 	</p>
 	<h1>A Better Way?</h1>
 	<p>As you can see, none of the methods above will satisfy all the criteria I suggested.
@@ -448,10 +455,10 @@ hello-world is /usr/local/games/hello-world
 		<li>Making <code>minit</code> shouldn't rely on anything unique to a specific Linux distro.</li>
 	</ul>
 	<h2>Symlinks</h2>
-		<p>Linux has a built in filetype that will allow us to satisfy all the critera, which is known as a <a href="https://kb.iu.edu/d/abbe">symbolic link</a> or "symlink" for short.
+		<p>Linux has a built in filetype that will allow us to satisfy all the criteria, which is known as a <a href="https://kb.iu.edu/d/abbe">symbolic link</a> or "symlink" for short.
 		Symlinks consist of a file or directory name, a few bytes for metadata (e.g. when the file was created), and that's it.
 		Most symlinks take up less than 100 bytes, while executables can often take up significantly more space.
-		Since symlinks are separate files, they don't have to share the same name, meaning the symlink can leave the extenstion off while the executable can keep it on.
+		Since symlinks are separate files, they don't have to share the same name, meaning the symlink can leave the extension off while the executable can keep it on.
 		Symlinks also won't affect anything in the code base since they're not part of it.
 		Finally, since symlinks only contain the path to the file and metadata, you would only ever need to update a symlink is if you move the linked executable.
 		To create our symlink for this command, use
@@ -465,7 +472,7 @@ hello-world is /usr/local/games/hello-world
 		For example, I made <code>/usr/nonlocal/physics</code> for my physics programs on an older computer.
 		If you did, you would treat it like I have treated <code>/usr/local/bin/</code>, where you store the symlinks in your personal command directory.
 	</p>
-	<h1>What if I Don't Need an Entire Executable?</h1>
+	<h2><section id="what-if-i-dont-need-an-entire-executable">What if I Don't Need an Entire Executable?</section></h2>
 	<p>Often, you won't need an entire executable for a simple command.
 		I generally use the command line text editor <code>vim</code>, and, while I do like it, it has quite a few weird quirks compared to modern text editors.
 		When you open multiple files at once with <code>vim</code>, it will open them like an old Unix terminal: you have to cycle through them and there's only really one open at a time.
@@ -484,11 +491,15 @@ hello-world is /usr/local/games/hello-world
 	<h1>Conclusion</h1>
 	<p>Let's do a quick overview of what we learned in this article:</p>
 	<ul>
-		<li>Linux commands are generally executables in one of the folders defined in <code>PATH</code>, aliases, or shell builtins.</li>
+		<li>Linux commands are generally executables in one of the directories defined in <code>PATH</code>, aliases, or shell builtins.</li>
+		<li>Creating your own command generally means adding an alias or putting an executable in <code>PATH</code>.</li>
 		<li>We can add or remove directories to <code>PATH</code>.</li>
 		<li>There are scripts that run when you login that you can customize.</li>
 		<li>We can also move or copy the executable to any directory already in <code>PATH</code>.</li>
+		<li>Symlinks are files that point to other files.</li>
 		<li>Symlinks will allow us to accomplish all the criteria we made for Linux commands.</li>
+		<li>Use aliases when your command is simple.</li>
 	</ul>
+	</div>
 	</body>
 </html>
