@@ -43,20 +43,24 @@
 			}
 
 			.terminal {
-				padding: 5px 10px 0px 5px;
+				padding: 10px 10px 10px 10px;
 				background-color: black;
 				font-family: "Lucidia Console",monospace,"Courier New";
-				border-width: 5px;
-				border-color: #777777;
+				border-width: 3px;
+				border-color: #999999;
 				border-style: solid;
-				margin-block-end: 1em;
-				padding-bottom: 0px;
+				margin-bottom: 1em;
+			}
+
+			.terminal-oneline {
+				white-space: pre;
 			}
 
 			.terminal pre {
-				color: #DC1111;
+				color: #EC1111;
 				white-space: pre-wrap;
 				word-wrap: break-word;
+				margin-bottom: 0;
 			}
 
 			/* Style page content */
@@ -68,13 +72,21 @@
 			}
 
 			.aside {
-				background: #CCCCCC;
+				background: #DDDDDD;
 				color: black;
 				padding: 10px 10px 10px 10px;
 				border-color: #777777;
 				border-width: 0px;
 				border-style: solid;
 				margin-block-end: 1em;
+			}
+			
+			.aside p:last-of-type {
+				margin-bottom: 0;
+			}
+
+			.terminal, .aside {
+				border-radius: 8px;
 			}
 
 			code {
@@ -209,28 +221,28 @@
 		</p>
 		</div>
 		<p>You can use the <code>which</code> command to see exactly which executable will be run when you type in a command.
-			Commands that are not executable scripts (like <code>cd</code>) won't print out anything when you run <code>which</code>.
+			Commands that are not executables (like <code>cd</code>) won't print out anything when you run <code>which</code>.
 			Instead, you can use the <code>type</code> command to determine what a command is in the general case.
 			For example:
 		</p>
-		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ which cd
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type cd
+		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ which cd</span>
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type cd</span>
 cd is a function
 cd ()
 {
 	builtin cd "$@" && chpwd
 }
 cd is a shell builtin
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which mv
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which mv</span>
 /bin/mv</span>
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which cp
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which cp</span>
 /bin/cp</span>
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which sudo
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which sudo</span>
 /usr/bin/sudo</span>
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which python
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which python</span>
 /usr/bin/python</span></pre>
 	</div>
-		<div class="aside"><p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt only displays the current and parent directory, but it doesn't matter for the tutorial.
+		<div class="aside"><p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt <a href="https://unix.stackexchange.com/a/217097">only displays the current and parent directories</a>, but it doesn't matter for the tutorial.
 			On most of your computers, <code>cd</code> will just be a shell builtin.
 			Since the only way to write a shell builtin is to write or modify a shell, we aren't going to deal with that here.
 		</p>
@@ -243,7 +255,7 @@ cd is a shell builtin
 			There are several other directories that can also have commands, which are contained in the PATH environment variable.
 			To see the full list, type <code>echo $PATH</code> into your terminal.
 		</p>
-		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ echo $PATH
+		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ echo $PATH</span>
 /home/joseph/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games</pre></div>
 		<p>You should see a list of directories separated by colons, as shown above.
 			<code>PATH</code> is just text, which will determine how we alter it later.
@@ -291,14 +303,14 @@ cd is a shell builtin
 			Modifying <code>PATH</code> isn't too severe, but it could still be annoying. Just make sure to record the value of <code>PATH</code> somewhere so you can revert it back to normal.
 			You can use <code>echo $PATH</code> to print out <code>PATH</code> to the terminal.
 			If you mess up and don't record the value of <code>PATH</code>, record it as it currently is using <code>echo $PATH</code>, then run the command:</p>
-		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ export PATH="$(echo $PATH | sed "s/:[^:]*\/dev\/minit//g")"</pre>
+		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ export PATH="$(echo $PATH | sed "s/:[^:]*\/dev\/minit//g")"</span></pre>
 		</div>
 		<p>This command will search your <code>PATH</code> variable for any string starting with a colon and ending with <code>/dev/minit</code> and remove it from <code>PATH</code>.
 			If your command is in a different directory, replace <code>\/dev\/minit</code> with your path to the directory, making sure that you add a backslash before every slash.
 		</p>
 		</div>
 		<p>Just add the directory to your PATH variable, using the syntax:</p>
-		<div class="terminal"><pre style="white-space: nowrap;"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ export PATH=$PATH:~/dev/minit</pre></div>
+		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ export PATH=$PATH:~/dev/minit</span></pre></div>
 		<p>It's that simple.</p>
 		<p>The <code>export</code> will mean that all that the current and all future terminal windows/bash sessions you create will also have <code>PATH</code> set, <code>PATH=</code> will set the <code>PATH</code> environment variable to everything that's after it, <code>$PATH</code> will expand out the contents of <code>PATH</code> (which include all the directories currently in <code>PATH</code>), and <code>:~/dev/minit</code> will be expanded and then appended to the expanded contents of <code>PATH</code>.
 		Now, every executable in the directory can be called from everywhere.
@@ -306,7 +318,7 @@ cd is a shell builtin
 		Instead of making your own, though, just add the command to the end of your <code>~/.bash_profile</code> or <code>~/.profile</code> file.
 		It's one of <a href="https://superuser.com/a/183980">several main scripts</a> that runs when you login.
 		I decided to wait to tell you just in case you accidently did something wrong and so you wouldn't touch important system files until you realized what could go wrong.
-		Once again, <b style="color: #FF0000">Do not modify important system files or variables without making some sort of a backup</b>.
+		Once again, <b style="color: #FF0000">DO NOT MODIFY IMPORTANT SYSTEM FILES OR VARIABLES WITHOUT MAKING SOME SORT OF A BACKUP</b>.
 		</p>
 		<h3>Multiple Executables in a Directory</h3>
 		<p>We only wanted to create the <code>minit</code> command, but now you have several commands.
@@ -315,7 +327,8 @@ cd is a shell builtin
 		</p>
 		<div class="aside">
 		<h4>Almost a Tragedy</h4><hr>
-		<p>I ran <code>Makefile</code> just to see what would happen (which is often a terrible reason to do things in computer science, at least on your computer), and it interpreted as a bash script, and it only had one bash command in it: <code>rm -rf $(OBJDIR)/* $(PRODUCT) $(DEBUG_PRODUCT)</code>, which will remove all the intermediate files and all the executables the Makefile generates.
+		<p>I ran <code>Makefile</code> just to see what would happen (which is often a terrible reason to do things in computer science, at least on your computer), and it interpreted as a bash script.
+			Unfortunately for me, it only had one interpretable bash command in it: <code>rm -rf $(OBJDIR)/* $(PRODUCT) $(DEBUG_PRODUCT)</code>, which will remove all the intermediate files and all the executables the Makefile generates.
 			Normally, that command does exactly what it's supposed to do.
 			If you don't set any of the variables (<code>$(OBJDIR)</code>, <code>$(PRODUCT)</code>, and <code>$(DEBUG_PRODUCT)</code>) because you didn't use <code>make</code>, however, they are blank, meaning I ran <code><a href="https://www.tecmint.com/10-most-dangerous-commands-you-should-never-execute-on-linux/">rm -rf  /*</a></code>, which is almost the most dangerous command you can run on a Linux system.
 			It's actually worse than deleting system32 on a Windows computer, because at least you still have your personal files.
@@ -350,17 +363,17 @@ cd is a shell builtin
 			I'm going to pick <code>/usr/games</code> and <code>/usr/local/games</code> since they don't contain anything important (one is empty and the other one contains <a href="https://linux.die.net/man/1/espdiff">espdiff</a>, which I'll let you figure out).
 			We're going to use the <code>touch</code> command, which creates an empty file if the file doesn't exist and does nothing if the file already exists.
 		</p>
-		<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo touch /usr/games/hello-world
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo chmod 755 /usr/games/hello-world
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo touch /usr/local/games/hello-world
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo chmod 755 /usr/local/games/hello-world
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type -a hello-world
+		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo touch /usr/games/hello-world</span>
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo chmod 755 /usr/games/hello-world</span>
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo touch /usr/local/games/hello-world</span>
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo chmod 755 /usr/local/games/hello-world</span>
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ type -a hello-world</span>
 hello-world is /usr/games/hello-world
 hello-world is /usr/local/games/hello-world
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ which hello-world
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ which hello-world</span>
 /usr/games/hello-world
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo rm /usr/games/hello-world
-<span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo rm /usr/local/games/hello-world</pre></div>
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo rm /usr/games/hello-world</span>
+<span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo rm /usr/local/games/hello-world</span></pre></div>
 	<p>Notice that <code>/usr/games/hello-world</code> shows up before <code>/usr/local/games/hello-world</code> and that <code>which</code> returns <code>/usr/games/hello-world</code>.
 		This experiment shows several things:
 	</p>
@@ -386,7 +399,7 @@ hello-world is /usr/local/games/hello-world
 		Since they have the same exact syntax, I'll just use <code>cp</code>.
 		If you've run <code>./install.sh tutorial</code>, then the script should still work.
 	</p>
-	<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo cp minit/minit.sh /usr/local/bin/</pre>
+	<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo cp minit/minit.sh /usr/local/bin/</span></pre>
 	</div>
 	<p>This solution is much better than just adding your whole directory to <code>PATH</code>, as you don't get unwanted executables, there are fewer directories to search, and you don't have to worry about name clashes.
 		You still have to deal with the extension issue, but that's mostly an aesthetic thing.
@@ -443,7 +456,7 @@ hello-world is /usr/local/games/hello-world
 		Finally, since symlinks only contain the path to the file and metadata, you would only ever need to update a symlink is if you move the linked executable.
 		To create our symlink for this command, use
 	</p>
-	<div class="terminal"><pre><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo ln -s ~/dev/minit/minit.sh /usr/local/bin/minit</pre>
+	<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo ln -s ~/dev/minit/minit.sh /usr/local/bin/minit</span></pre>
 	</div>
 	<p>Note that we used an absolute path and not a relative path, since the command is intended to be run from everywhere.
 		You can also have a symlink with a relative path, but only if the relative path is only going to be used from the same location.
@@ -468,5 +481,14 @@ hello-world is /usr/local/games/hello-world
 		Since I want it to stay across login sessions, I needed to put it in one of those scripts that run when you login or create a new terminal.
 		On my computer, my <code>~/.bashrc</code> would run all the commands in the file <code>~/.bash_aliases</code> if it existed, so I created the <code>~/.bash_aliases</code> and put the alias in there and it worked as expected.
 	</p>
+	<h1>Conclusion</h1>
+	<p>Let's do a quick overview of what we learned in this article:</p>
+	<ul>
+		<li>Linux commands are generally executables in one of the folders defined in <code>PATH</code>, aliases, or shell builtins.</li>
+		<li>We can add or remove directories to <code>PATH</code>.</li>
+		<li>There are scripts that run when you login that you can customize.</li>
+		<li>We can also move or copy the executable to any directory already in <code>PATH</code>.</li>
+		<li>Symlinks will allow us to accomplish all the criteria we made for Linux commands.</li>
+	</ul>
 	</body>
 </html>
