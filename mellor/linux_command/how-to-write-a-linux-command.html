@@ -214,48 +214,47 @@
   		<a href="#">Contact</a>
 		</div>
 	<div class="main">
-		<p>Although the purpose of a computer is to automate tasks, there are still tons of things programmers have to do manually.
+		<p>Although the purpose of a computer is to automate tasks, programmers have still have to do some tasks manually.
 			For instance, to set up a c/c++ project on my computer, I would have to create a bunch of directories, copy a Makefile (it's like a project file for c/c++) into the right directory, modify the Makefile to generate the specific program, etc.
-			Doing so requires me to remember not only what directories I need to create, but also where I stored the original Makefile.
-			Furthermore, since the Makefile is written specifically for c++ projects, I would have to modify it even more to use c.
+			Doing so requires me to remember both the directories I need to create and where I stored the original Makefile.
+			Furthermore, since I wrote the Makefile specifically for c++ projects, I have to change it for c projects.
 			Lastly, if I mess up any of the steps above, I have to spend even more time to find the error.
-			All in all, it's a waste of time and effort just to set up a project, especially since I have to follow the same exact steps for every project.
+			All in all, it's a waste of time and effort to go through this process to set up a project, especially since I have to follow the same exact steps for every project.
 		</p>
-		<p>Eventually, I got sick of not having this process automated, and I decided that I would write a script to do everything for me.
-			This method almost worked, except for the fact that I couldn't really run the script anywhere.
+		<p>I got sick of not having this process automated, and I decided that I would write a script to do everything for me.
+			This method almost worked, except for the fact that I couldn't run the script anywhere.
 			I could either copy the script where I wanted to make the project then delete it or I could call the script by using the full filepath.
 			Neither option sounded pleasant, so I decided to make a command that could run the script from anywhere.
 		</p>
 		<p>In this article, I'm going to discuss what a Linux command is, the basics of how Linux processes commands, and how to make one yourself.
 			I will use the command I made above to help me set up a build system for c/c++ projects, which I called <a href="https://github.com/TheLandfill/minit">minit</a>, as a guide.
-			To successfully run <code>minit</code>, you need to run <code>./install.sh</code> because it needs to figure out where to create the symbolic links and to make sure it's not overwriting any other commands.
-			To make it a command, however, we don't necessarily need it to run correctly.
-			If you do want it to run correctly and use this tutorial, just type <code>./install.sh tutorial</code> into your terminal instead of just <code>./install.sh</code>.
-			You can also uninstall the program completely by running <code>./uninstall.sh</code> and then deleting the whole <code>minit</code> directory.
+			To run <code>minit</code>, you need to run <code>./install.sh</code> so it can figure out where the specific files are and to make sure it's not overwriting any other commands.
+			To make it a command, we don't necessarily need it to run, but if you do want it to run and use this tutorial, type <code>./install.sh tutorial</code> into your terminal instead of <code>./install.sh</code>.
+			You can also remove the command by running <code>./uninstall.sh</code> and then deleting the whole <code>minit</code> directory.
 			I will assume that the <code>minit.sh</code> script is in the directory <code>~/dev/minit</code> as if you ran <code>git clone https://github.com/TheLandfill/minit</code> while in the directory <code>~/dev</code>.
 		</p>
-		<h2>What Exactly is a Linux Command?</h2>
-		<p>As with most topics involving computers, there is a distiction between what a command is to the user and what a command is to the computer.</p>
-		<p>To the user, <b>Linux commands are things you type into the terminal to accomplish something</b>.
-			If you have any experience with Linux or bash, you'll already know a few standard Linux commands, such as <code>cd</code> (change current directory), <code>mv</code> (move or rename files and directories), and <code>cp</code> (copy files).
+		<h2>What is a Linux Command?</h2>
+		<p>As with most topics involving computers, there is a distinction between what a command is to the user and what a command is to the computer.</p>
+		<p>To the user, <b>Linux commands are phrases you type into the terminal to do something on your computer</b>.
+			If you have any experience with Linux or bash, you'll already know some standard Linux commands, such as <code>cd</code> (change current directory), <code>mv</code> (move or rename files and directories), and <code>cp</code> (copy files).
 			If you're a little more experienced, you might know about some more complex commands, such as <code>sudo</code> (gives a command temporary root/admin privileges) or <code>python</code> (runs the python interpreter).
 			Because you can't do much in the terminal without these commands and they come on most terminals, people often assume that they're built in.
-			While a few of them are (<code>cd</code> usually is because it's directly related to the terminal), most are not.
+			While some commands are (<code>cd</code> is because it's directly related to the terminal), most are not.
 		</p>
-		<p>To the computer, <b>Linux commands are usually either executables in a specific directory or "aliases"</b>.
-			Linux commands also include functions and builtins, but they're not generally what you would write if you wanted to make a command.
+		<p>To the computer, <b>Linux commands are executables in a specific directory, aliases, functions, or builtins</b>.
+			In this article, we'll discuss how to make an executable a command and how to make an alias.
 			In general, you won't be able to write a builtin and functions are usually best used for simple, frequently used commands.
 			You'll see an example of both a builtin and a function later, and we'll go into more detail about the specifics.
 		</p>
 		<div class="aside">
 		<h4>Quick Note on Aliases</h4><hr>
-		<p>You can make an alias out of most things you could type on the command line, but aliases have severe limits on what they can do.
+		<p>You can make an alias out of almost anything you could type on the command line, but aliases have severe limits on what they can do.
 			They also rely on builtins and other Linux commands.
 			We'll discuss how to create an alias <a href="#what-if-i-dont-need-an-entire-executable">later in the article</a>.
 			Since <code>minit</code> is too complex to be an alias, I had to use a script.
 		</p>
 		</div>
-		<p>You can use the <code>which</code> command to see exactly which executable will be run when you type in a command.
+		<p>You can use the <code>which</code> command to see which executable the computer will run when you type in a command.
 			Commands that are not executables (like <code>cd</code>) won't print out anything when you run <code>which</code>.
 			Instead, you can use the <code>type</code> command to determine what a command is in the general case.
 			Using <code>type -a NAME</code> will display all locations containing an executable named NAME including aliases, builtins, and functions.
@@ -280,47 +279,47 @@ cd is a shell builtin
 	</div>
 		<div class="aside">
 		<h4>Why is <code>cd</code> a Function?</h4><hr>
-		<p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt <a href="https://unix.stackexchange.com/a/217097">only displays the current and parent directories</a>, but it doesn't matter for the tutorial.
-			On most of your computers, <code>cd</code> will just be a shell builtin.
+		<p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt <a href="https://unix.stackexchange.com/a/217097">displays the current and parent directories</a>, but it doesn't matter for the tutorial.
+			On most of your computers, <code>cd</code> will be a shell builtin.
 			Since the only way to write a shell builtin is to write or modify a shell, we aren't going to deal with that here.
-			Since I use cd frequently, the actual function is quite simple (it calls the builtin <code>cd</code> and then runs another function if the builtin <code>cd</code> ran properly), and I need it to be called instead of the builtin <code>cd</code> (see <a href="#command-order">here</a> for more details), I had to make it a function.
+			Since I use cd frequently, the actual function is simple (it calls the builtin <code>cd</code> and then runs another function if the builtin <code>cd</code> ran properly), and I need to call it instead of the builtin <code>cd</code> (see <a href="#command-order">here</a> for more details), I had to make it a function.
 			If you want more information on when to use a function, alias, or script to make a Linux command, see <a href="https://unix.stackexchange.com/a/30964">this answer</a> on StackOverflow.
 		</p>
 		<p>I also want you to notice that, in my case, it prints out both that <code>cd is a function</code> and <code>cd is a shell builtin</code>.
-			In other words, there are multiple commands named <code>cd</code>, but only the first one will be run when you type <code>cd</code> into the console.
+			In other words, multiple commands are named <code>cd</code>, but the computer will run just the first one when you type <code>cd</code> into the console.
 		</p>
 		</div>
-		<p>Most of the other commands are actually just executables in either <code>/bin</code> or <code>/usr/bin/</code>.
-			Any executable in either of these directories can be run from anywhere just like a Linux command.
-			There are several other directories that can also have commands, which are contained in the PATH environment variable.
+		<p>Most of the other commands are actually executables in either <code>/bin</code> or <code>/usr/bin/</code>.
+			You can run any executable in either of these directories from anywhere like a Linux command.
+			Other directories can also have commands, and these directories are listed in the <code>PATH</code> environment variable.
 			To see the full list, type <code>echo $PATH</code> into your terminal.
 		</p>
 		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ echo $PATH</span>
 /home/joseph/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games</pre></div>
 		<p>You should see a list of directories separated by colons, as shown above.
-			<code>PATH</code> is just text, which will determine how we alter it later.
+			<code>PATH</code> contains text, which will determine how we alter it later.
 		</p>
 		<h2>Making an Executable</h2>
 		<p>Before you can run an executable, you have to tell the system which users can run it by using the <code>chmod</code> command.
 			The <code>chmod</code> command allows you to set who can read, write, and execute a file.
-			In most cases, you can use <code>chmod 755 exe</code>, which will allow anyone to execute <code>exe</code>, but only the user can modify it.
-			For more information about the intricacies of the <code>chmod</code> command, see <a href="https://askubuntu.com/questions/932713/what-is-the-difference-between-chmod-x-and-chmod-755">here</a>, <a href="https://www.thegeekstuff.com/2010/06/chmod-command-examples/">here</a>, or read the man page by typing <code>man chmod</code> in the terminal.
+			In most cases, you can use <code>chmod 755 exe</code>, which will allow anyone to execute <code>exe</code> and allow the user to modify it.
+			For more information about the intricacies of the <code>chmod</code> command, see this <a href="https://askubuntu.com/questions/932713/what-is-the-difference-between-chmod-x-and-chmod-755">answer</a>, this <a href="https://www.thegeekstuff.com/2010/06/chmod-command-examples/">article</a>, or read the man page by typing <code>man chmod</code> in the terminal.
 		</p>
 		<h2>Absolute vs. Relative Paths</h2>
 		<p>An absolute filepath starts from either your root directory. <code>/</code> or your home directory, <code>~/</code>.
-			The <code>~/</code> is usually just shorthand for <code>/home/username</code>.
+			The <code>~/</code> is shorthand for <code>/home/username</code>.
 			A relative filepath is from your current location in the terminal.
 			When making Linux commands, they have to run from anywhere, meaning your current location is going to change.
 			<b>If you want to make use of a specific file or directory, then you must use an absolute path.</b>
 			For example, <code>minit</code> copies the Makefile in <code>~/dev/minit/</code> (or wherever you clone the project) into a different directory, so it needs an absolute path.
-			On the other hand, <code>minit</code> needs to create several new directories from your current location, so it uses relative paths.
+			<code>minit</code> needs to create new directories from your current location, so it uses relative paths.
 		</p>
 		<h1>Making a Linux Command</h1>
-		<p>Since any executable must be in one of the directories specified in <code>PATH</code>, we now have only two ways to turn an executable into a Linux command.
+		<p>Since any executable must be in one of the directories specified in <code>PATH</code>, we now have two ways to turn an executable into a Linux command.
 		</p>
 		<ul>
 			<li>Add the directory containing your executable to the <code>PATH</code> variable.</li>
-			<li>Move the executable into one of the directories currently in PATH.</li>
+			<li>Move the executable into one of the directories in PATH.</li>
 		</ul>
 		<h2>Criteria</h2>
 		<p>While both of these methods will work, we want to set up some criteria for determining the best method.
@@ -329,48 +328,49 @@ cd is a shell builtin
 			The method we use to create a command should
 		</p>
 		<ul>
-			<li>look like a Linux command, since that's what people are used to.</li>
+			<li>look like a Linux command, since <a href="https://en.wikipedia.org/wiki/Principle_of_least_astonishment">that's what people expect</a>.</li>
 			<li>not create extraneous commands.</li>
 			<li>work with the organization of a project or at least not complicate the project.</li>
-			<li>use as few resources as possible.</li>
-			<li>not require the user to do anything more than the bare minimum to update the command.</li>
-			<li>work on as many Linux systems as reasonably possible.</li>
+			<li>use the fewest resources it can.</li>
+			<li>require the user to do as little as possible to update the command.</li>
+			<li>work on most, if not all, standard Linux distros.</li>
 		</ul>
 		<h2>Adding a Directory to the <code>PATH</code> Variable</h2>
 		<div class="aside" style="border-width: 8px;">
 		<h3 style="color: red; text-align: center;">WARNING</h3><hr>
-		<p>Before you modify anything system related, always make sure to back your data up.
-			Modifying <code>PATH</code> isn't too severe, but it could still be annoying. Just make sure to record the value of <code>PATH</code> somewhere so you can revert it back to normal.
+		<p>Before you interact with anything related to the operating system or anything related to configurations, always make sure to back your data up.
+			Modifying <code>PATH</code> isn't too severe, but it could still be annoying.
+			In this case, make sure to record the value of <code>PATH</code> somewhere so you can revert it back to normal.
 			You can use <code>echo $PATH</code> to print out <code>PATH</code> to the terminal.
-			If you mess up and don't record the value of <code>PATH</code>, record it as it currently is using <code>echo $PATH</code>, then run the command:</p>
+			If you mess up and don't record the value of <code>PATH</code>, record its current value using <code>echo $PATH</code>, then run the command:</p>
 		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ export PATH="$(echo $PATH | sed "s/:[^:]*\/dev\/minit//g")"</span></pre>
 		</div>
 		<p>This command will search your <code>PATH</code> variable for any string starting with a colon and ending with <code>/dev/minit</code> and remove it from <code>PATH</code>.
 			If your command is in a different directory, replace <code>\/dev\/minit</code> with your path to the directory, making sure that you add a backslash before every slash.
 		</p>
 		</div>
-		<p>Just add the directory to your PATH variable, using the syntax:</p>
+		<p>Add the directory to your PATH variable, using the syntax:</p>
 		<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ export PATH=$PATH:~/dev/minit</span></pre></div>
 		<p>It's that simple.</p>
-		<p>The <code>export</code> will mean that all that the current and all future terminal windows/bash sessions you create will also have <code>PATH</code> set, <code>PATH=</code> will set the <code>PATH</code> environment variable to everything that's after it, <code>$PATH</code> will expand out the contents of <code>PATH</code> (which include all the directories currently in <code>PATH</code>), and <code>:~/dev/minit</code> will be expanded and then appended to the expanded contents of <code>PATH</code>.
-		Now, every executable in the directory can be called from everywhere.
+		<p>The <code>export</code> will mean that all that the current and all future terminal windows/bash sessions you create will also have <code>PATH</code> set, <code>PATH=</code> will set the <code>PATH</code> environment variable to everything that's after it, <code>$PATH</code> will expand out the contents of <code>PATH</code> (which include all the directories in <code>PATH</code>), and <code>:~/dev/minit</code> will be expanded to <code>:/home/username/dev/minit</code> and then appended to the contents of <code>PATH</code>.
+		Now, you can call every executable in the directory from anywhere.
 		You will have to type the command every time you log into your computer, unless you have some script that automatically runs when you login.
-		Instead of making your own, though, just add the command to the end of your <code>~/.bash_profile</code> or <code>~/.profile</code> file.
-		It's one of <a href="https://superuser.com/a/183980">several main scripts</a> that runs when you login.
-		I decided to wait to tell you just in case you accidentally did something wrong and so you wouldn't touch important system files until you realized what could go wrong.
+		Instead of making your own, though, add the command to the end of your <code>~/.bash_profile</code> or <code>~/.profile</code> file.
+		It's one of the <a href="https://superuser.com/a/183980">main scripts</a> that runs when you login.
+		I decided to wait to tell you in case you did something wrong and so you wouldn't touch important system files until you realized what could go wrong.
 		Once again, <b style="color: #FF0000">DO NOT MODIFY IMPORTANT SYSTEM FILES OR VARIABLES WITHOUT MAKING SOME SORT OF A BACKUP</b>.
 		</p>
 		<h3>Multiple Executables in a Directory</h3>
-		<p>We only wanted to create the <code>minit</code> command, but now you have several commands.
+		<p>We wanted to create the <code>minit</code> command, but now every executable is a command.
 			Some of these commands will not work, but could still lead to some unwanted behavior.
-			Worse, if a file in the directory was executable even though it really shouldn't be executable (such as a text file or a Makefile), you could end up running dangerous code that could modify things you don't want to modify.
+			Worse, if a file in the directory was executable even though it shouldn't be executable (such as a text file or a Makefile), you could end up running dangerous code.
 		</p>
 		<div class="aside">
 		<h4>Almost a Tragedy</h4><hr>
-		<p>I ran <code>Makefile</code> just to see what would happen (which is often a terrible reason to do things in computer science, at least on your computer), and it interpreted as a bash script.
-			Unfortunately for me, it only had one interpretable bash command in it: <code>rm -rf $(OBJDIR)/* $(PRODUCT) $(DEBUG_PRODUCT)</code>, which will remove all the intermediate files and all the executables the Makefile generates.
-			Normally, that command does exactly what it's supposed to do.
-			If you don't set any of the variables (<code>$(OBJDIR)</code>, <code>$(PRODUCT)</code>, and <code>$(DEBUG_PRODUCT)</code>) because you didn't use <code>make</code>, however, they are blank, meaning I ran <code><a href="https://www.tecmint.com/10-most-dangerous-commands-you-should-never-execute-on-linux/">rm -rf  /*</a></code>, which is almost the most dangerous command you can run on a Linux system.
+		<p>I ran <code>Makefile</code> to see what would happen, and it interpreted as a bash script.
+			Unfortunately for me, it had one interpretable bash command in it: <code>rm -rf $(OBJDIR)/* $(PRODUCT) $(DEBUG_PRODUCT)</code>, which will remove all the intermediate files and all the executables the Makefile generates.
+			When using <code>make</code> to interpret the <code>Makefile</code>, that command does what it's supposed to do.
+			If you don't set any of the variables (<code>$(OBJDIR)</code>, <code>$(PRODUCT)</code>, and <code>$(DEBUG_PRODUCT)</code>) because you didn't use <code>make</code>, they will be empty, meaning I ran <code><a href="https://www.tecmint.com/10-most-dangerous-commands-you-should-never-execute-on-linux/">rm -rf  /*</a></code>, which is almost the most dangerous command you can run on a Linux system.
 			It's actually worse than deleting system32 on a Windows computer, because at least you still have your personal files.
 			<code>rm -rf /*</code> will actually try to delete everything on your computer.
 			Fortunately, it can't delete any files you would need root privileges to modify.
@@ -378,7 +378,7 @@ cd is a shell builtin
 			I didn't lose anything because it didn't have any root privileges and it hadn't reached anything important before I killed it using Ctrl-c.
 			You won't be able to execute the Makefile for this reason.
 		</p></div>
-		<p>Now, you could move the script into a different directory, and add just that directory to the <code>PATH</code>, and you would only have one executable.
+		<p>Now, you could move the script into a different directory, and add that directory to the <code>PATH</code>, and you would have one executable.
 			In practice, having your executable in a different directory could lead to some problems or at least annoyances, as it might disrupt the organization of your project.
 			In a c/c++ project, I would have to change directories every time I wanted to rebuild the project and execute the command, which doesn't sound like a lot until you have to find an error by hand because your debugger isn't working properly or you want to make some slight changes to make sure everything is working properly.
 			Furthermore, I generally have a release and a debug version of a c/c++ program, which means the debug command will also be a command unless I rearrange the build system around it.
@@ -392,11 +392,11 @@ cd is a shell builtin
 		</p>
 		<p>Adding a directory or two won't hurt, but adding a lot of them could mean it takes a little bit longer for your commands to execute.
 			A computer will still be quick enough that you wouldn't notice a difference except in some extreme circumstances.
-			You however, will need to edit the <code>PATH</code> variable whenever you want to remove a command, which means going into your <code>~/.bash_profile</code> or <code>~/.profile</code> and finding the specific directory you added and removing it, then using the method above in the WARNING aside to remove it from the current <code>PATH</code> variable.
+			You will need to edit the <code>PATH</code> variable whenever you want to remove a command, which means going into your <code>~/.bash_profile</code> or <code>~/.profile</code> and finding the specific directory you added and removing it, then using the method above in the WARNING aside to remove it from the current <code>PATH</code> variable.
 		</p>
 		<h3>Name Clash</h3>
-		<p>You saw earlier that the function I wrote for <code>cd</code> was mentioned before the builtin <code>cd</code>, but let's do a little experiment.
-			We're going to create two empty executables in two different directories specified in <code>PATH</code>, and we'll see which one would be run.
+		<p>You saw earlier that <code>type -a</code> listed the function I wrote for <code>cd</code> before the builtin <code>cd</code>, but let's do a little experiment.
+			We're going to create two empty executables in two different directories specified in <code>PATH</code>, and we'll see which one the computer will run.
 			To prevent anything bad from happening, we're going to come up with an unused command name.
 			I'm going to use <code>hello-world</code>, since it's not a command on my system.
 			To test if the command isn't on your system, use <code>type hello-world</code>, which should say something like "not found" or "does not exist".
@@ -422,30 +422,30 @@ hello-world is /usr/local/games/hello-world
 		<ul>
 			<li>There can be multiple executables with the same name as another script.</li>
 			<li>Bash will go through all the directories in <code>PATH</code> and choose the first executable with the name you provided.</li>
-			<li>Therefore, <b>only the first executable will be run</b>.</li>
+			<li>Therefore, <b>the computer will only run the first executable</b>.</li>
 			<li>Furthermore, <b>you could end up running the wrong executable</b>.</li>
 		</ul>
 	<p>I don't think this issue will come up too often, but I can think a much more common name clash.
-		You'll notice that one of the executables in <code>minit</code> was called <code>install.sh</code>.
+		You'll notice that I called one of the executables in <code>minit</code> called <code>install.sh</code>.
 		In the context of the <code>minit</code> directory, <code>install.sh</code> makes perfect sense.
 		In the general context of the entire file system, it doesn't.
-		If you have another code base with its own <code>install.sh</code> executable, you could end up accidentally running a different <code>install.sh</code>, which, just like the <code>Makefile</code> command earlier, could harm your computer.
+		If you have another code base with its own <code>install.sh</code> executable, you could end up running a different <code>install.sh</code>, which, like the <code>Makefile</code> command earlier, could harm your computer.
 	</p>
 	<h3>Extensions on Names</h3>
 	<p>Commands with extensions (<code>.sh</code>, <code>.py</code>, etc.) will keep their extensions if you make them commands using this method.
-		While you could probably remove the extension in some instances, it really isn't worth it.
-		You can no longer search for the script based on its extension and you would have to open the file to determine what kind of script it is.
+		While you could remove the extension, you shouldn't.
+		You can no longer search for the script based on its extension and you would have to open the file to determine the language of script.
 	</p>
 	<h2>Moving or Copying the Executable into One of the Directories in <code>PATH</code></h2>
 	<p>Either <code>cp</code> or <code>mv</code> will work.
-		Since they have the same exact syntax, I'll just use <code>cp</code>.
+		Since they have the same exact syntax, I'll use <code>cp</code>.
 		If you've run <code>./install.sh tutorial</code>, then the script should still work.
 	</p>
 	<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo cp minit/minit.sh /usr/local/bin/</span></pre>
 	</div>
-	<p>This solution is much better than just adding your whole directory to <code>PATH</code>, as you don't get unwanted executables, there are fewer directories to search, and you don't have to worry about name clashes.
-		You still have to deal with the extension issue, but that's mostly an aesthetic thing.
-		This solution introduces some new problems, however.
+	<p>This solution is much better than adding your whole directory to <code>PATH</code>, as you don't get unwanted executables, there are fewer directories to search, and you don't have to worry about name clashes.
+		You still have to deal with the extension issue, but that's an aesthetic thing.
+		This solution introduces some new problems.
 	</p>
 	<ul>
 		<li>Scattered Build System</li>
@@ -459,14 +459,14 @@ hello-world is /usr/local/games/hello-world
 		How would you share the code with someone else?
 		You would have to log all the files manually, assemble them, and send them over with instructions on where to put the executables.
 		You also couldn't use git or most other version control systems, as most VCSs require the project to be inside the same directory.
-		In general, poor organization at any level of a software project could lead to <a href="https://medium.com/existek/what-is-technical-debt-and-how-to-calculate-it-80193e4e746d">technical debt</a>, which can eventually kill your project if you don't pay it off.
+		In general, poor organization at any level of a software project could lead to <a href="https://medium.com/existek/what-is-technical-debt-and-how-to-calculate-it-80193e4e746d">technical debt</a>, which can kill your project if you don't pay it off.
 	</p>
 	<h3>Manual Updates</h3>
 	<p>If you decide to keep the executable as part of a separate project, then you will have to recopy or replace the executable whenever or someone else updates the code.
 		You might also need to use <code>sudo</code> if you're using an important directory, like <code>/usr/local/bin</code>.
 	</p>
 	<p>Other than manual updates, this solution is almost optimal.
-		It keeps everything organized, only the executables you want to be commands will be commands, no name clashes, and <code>PATH</code> doesn't fill up with a bunch of minor directories.
+		It keeps everything organized, the executables you want to be commands will be commands, the executables you don't want to be commands won't be commands, no name clashes, and <code>PATH</code> doesn't fill up with a bunch of minor directories.
 		You still have to manually update the executable in <code>PATH</code>.
 	</p>
 	<h3>Duplicate Files</h3>
@@ -478,7 +478,7 @@ hello-world is /usr/local/games/hello-world
 	</p>
 	<h1>A Better Way?</h1>
 	<p>As you can see, none of the methods above will satisfy all the criteria I suggested.
-		Unfortunately, there is no way to make an executable a Linux command unless it is in one of the directories in <code>PATH</code>.
+		Unfortunately, there is no way to make an executable a Linux command unless the executable is in one of the directories in <code>PATH</code>.
 		Reviewing the problems with the proposed solutions and the criteria, we can come up with our ideal solution:
 	</p>
 	<ul>
@@ -490,18 +490,18 @@ hello-world is /usr/local/games/hello-world
 		<li>Making <code>minit</code> shouldn't rely on anything unique to a specific Linux distro.</li>
 	</ul>
 	<h2>Symlinks</h2>
-		<p>Linux has a built in filetype that will allow us to satisfy all the criteria, which is known as a <a href="https://kb.iu.edu/d/abbe">symbolic link</a> or "symlink" for short.
-		Symlinks consist of a file or directory name, a few bytes for metadata (e.g. when the file was created), and that's it.
-		Most symlinks take up less than 100 bytes, while executables can often take up significantly more space.
+		<p>Linux has a built in filetype that will allow us to satisfy all the criteria for a command, which is known as a <a href="https://kb.iu.edu/d/abbe">symbolic link</a> or "symlink" for short.
+		Symlinks consist of a file or directory name, some metadata (e.g. the time it was last modified), and that's it.
+		Most symlinks take up less than one hundred bytes, while executables can often take up orders of magnitude more space.
 		Since symlinks are separate files, they don't have to share the same name, meaning the symlink can leave the extension off while the executable can keep it on.
 		Symlinks also won't affect anything in the code base since they're not part of it.
-		Finally, since symlinks only contain the path to the file and metadata, you would only ever need to update a symlink is if you move the linked executable.
+		And since symlinks contain just a filepath and metadata, you only need to update a symlink if you move the linked executable.
 		To create our symlink for this command, use
 	</p>
 	<div class="terminal"><pre><span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span>$ sudo ln -s ~/dev/minit/minit.sh /usr/local/bin/minit</span></pre>
 	</div>
-	<p>Note that we used an absolute path and not a relative path, since the command is intended to be run from everywhere.
-		You can also have a symlink with a relative path, but only if the relative path is only going to be used from the same location.
+	<p>Note that we used an absolute path and not a relative path since we want to run the command from everywhere.
+		You can also have a symlink with a relative path as long as the relative link always points to the same file or directory.
 	</p>
 	<p>Now, you can still add directories to your <code>PATH</code>, like if you wanted to have a directory filled with your commands so you didn't mix them in with any other commands.
 		For example, I made <code>/usr/nonlocal/physics</code> for my physics programs on an older computer.
@@ -509,17 +509,17 @@ hello-world is /usr/local/games/hello-world
 	</p>
 	<h2><section id="what-if-i-dont-need-an-entire-executable">What if I Don't Need an Entire Executable?</section></h2>
 	<p>Often, you won't need an entire executable for a simple command.
-		I generally use the command line text editor <code>vim</code>, and, while I do like it, it has quite a few weird quirks compared to modern text editors.
-		When you open multiple files at once with <code>vim</code>, it will open them like an old Unix terminal: you have to cycle through them and there's only really one open at a time.
-		<code>vim</code> can open them in tabs (like a modern text editor) if you use <code>vim -p</code> on the command line, however.
-		Since I strongly prefer using tabs as opposed to the old Unix style, I wanted to make a Linux command that would work exactly as if I had typed <code>vim -p</code>.
-		If I were to write a bash script, it would only have one line of code.
+		I generally use the command line text editor <code>vim</code>, and, while I do like it, it has some weird quirks compared to modern text editors.
+		When you open multiple files at once with <code>vim</code>, it will open them like an old Unix terminal: you have to cycle through them and there's one open at a time.
+		<code>vim</code> can open them in tabs (like a modern text editor) if you use <code>vim -p</code> on the command line.
+		Since I strongly prefer using tabs as opposed to the old Unix style, I wanted to make a Linux command that would work as if I had typed <code>vim -p</code>.
+		If I were to write a bash script, it would have one line of code.
 		In this case, I would use an <b>alias</b>.
 	</p>
 	<p>Aliases have an easy syntax.
 	</p>
 	<div class="terminal"><pre>alias vip="vim -p"</pre></div>
-	<p>This line will create a Linux command called <code>vip</code> that will run <code>vim -p</code> whenever it is called.
+	<p>This line will create a Linux command called <code>vip</code> that will run <code>vim -p</code> whenever you call it.
 		Since I want it to stay across login sessions, I needed to put it in one of those scripts that run when you login or create a new terminal.
 		On my computer, my <code>~/.bashrc</code> would run all the commands in the file <code>~/.bash_aliases</code> if it existed, so I created the <code>~/.bash_aliases</code> and put the alias in there and it worked as expected.
 	</p>
@@ -529,10 +529,10 @@ hello-world is /usr/local/games/hello-world
 		<li>Linux commands are generally executables in one of the directories defined in <code>PATH</code>, aliases, or shell builtins.</li>
 		<li>Creating your own command generally means adding an alias or putting an executable in <code>PATH</code>.</li>
 		<li>We can add or remove directories to <code>PATH</code>.</li>
-		<li>There are scripts that run when you login that you can customize.</li>
+		<li>Some scripts run when you login and you can customize them to alter the behavior of your computer or terminal.</li>
 		<li>We can also move or copy the executable to any directory already in <code>PATH</code>.</li>
 		<li>Symlinks are files that point to other files.</li>
-		<li>Symlinks will allow us to accomplish all the criteria we made for Linux commands.</li>
+		<li>Symlinks will allow us to achieve all the criteria we made for Linux commands.</li>
 		<li>Use aliases when your command is simple.</li>
 	</ul>
 	</div>
