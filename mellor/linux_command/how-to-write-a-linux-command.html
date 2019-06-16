@@ -16,20 +16,22 @@
 
 			/* Sidebar stuff is from https://www.w3schools.com/howto/howto_css_fixed_sidebar.asp */
 			/* The sidebar menu */
-			.sidenav {
+			#sidenav {
 				float: left;
-				height: 100vh; /* Full-height: remove this if you want "auto" height */
+				height: 50vh; /* Full-height: remove this if you want "auto" height */
 				width: 160px; /* Set the width of the sidebar */
-				position: relative; /* Fixed Sidebar (stay in place on scroll)
-				z-index: 1; /* Stay on top */
-				top: 0px; /* Stay at the top */
+				position: sticky;
+				position: -webkit-sticky;
+				/* z-index: 1;  Stay on top */
+				top: 0; /* Stay at the top */
 				left: 0;
 				overflow-x: hidden; /* Disable horizontal scroll */
 				padding-top: 20px;
-			}			
+				padding-bottom: 5vh;
+			}
 
 			/* The navigation menu links */
-			.sidenav a {
+			#sidenav a {
 				padding: 6px 8px 6px 16px;
 				text-decoration: none;
 				font-size: 25px;
@@ -38,7 +40,7 @@
 			}
 
 			/* When you mouse over the navigation links, change their color */
-			.sidenav a:hover {
+			#sidenav a:hover {
 				color: #b1b1b1;
 			}
 
@@ -72,7 +74,7 @@
 			}
 
 			.aside {
-				background: #DDDDDD;
+				background: #E3E3E3;
 				color: black;
 				padding: 10px 10px 10px 10px;
 				border-color: #777777;
@@ -119,15 +121,15 @@
 				background: #333333;
 			}
 
-			.darkmode .sidenav {
+			.darkmode #sidenav {
 				background-color: #222222;
 			}
 
-			.darkmode .sidenav a {
+			.darkmode #sidenav a {
 				color: #AAAAAA;
 			}
 
-			.darkmode .sidenav a:hover {
+			.darkmode #sidenav a:hover {
 				color: #FFFFFF;
 			}
 
@@ -141,12 +143,12 @@
 
 			/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
 			@media screen and (max-height: 450px) {
-				.sidenav {padding-top: 15px;}
-				.sidenav a {font-size: 18px;}
+				#sidenav {padding-top: 15px;}
+				#sidenav a {font-size: 18px;}
 			}
 
 			@media screen and (max-width: 1000px) {
-				.sidenav {
+				#sidenav {
 					display: none !important;
 				}
 				.main {
@@ -169,8 +171,7 @@
 			}
 
 		</style>
-
-		<title>How to Make a Linux Command</title>
+			<title>How to Make a Linux Command</title>
 	</head>
 	<body class="">
 	<div class="jumbotron jumbotron-fluid">
@@ -190,21 +191,47 @@
       </div>
     </div>
 		<!-- Side navigation -->
-		<div class="sidenav">
+		<div id="sidenav">
   		<a href="#">About</a>
+  		<a href="#">Services</a>
+  		<a href="#">Clients</a>
+  		<a href="#">Contact</a>
+  		<a href="#">About</a>
+  		<a href="#">About</a>
+  		<a href="#">About</a>
+  		<a href="#">About</a>
+  		<a href="#">Services</a>
+  		<a href="#">Clients</a>
+  		<a href="#">Contact</a>
+  		<a href="#">Services</a>
+  		<a href="#">Clients</a>
+  		<a href="#">Contact</a>
+  		<a href="#">Services</a>
+  		<a href="#">Clients</a>
+  		<a href="#">Contact</a>
   		<a href="#">Services</a>
   		<a href="#">Clients</a>
   		<a href="#">Contact</a>
 		</div>
 	<div class="main">
-		<h2>Intro</h2>
-		<p>I'm going to go through a step by step example of how I would generally make a Linux command.
-			For this example, I will use an actual command I made to help me set up a build system for c++ projects, which I called <a href="https://github.com/TheLandfill/minit">minit</a>.
-			This command automates several things I had to do manually whenever I wanted to create a c/c++ project, including creating the relevant directories, copying a generic Makefile from a specific location (it's a c/c++ thing) into the project, etc.
-			To successfully run the command, you need to run <code>install.sh</code> because it needs to figure out where to create the symbolic links and it needs to make sure it's not overwriting any other commands.
+		<p>Although the purpose of a computer is to automate tasks, there are still tons of things programmers have to do manually.
+			For instance, to set up a c/c++ project on my computer, I would have to create a bunch of directories, copy a Makefile (it's like a project file for c/c++) into the right directory, modify the Makefile to generate the specific program, etc.
+			Doing so requires me to remember not only what directories I need to create, but also where I stored the original Makefile.
+			Furthermore, since the Makefile is written specifically for c++ projects, I would have to modify it even more to use c.
+			Lastly, if I mess up any of the steps above, I have to spend even more time to find the error.
+			All in all, it's a waste of time and effort just to set up a project, especially since I have to follow the same exact steps for every project.
+		</p>
+		<p>Eventually, I got sick of not having this process automated, and I decided that I would write a script to do everything for me.
+			This method almost worked, except for the fact that I couldn't really run the script anywhere.
+			I could either copy the script where I wanted to make the project then delete it or I could call the script by using the full filepath.
+			Neither option sounded pleasant, so I decided to make a command that could run the script from anywhere.
+		</p>
+		<p>In this article, I'm going to discuss what a Linux command is, the basics of how Linux processes commands, and how to make one yourself.
+			I will use the command I made above to help me set up a build system for c/c++ projects, which I called <a href="https://github.com/TheLandfill/minit">minit</a>, as a guide.
+			To successfully run <code>minit</code>, you need to run <code>./install.sh</code> because it needs to figure out where to create the symbolic links and to make sure it's not overwriting any other commands.
 			To make it a command, however, we don't necessarily need it to run correctly.
 			If you do want it to run correctly and use this tutorial, just type <code>./install.sh tutorial</code> into your terminal instead of just <code>./install.sh</code>.
-			You can also uninstall the program completely by running <code>uninstall.sh</code> and then deleting the whole <code>minit</code> directory.
+			You can also uninstall the program completely by running <code>./uninstall.sh</code> and then deleting the whole <code>minit</code> directory.
 			I will assume that the <code>minit.sh</code> script is in the directory <code>~/dev/minit</code> as if you ran <code>git clone https://github.com/TheLandfill/minit</code> while in the directory <code>~/dev</code>.
 		</p>
 		<h2>What Exactly is a Linux Command?</h2>
@@ -215,7 +242,11 @@
 			Because you can't do much in the terminal without these commands and they come on most terminals, people often assume that they're built in.
 			While a few of them are (<code>cd</code> usually is because it's directly related to the terminal), most are not.
 		</p>
-		<p>To the computer, <b>Linux commands are usually either executables in a specific directory or "aliases".</b></p>
+		<p>To the computer, <b>Linux commands are usually either executables in a specific directory or "aliases"</b>.
+			Linux commands also include functions and builtins, but they're not generally what you would write if you wanted to make a command.
+			In general, you won't be able to write a builtin and functions are usually best used for simple, frequently used commands.
+			You'll see an example of both a builtin and a function later, and we'll go into more detail about the specifics.
+		</p>
 		<div class="aside">
 		<h4>Quick Note on Aliases</h4><hr>
 		<p>You can make an alias out of most things you could type on the command line, but aliases have severe limits on what they can do.
@@ -247,9 +278,13 @@ cd is a shell builtin
 <span class="terminal-oneline"><span style="color:#E23434"><b>joseph@tutorials</b></span>:<span style="color:#DC1F63"><b>~/dev</b></span><span style="color:#DC1111">$ which python</span>
 /usr/bin/python</span></pre>
 	</div>
-		<div class="aside"><p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt <a href="https://unix.stackexchange.com/a/217097">only displays the current and parent directories</a>, but it doesn't matter for the tutorial.
+		<div class="aside">
+		<h4>Why is <code>cd</code> a Function?</h4><hr>
+		<p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt <a href="https://unix.stackexchange.com/a/217097">only displays the current and parent directories</a>, but it doesn't matter for the tutorial.
 			On most of your computers, <code>cd</code> will just be a shell builtin.
 			Since the only way to write a shell builtin is to write or modify a shell, we aren't going to deal with that here.
+			Since I use cd frequently, the actual function is quite simple (it calls the builtin <code>cd</code> and then runs another function if the builtin <code>cd</code> ran properly), and I need it to be called instead of the builtin <code>cd</code> (see <a href="#command-order">here</a> for more details), I had to make it a function.
+			If you want more information on when to use a function, alias, or script to make a Linux command, see <a href="https://unix.stackexchange.com/a/30964">this answer</a> on StackOverflow.
 		</p>
 		<p>I also want you to notice that, in my case, it prints out both that <code>cd is a function</code> and <code>cd is a shell builtin</code>.
 			In other words, there are multiple commands named <code>cd</code>, but only the first one will be run when you type <code>cd</code> into the console.
@@ -348,7 +383,7 @@ cd is a shell builtin
 			In a c/c++ project, I would have to change directories every time I wanted to rebuild the project and execute the command, which doesn't sound like a lot until you have to find an error by hand because your debugger isn't working properly or you want to make some slight changes to make sure everything is working properly.
 			Furthermore, I generally have a release and a debug version of a c/c++ program, which means the debug command will also be a command unless I rearrange the build system around it.
 		</p>
-		<h3>More Directories Means More to Search</h3>
+		<h3><section id="command-order">More Directories Means More to Search</section></h3>
 		<p>This issue isn't as big a deal as having more executables than you wanted, but it's still a potential issue.
 			When you type in a command to the terminal, the computer will look through all the commands in a specified order.
 			On my terminal (<code>Linux Mint 19.1 Tessa</code> with <code>bash 4.4.19</code>), the order seems to be
@@ -502,4 +537,19 @@ hello-world is /usr/local/games/hello-world
 	</ul>
 	</div>
 	</body>
+	<script>
+		window.onscroll = sidenav_height_adj;
+		var max_height = document.documentElement.clientHeight;
+		var didScroll = false;
+
+		setInterval(function() {
+			if (didScroll) {
+				didScroll = false;
+			}
+		}, 200);
+
+		function sidenav_height_adj() {
+			document.getElementById("sidenav").style.height = 50 + Math.min(Math.round(document.documentElement.scrollTop * 100 / max_height), 50) + "vh";
+		}
+	</script>
 </html>
