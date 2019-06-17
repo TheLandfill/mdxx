@@ -5,112 +5,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+		<link rel="stylesheet" href="terminal.css">
+		<link rel="stylesheet" href="aside.css">
+		<link rel="stylesheet" href="general.css">
+		<link rel="stylesheet" href="article.css">
 		<style>
-			body {
-				font-family: Helvetica,Arial,sans-serif;
-				padding-bottom: 3em;
-			}
 			.width-90 {
 				width: 90%;
 			}
 
-			/* Sidebar stuff is from https://www.w3schools.com/howto/howto_css_fixed_sidebar.asp */
-			/* The sidebar menu */
-			#sidenav {
-				float: left;
-				height: 50vh; /* Full-height: remove this if you want "auto" height */
-				width: 160px; /* Set the width of the sidebar */
-				position: sticky;
-				position: -webkit-sticky;
-				/* z-index: 1;  Stay on top */
-				top: 0; /* Stay at the top */
-				left: 0;
-				overflow-x: hidden; /* Disable horizontal scroll */
-				padding-top: 20px;
-				padding-bottom: 5vh;
-			}
-
-			/* The navigation menu links */
-			#sidenav a {
-				padding: 6px 8px 6px 16px;
-				text-decoration: none;
-				font-size: 25px;
-				color: #818181;
-				display: block;
-			}
-
-			/* When you mouse over the navigation links, change their color */
-			#sidenav a:hover {
-				color: #b1b1b1;
-			}
-
-			.terminal {
-				padding: 10px 10px 10px 10px;
-				background-color: black;
-				font-family: "Lucidia Console",monospace,"Courier New";
-				border-width: 3px;
-				border-color: #999999;
-				border-style: solid;
-				margin-bottom: 1em;
-			}
-
-			.terminal-oneline {
-				white-space: pre;
-			}
-
-			.terminal pre {
-				color: #EC1111;
-				white-space: pre-wrap;
-				word-wrap: break-word;
-				margin-bottom: 0;
-			}
-
-			/* Style page content */
-			.main {
-				padding: 26px 0px;
-				position: relative;
-				margin-left: 200px; /* Same as the width of the sidebar */
-				width: 800px;
-			}
-
-			.aside {
-				background: #E3E3E3;
-				color: black;
-				padding: 10px 10px 10px 10px;
-				border-color: #777777;
-				border-width: 0px;
-				border-style: solid;
-				margin-block-end: 1em;
-			}
-			
-			.aside p:last-of-type {
-				margin-bottom: 0;
-			}
-
-			.terminal, .aside {
-				border-radius: 8px;
-			}
-
-			code {
-				font-family: "Lucidia Console",monospace,"Courier New";
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-				font-smooth: antialiased;
-			}
-
-			.aside code {
-				color: #FF0000;
-			}
-
-			.aside hr {
-				color: #444444;
-				background-color: #444444;
-			}
-
-			.aside a {
-				color: #0000FF
-			}
-			
 			.darkmode {
 				background-color: black;
 				color: #DDDDDD;
@@ -140,38 +44,8 @@
 			.jumbotron {
 				margin-bottom: 0px;
 			}
-
-			/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-			@media screen and (max-height: 450px) {
-				#sidenav {padding-top: 15px;}
-				#sidenav a {font-size: 18px;}
-			}
-
-			@media screen and (max-width: 1000px) {
-				#sidenav {
-					display: none !important;
-				}
-				.main {
-					padding-left: 40px;
-					margin-left: 0px;
-				}
-			}
-
-			@media screen and (max-width: 840px) {
-				.main {
-					padding-left: 20px;
-					width: 95%;
-				}
-			}
-
-			@media screen and (max-width: 820px) {
-				.main {
-					width: 95%;
-				}
-			}
-
 		</style>
-			<title>How to Make a Linux Command</title>
+		<title>How to Make a Linux Command</title>
 	</head>
 	<body class="" onload="sidenav_height_adj()">
 	<div id="jumbotron-header" class="jumbotron jumbotron-fluid">
@@ -213,7 +87,7 @@
   		<a href="#">Clients</a>
   		<a href="#">Contact</a>
 		</div>
-	<div class="main">
+	<div class="article">
 		<p>Although the purpose of a computer is to automate tasks, programmers have still have to do some tasks manually.
 			For instance, to set up a c/c++ project on my computer, I would have to create a bunch of directories, copy a Makefile (it's like a project file for c/c++) into the right directory, modify the Makefile to generate the specific program, etc.
 			Doing so requires me to remember both the directories I need to create and where I stored the original Makefile.
@@ -336,7 +210,7 @@ cd is a shell builtin
 			<li>work on most, if not all, standard Linux distros.</li>
 		</ul>
 		<h2>Adding a Directory to the <code>PATH</code> Variable</h2>
-		<div class="aside" style="border-width: 8px;">
+		<div class="aside" style="border-width: 8px; border-radius: 12px;">
 		<h3 style="color: red; text-align: center;">WARNING</h3><hr>
 		<p>Before you interact with anything related to the operating system or anything related to configurations, always make sure to back your data up.
 			Modifying <code>PATH</code> isn't too severe, but it could still be annoying.
@@ -536,10 +410,18 @@ hello-world is /usr/local/games/hello-world
 		<li>Use aliases when your command is simple.</li>
 	</ul>
 	</div>
+	<div id="footer" style="height: 20vh; background: grey; width: 100%; z-index: 100;">
+	</div>
 	</body>
 	<script>
 		var max_height = document.documentElement.clientHeight;
 		var jumbotron_height = document.getElementById("jumbotron-header").clientHeight;
+		var footer_position = document.getElementById("footer").offsetTop;
+		var sidenav = document.getElementById("sidenav");
+		var window_height = window.innerHeight;
+		var bottom_of_sidenav = window_height - footer_position;
+		var scale_vh = 100 / max_height;
+		var need_to_resize_sidenav = true;
 		function debounce(f, t) {
 			return function (args) {
 				let previousCall = this.lastCall;
@@ -553,23 +435,31 @@ hello-world is /usr/local/games/hello-world
 
 		window.onscroll = sidenav_height_adj;
 
-		var didScroll = false;
-
-		setInterval(function() {
-			if (didScroll) {
-				didScroll = false;
-			}
-		}, 200);
-
 		function sidenav_height_adj() {
-			document.getElementById("sidenav").style.height = 100 + Math.min(Math.round((document.documentElement.scrollTop - jumbotron_height) * 100 / max_height), 0) + "vh";
+			var scroll_location = document.documentElement.scrollTop;
+			if (scroll_location < jumbotron_height) {
+				sidenav.style.height = 100 + (scroll_location - jumbotron_height) * scale_vh + "vh";
+				need_to_resize_sidenav = true;
+			} else {
+				let amount_of_visible_footer = scroll_location + bottom_of_sidenav;
+				if (amount_of_visible_footer > 0) {
+					sidenav.style.height = 100 - amount_of_visible_footer * scale_vh + "vh";
+					need_to_resize_sidenav = true;
+				} else if (need_to_resize_sidenav) {
+					sidenav.style.height = "100vh";
+					need_to_resize_sidenav = false;
+				}
+			}
 		}
 	</script>
 	<script>
-		window.onresize = debounce(change_max_height, 100);
+		window.onresize = debounce(change_max_height, 50);
 
 		function change_max_height() {
+			window_height = window.innerHeight;
+			bottom_of_sidenav = window_height - footer_position;
 			max_height = document.documentElement.clientHeight;
+			scale_vh = 100 / max_height;
 			sidenav_height_adj();
 		}
 	</script>

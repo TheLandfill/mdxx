@@ -1,0 +1,21 @@
+.terminal {
+	padding: 10px 10px 10px 10px;
+	background-color: black;
+	font-family: "Lucidia Console",monospace,"Courier New";
+	border-width: 3px;
+	border-color: #999999;
+	border-style: solid;
+	margin-bottom: 1em;
+	border-radius: 8px;
+}
+
+.terminal-oneline {
+	white-space: pre;
+}
+
+.terminal pre {
+	color: #EC1111;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	margin-bottom: 0;
+}
