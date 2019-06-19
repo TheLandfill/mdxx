@@ -3,7 +3,7 @@ body {
 }
 
 code {
-	font-family: "Lucidia Console",monospace,"Courier New";
+	font-family: "Lucidia Console","Monaco Regular",monospace,"Courier New";
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-smooth: antialiased;

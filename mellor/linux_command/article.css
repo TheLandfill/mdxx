@@ -9,7 +9,10 @@
 	top: 0;
 	padding-top: 20px;
 	overflow-y: hidden;
-	padding-bottom: 5vh;
+	background: #EFEFEF;
+	border-width: 1px 1px 1px 0px;
+	border-color: #999999;
+	border-style: solid;
 	margin-top: 0px;
 }
 
@@ -19,12 +22,20 @@
 
 /* The navigation menu links */
 #sidenav a {
-	padding: 6px 8px 6px 16px;
+	padding: 3px 12px 3px 16px;
 	text-decoration: none;
-	font-size: 25px;
+	font-size: 1em;
 	color: red;
 	display: block;
 	z-index: 1;
+	border-width: 0px 0px 1px 0px;
+	border-color: #999999;
+	border-style: solid;
+}
+
+#sidenav a:last-of-type {
+	border-width: 0px;
+	padding-bottom: 20px;
 }
 
 /* When you mouse over the navigation links, change their color */
@@ -43,7 +54,6 @@
 
 @media screen and (max-height: 450px) {
 	#sidenav {padding-top: 15px;}
-	#sidenav a {font-size: 18px;}
 }
 
 @media screen and (max-width: 1000px) {
