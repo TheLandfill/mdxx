@@ -10,9 +10,9 @@
 	padding-top: 20px;
 	overflow-y: hidden;
 	background: #EFEFEF;
-	border-width: 1px 1px 1px 0px;
+/*	border-width: 1px 1px 1px 0px;
 	border-color: #999999;
-	border-style: solid;
+	border-style: solid;*/
 	margin-top: 0px;
 }
 
@@ -28,13 +28,13 @@
 	color: red;
 	display: block;
 	z-index: 1;
-	border-width: 0px 0px 1px 0px;
+/*	border-width: 0px 0px 1px 0px;
 	border-color: #999999;
-	border-style: solid;
+	border-style: solid;*/
 }
 
 #sidenav a:last-of-type {
-	border-width: 0px;
+/*	border-width: 0px;*/
 	padding-bottom: 20px;
 }
 
