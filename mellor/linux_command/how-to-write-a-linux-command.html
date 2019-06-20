@@ -61,6 +61,7 @@
 	<div>
 		<!-- Side navigation -->
 		<div id="sidenav">
+		<a href="#how-to-make-a-linux-command">How to make a Linux Command</a>
 		<a href="#what-is-a-linux-command">What is a Linux Command?</a>
 		<a href="#making-an-executable">Making an Executable</a>
 		<a href="#absolute-vs-relative-paths">Absolute vs. Relative Paths</a>
@@ -82,7 +83,7 @@
 		<a href="#conclusion">Conclusion</a>
 		</div>
 	<div class="article">
-		<h1 class="display-4">How to Make a Linux Command</h1>
+		<h1 class="display-4"><section id="how-to-make-a-linux-command">How to Make a Linux Command</section></h1>
 		<h4>Joseph Mellor &middot; June 15, 2019</h4>
 		<p>Although the purpose of a computer is to automate tasks, programmers have still have to do some tasks manually.
 			For instance, to set up a c/c++ project on my computer, I would have to create a bunch of directories, copy a Makefile (it's like a project file for c/c++) into the right directory, modify the Makefile to generate the specific program, etc.
@@ -439,7 +440,6 @@ hello-world is /usr/local/games/hello-world
 				need_to_resize_sidenav = true;
 			} else {
 				var amount_of_visible_footer = scroll_location + bottom_of_sidenav;
-				console.log("amount of visible footer: " + amount_of_visible_footer);
 				if (amount_of_visible_footer > 0) {
 					sidenav.style.height = 100 - amount_of_visible_footer * scale_vh + "vh";
 					need_to_resize_sidenav = true;
@@ -451,8 +451,6 @@ hello-world is /usr/local/games/hello-world
 				}
 			}
 		}
-	</script>
-	<script>
 		window.onresize = debounce(change_max_height, 50);
 
 		function change_max_height() {
