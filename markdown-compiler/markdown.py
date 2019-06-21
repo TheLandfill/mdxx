@@ -56,6 +56,7 @@ class HTML_Manager:
         line = next_line()
         if re.match(r"^Import:.*") is None:
             print('Missing a legible import statement.' + metadata_format)
+            raise SystemExit
         line = re.sub('Import:', '', line)
         imports = line.split()
         self.imports.extend(imports)
@@ -64,6 +65,7 @@ class HTML_Manager:
         line = next_line()
         if re.match(r"^Scripts:.*") is None:
             print('Missing a legible script statement.' + metadata_format)
+            raise SystemExit
         line = re.sub('Scripts:', '', line)
         imports = line.split()
         self.imports.extend(imports)
@@ -107,25 +109,42 @@ class HTML_Manager:
         add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date)
         in_paragraph = False
         current_pre = []
-        context = []
+        context = ['none']
         line = ''
+        need_to_close_paragraph = False
         while (True):
             if len(current_pre) > 0:
                 line = next_line()
                 if re.sub('!', '', line) == current_pre:
-                    current_pre = ''
+                    current_pre = current_pre[:-1]
                 else:
-                    expanded_line = expand_line(line, current_pre)
+                    expanded_line = expand_line(line, context)
                     self.out.write(expanded_line)
                 continue
             line_data = find_next_content_line()
             line = line_data[0]
-            count = line_data[1] > 1
+            blank_lines = line_data[1] > 1
             if line == '':
                 break
             if line in pre_subs:
                 current_pre.append(line)
+                context.append(line)
                 add(pre_subs[line] + next_line())
+            if len(context) == 1:
+                if blank_lines:
+                    if need_to_close_paragraph:
+                        pop()
+                        add('</p>')
+                        need_to_close_paragraph = False
+                    add('<p>' + line)
+                    push()
+                    need_to_close_paragraph = True
+                else:
+                    add(line)
+            else if need_to_close_paragraph:
+                add('</p>')
+                need_to_close_paragraph = False
+
 
     def find_next_content_line():
         line = '    '
