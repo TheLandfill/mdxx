@@ -1,12 +1,9 @@
 #sidenav {
 	float: left;
-	height: 50vh;
-	width: 160px;
-	position: sticky;
-	position: -webkit-sticky;
+	width: 200px;
+	position: fixed;
 	z-index: 2;
 	left: 0;
-	top: 0;
 	padding-top: 20px;
 	overflow-y: hidden;
 	background: #EFEFEF;
@@ -48,7 +45,7 @@
 .article {
 	padding: 26px 0px;
 	position: relative;
-	margin-left: 200px; /* Same as the width of the sidebar */
+	margin-left: 240px; /* Same as the width of the sidebar */
 	padding-bottom: 6em;
 	width: 800px;
 }

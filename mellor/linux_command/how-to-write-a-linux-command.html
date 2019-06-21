@@ -59,30 +59,8 @@
       </div>
     </div>
 	<div>
-		<!-- Side navigation -->
-		<div id="sidenav">
-		<a href="#what-is-a-linux-command">What is a Linux Command?</a>
-		<a href="#making-an-executable">Making an Executable</a>
-		<a href="#absolute-vs-relative-paths">Absolute vs. Relative Paths</a>
-		<a href="#making-a-linux-command">Making a Linux Command</a>
-		<a href="#criteria">Criteria</a>
-  		<a href="#adding-a-directory-to-the-path-variable">Adding a Directory to the <code>PATH</code> Variable</a>
-		<a href="#multiple-executables-in-a-directory">Multiple Executables in a Directory</a>
-		<a href="#more-directories-means-more-to-search">More Directories Means More to Search</a>
-		<a href="#name-clash">Name Clash</a>
-		<a href="#extensions-on-names">Extensions on Names</a>
-		<a href="#moving-or-copying-the-executable">Moving or Copyting the Executable</a>
-		<a href="#scattered-build-system">Scattered Build System</a>
-		<a href="#manual-updates">Manual Updates</a>
-		<a href="#duplicate-files">Duplicate Files</a>
-		<a href="#accidental-overwrite">Accidental Overwrite</a>
-		<a href="#a-better-way">A Better Way?</a>
-		<a href="#symlinks">Symlinks</a>
-		<a href="#what-if-i-dont-need-an-entire-executable">What if I Don't Need an Entire Executable?</a>
-		<a href="#conclusion">Conclusion</a>
-		</div>
-	<div class="article">
-		<h1 class="display-4">How to Make a Linux Command</h1>
+		<div class="article">
+		<h1 class="display-4"><section id="how-to-make-a-linux-command">How to Make a Linux Command</section></h1>
 		<h4>Joseph Mellor &middot; June 15, 2019</h4>
 		<p>Although the purpose of a computer is to automate tasks, programmers have still have to do some tasks manually.
 			For instance, to set up a c/c++ project on my computer, I would have to create a bunch of directories, copy a Makefile (it's like a project file for c/c++) into the right directory, modify the Makefile to generate the specific program, etc.
@@ -149,13 +127,13 @@ cd is a shell builtin
 	</div>
 		<div class="aside">
 		<h4>Why is <code>cd</code> a Function?</h4><hr>
-		<p>On my computer, I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt <a href="https://unix.stackexchange.com/a/217097">displays the current and parent directories</a>, but it doesn't matter for the tutorial.
-			On most of your computers, <code>cd</code> will be a shell builtin.
+		<p>I had to write a function that modified the behavior of <code>cd</code> slightly so that my prompt <a href="https://unix.stackexchange.com/a/217097">displays the current and parent directories</a>, but it doesn't matter for the tutorial.
+			On most computers, <code>cd</code> will be a shell builtin.
 			Since the only way to write a shell builtin is to write or modify a shell, we aren't going to deal with that here.
 			Since I use cd frequently, the actual function is simple (it calls the builtin <code>cd</code> and then runs another function if the builtin <code>cd</code> ran properly), and I need to call it instead of the builtin <code>cd</code> (see <a href="#more-directories-means-more-to-search">here</a> for more details), I had to make it a function.
 			If you want more information on when to use a function, alias, or script to make a Linux command, see <a href="https://unix.stackexchange.com/a/30964">this answer</a> on StackOverflow.
 		</p>
-		<p>I also want you to notice that, in my case, it prints out both that <code>cd is a function</code> and <code>cd is a shell builtin</code>.
+		<p>Also, notice that it prints out both that <code>cd is a function</code> and <code>cd is a shell builtin</code>.
 			In other words, multiple commands are named <code>cd</code>, but the computer will run just the first one when you type <code>cd</code> into the console.
 		</p>
 		</div>
@@ -227,7 +205,6 @@ cd is a shell builtin
 		You will have to type the command every time you log into your computer, unless you have some script that automatically runs when you login.
 		Instead of making your own, though, add the command to the end of your <code>~/.bash_profile</code> or <code>~/.profile</code> file.
 		It's one of the <a href="https://superuser.com/a/183980">main scripts</a> that runs when you login.
-		I decided to wait to tell you in case you did something wrong and so you wouldn't touch important system files until you realized what could go wrong.
 		Once again, <b style="color: #FF0000">DO NOT MODIFY IMPORTANT SYSTEM FILES OR VARIABLES WITHOUT MAKING SOME SORT OF A BACKUP</b>.
 		</p>
 		<h3><section id="multiple-executables-in-a-directory">Multiple Executables in a Directory</section></h3>
@@ -295,7 +272,7 @@ hello-world is /usr/local/games/hello-world
 			<li>Therefore, <b>the computer will only run the first executable</b>.</li>
 			<li>Furthermore, <b>you could end up running the wrong executable</b>.</li>
 		</ul>
-	<p>I don't think this issue will come up too often, but I can think a much more common name clash.
+	<p>I don't think this issue will come up too often, but I can think of a much more common name clash.
 		You'll notice that I called one of the executables in <code>minit</code> called <code>install.sh</code>.
 		In the context of the <code>minit</code> directory, <code>install.sh</code> makes perfect sense.
 		In the general context of the entire file system, it doesn't.
@@ -393,8 +370,7 @@ hello-world is /usr/local/games/hello-world
 		Since I want it to stay across login sessions, I needed to put it in one of those scripts that run when you login or create a new terminal.
 		On my computer, my <code>~/.bashrc</code> would run all the commands in the file <code>~/.bash_aliases</code> if it existed, so I created the <code>~/.bash_aliases</code> and put the alias in there and it worked as expected.
 	</p>
-	<h1><section id="conclusion">Conclusion</section></h1>
-	<p>Let's do a quick overview of what we learned in this article:</p>
+	<h1><section id="summary">Summary</section></h1>
 	<ul>
 		<li>Linux commands are generally executables in one of the directories defined in <code>PATH</code>, aliases, or shell builtins.</li>
 		<li>Creating your own command generally means adding an alias or putting an executable in <code>PATH</code>.</li>
@@ -405,6 +381,29 @@ hello-world is /usr/local/games/hello-world
 		<li>Symlinks will allow us to achieve all the criteria we made for Linux commands.</li>
 		<li>Use aliases when your command is simple.</li>
 	</ul>
+	</div>
+	<!-- Side navigation -->
+	<div id="sidenav">
+		<a href="#how-to-make-a-linux-command">How to Make a Linux Command</a>
+		<a href="#what-is-a-linux-command">What is a Linux Command?</a>
+		<a href="#making-an-executable">Making an Executable</a>
+		<a href="#absolute-vs-relative-paths">Absolute vs. Relative Paths</a>
+		<a href="#making-a-linux-command">Making a Linux Command</a>
+		<a href="#criteria">Criteria</a>
+		<a href="#adding-a-directory-to-the-path-variable">Adding a Directory to the <code>PATH</code> Variable</a>
+		<a href="#multiple-executables-in-a-directory">Multiple Executables in a Directory</a>
+		<a href="#more-directories-means-more-to-search">More Directories Means More to Search</a>
+		<a href="#name-clash">Name Clash</a>
+		<a href="#extensions-on-names">Extensions on Names</a>
+		<a href="#moving-or-copying-the-executable">Moving or Copyting the Executable</a>
+		<a href="#scattered-build-system">Scattered Build System</a>
+		<a href="#manual-updates">Manual Updates</a>
+		<a href="#duplicate-files">Duplicate Files</a>
+		<a href="#accidental-overwrite">Accidental Overwrite</a>
+		<a href="#a-better-way">A Better Way?</a>
+		<a href="#symlinks">Symlinks</a>
+		<a href="#what-if-i-dont-need-an-entire-executable">What if I Don't Need an Entire Executable?</a>
+		<a href="#conclusion">Conclusion</a>
 	</div>
 	</div>
 	<div id="footer" style="height: 20vh; background: grey; width: 100%; z-index: 100;">
@@ -435,24 +434,22 @@ hello-world is /usr/local/games/hello-world
 		function sidenav_height_adj() {
 			var scroll_location = document.documentElement.scrollTop;
 			if (scroll_location < jumbotron_height) {
-				sidenav.style.height = 100 + (scroll_location - jumbotron_height) * scale_vh + "vh";
+				sidenav.style.top = jumbotron_height - scroll_location + "px";
 				need_to_resize_sidenav = true;
 			} else {
 				var amount_of_visible_footer = scroll_location + bottom_of_sidenav;
-				console.log("amount of visible footer: " + amount_of_visible_footer);
 				if (amount_of_visible_footer > 0) {
-					sidenav.style.height = 100 - amount_of_visible_footer * scale_vh + "vh";
+					sidenav.style.bottom = amount_of_visible_footer + "px";
 					need_to_resize_sidenav = true;
 				} else {
 					if (need_to_resize_sidenav) {
-						sidenav.style.height = "100vh";
+						sidenav.style.top = "0px";
+						sidenav.style.bottom = "0px";
 						need_to_resize_sidenav = false;
 					}
 				}
 			}
 		}
-	</script>
-	<script>
 		window.onresize = debounce(change_max_height, 50);
 
 		function change_max_height() {
