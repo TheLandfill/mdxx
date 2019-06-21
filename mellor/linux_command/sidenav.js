@@ -1,5 +1,5 @@
 var max_height = document.documentElement.clientHeight;
-var jumbotron_height = document.getElementById("jumbotron-header").clientHeight;
+var jumbotron_height = document.getElementById("webpage-header").clientHeight;
 var footer_position = document.getElementById("footer").offsetTop;
 var sidenav = document.getElementById("sidenav");
 var window_height = window.innerHeight;
