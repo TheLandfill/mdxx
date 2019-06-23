@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 import sys
+import re
 from collections import namedtuple
 
 Metadata = namedtuple('Metadata', 'title author date')
+
+pre_subs = {}
 
 class HTML_Manager:
     metadata_format = '\nPlease use the following format at the top of your article:\n\nTitle:\tHow to Write a Tutorial\nAuthor:\tJoseph Mellor\nDate:\tJune 15, 2019\nImport:\tterminal\taside\nScripts:\tdraw_spiral\tinvert_colors'
@@ -15,113 +18,131 @@ class HTML_Manager:
     def __init__(self, file_writer, file_reader):
         self.tab_level = ""
         self.out = file_writer
-        self.in = file_reader
-        self.imports = necessary_imports
+        self.infile = file_reader
+        self.imports = HTML_Manager.necessary_imports
         self.metadata = None
-        self.scripts = necessary_scripts
-        self.headings = None
+        self.scripts = HTML_Manager.necessary_scripts
+        self.headings = []
 
-    def next_line():
-        return self.in.readline()
+    def next_line(self):
+        return self.infile.readline()
+
+    def next_line_no_nl(self):
+        return re.sub('\n', '', self.next_line())
  
-    def add(line):
+    def add(self, line):
         self.out.write(self.tab_level + line + "\n")
 
-    def push():
+    def push(self):
         self.tab_level += "\t"
 
-    def pop():
-        self.tab_level = tab_level[:-1]
+    def pop(self):
+        self.tab_level = self.tab_level[:-1]
  
-    def get_metadata():
-        line = next_line()
+    def get_metadata(self):
+        line = self.next_line_no_nl()
         if re.match(r"^Title:\s*\S.*$", line) is None:
-            print('Missing a legible title declaration.' + metadata_format)
+            print('Missing a legible title declaration.' + HTML_Manager.metadata_format)
             raise SystemExit
-        self.metadata.title = re.sub('Title:\s*', '', line)
+        temp_title = re.sub('Title:\s*', '', line)
+        print('|' + temp_title + '|')
         
-        line = next_line()
+        line = self.next_line_no_nl()
         if re.match(r"^Author:\s*\S.*$", line) is None:
-            print('Missing a legible author declaration.' + metadata_format)
+            print('Missing a legible author declaration.' + HTML_Manager.metadata_format)
             raise SystemExit
-        self.metadata.author = re.sub('Author:\s*', '', line)
+        temp_author = re.sub('Author:\s*', '', line)
+        print('|' + temp_author + '|')
 
-        line = next_line()
-        if (re.match(r"^Date:\s*\S.*$", line) is None:
-            print('Missing a legible date declaration.' + metadata_format)
+        line = self.next_line_no_nl()
+        if re.match(r"^Date:\s*\S.*$", line) is None:
+            print('Missing a legible date declaration.' + HTML_Manager.metadata_format)
             raise SystemExit
-        self.metadata.date = re.sub('Date:\s*', '', line)
+        temp_date = re.sub('Date:\s*', '', line)
+        print('|' + temp_date + '|')
+        self.metadata = Metadata(title=temp_title, author=temp_author, date=temp_date)
    
-    def get_imports():
-        line = next_line()
-        if re.match(r"^Import:.*") is None:
-            print('Missing a legible import statement.' + metadata_format)
+    def get_imports(self):
+        line = self.next_line_no_nl()
+        if re.match(r"^Import:.*", line) is None:
+            print('Missing a legible import statement.' + HTML_Manager.metadata_format)
             raise SystemExit
         line = re.sub('Import:', '', line)
         imports = line.split()
         self.imports.extend(imports)
     
-    def get_scripts():
-        line = next_line()
-        if re.match(r"^Scripts:.*") is None:
-            print('Missing a legible script statement.' + metadata_format)
+    def get_scripts(self):
+        line = self.next_line_no_nl()
+        if re.match(r"^Scripts:.*", line) is None:
+            print('Missing a legible script statement.' + HTML_Manager.metadata_format)
             raise SystemExit
         line = re.sub('Scripts:', '', line)
         imports = line.split()
         self.imports.extend(imports)
 
-    def write_head():
-        get_metadata()
-        get_imports()
-        get_scripts()
-        write_generic_stuff()            # <!doctype html><html lang="en">...
-        write_mandatory_stuff()          # Stuff specific to our articles
-        convert_imports_to_links()
-        write_title_and_close_head()
-    
-    def write_generic_stuff():
-        add('<!doctype html>')
-        add('<html lang="en">')
-        push()
-        add('<head>')
-        push()
-        add('<meta charset="utf-8">')
-        add('<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">')
-    
-    def convert_imports_to_links():
-        for css in imports:
-            add(css_edges[0] + css_path + css + css_edges[1])
-    
-    def write_title_and_close_head():
-        add('<title>' + self.metadata.title + '</title>')
-        pop()
-        add('</head>')
-    
-    def write_body_header():
-        add('<body id="body-handle" onload="sidenav_height_adj()">')
-        push()
+    def write_head(self):
+        self.get_metadata()
+        self.get_imports()
+        self.get_scripts()
+        self.write_generic_stuff()            # <!doctype html><html lang="en">...
+        self.write_mandatory_stuff()          # Stuff specific to our articles
+        self.convert_imports_to_links()
+        self.write_title_and_close_head()
 
-    def write_article():
-        add('<div class="article">')
-        push()
-        heading_to_section(self.metadata.title)
-        add('<h1 class="display-4"><section id="' + self.headings[-1][0] + '">' + self.headings[-1][1] + '</section></h1>')
-        add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date)
-        in_paragraph = False
+    def write_body(self):
+        self.write_body_header()
+        self.write_article()
+        self.write_sidenav()
+        self.write_footer()
+        self.close_body()
+        self.write_scripts()
+        self.write_end_of_file()
+
+    def write_mandatory_stuff(self):
+        return
+    
+    def write_generic_stuff(self):
+        self.add('<!doctype html>')
+        self.add('<html lang="en">')
+        self.push()
+        self.add('<head>')
+        self.push()
+        self.add('<meta charset="utf-8">')
+        self.add('<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">')
+    
+    def convert_imports_to_links(self):
+        for css in self.imports:
+            self.add(HTML_Manager.css_edges[0] + self.css_path + css + HTML_Manager.css_edges[1])
+    
+    def write_title_and_close_head(self):
+        self.add('<title>' + self.metadata.title + '</title>')
+        self.pop()
+        self.add('</head>')
+    
+    def write_body_header(self):
+        self.add('<body id="body-handle" onload="sidenav_height_adj()">')
+        self.push()
+
+    def write_article(self):
+        self.add('<div class="article">')
+        self.push()
+        self.heading_to_section(self.metadata.title)
+        self.add('<h1 class="display-4"><section id="' + self.headings[-1][0] + '">' + self.headings[-1][1] + '</section></h1>')
+        self.add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date)
         current_pre = []
         context = ['none']
         line = ''
         need_to_close_paragraph = False
         while (True):
             if len(current_pre) > 0:
-                line = next_line()
+                line = self.next_line()
                 if re.sub('!', '', line) == current_pre:
                     current_pre = current_pre[:-1]
                 else:
                     expanded_line = expand_line(line, context)
                     self.out.write(expanded_line)
                 continue
-            line_data = find_next_content_line()
+            line_data = self.find_next_content_line()
             line = line_data[0]
             blank_lines = line_data[1] > 1
             if line == '':
@@ -129,78 +150,90 @@ class HTML_Manager:
             if line in pre_subs:
                 current_pre.append(line)
                 context.append(line)
-                add(pre_subs[line] + next_line())
+                self.add(pre_subs[line] + self.next_line_no_nl())
             if len(context) == 1:
                 if blank_lines:
                     if need_to_close_paragraph:
-                        pop()
-                        add('</p>')
+                        self.pop()
+                        self.add('</p>')
                         need_to_close_paragraph = False
-                    add('<p>' + line)
-                    push()
+                    self.add('<p>' + line)
+                    self.push()
                     need_to_close_paragraph = True
                 else:
-                    add(line)
-            else if need_to_close_paragraph:
-                add('</p>')
+                    self.add(line)
+            elif need_to_close_paragraph:
+                self.pop()
+                self.add('</p>')
                 need_to_close_paragraph = False
+        if need_to_close_paragraph:
+            self.pop()
+            self.add('</p>')
+            need_to_close_paragraph = False
+        self.pop()
+        self.add('</div>')
 
 
-    def find_next_content_line():
+    def find_next_content_line(self):
         line = '    '
         count = 0
         while re.match('^\s*$', line) and line != '':
-            count++
-            line = next_line()
+            count += 1
+            line = self.next_line()
+        line = re.sub('\n', '', line)
         return (line, count)
 
-    def heading_to_section(heading):
+    def heading_to_section(self, heading):
         section = re.sub('\s+', '-', heading)
         section = re.sub('[^\w\-]', '', section)
-        self.headings.append(section, heading)
-
+        self.headings.append((section.lower(), heading))
     
-    def write_sidenav():
-        add('<div id="sidenav">')
-        push()
+    def write_sidenav(self):
+        self.add('<div id="sidenav">')
+        self.push()
         for heading in self.headings:
-            add('<a href="#' + heading[0] + '">' + heading[1] + '</a>')
-        pop()
+            self.add('<a href="#' + heading[0] + '">' + heading[1] + '</a>')
+        self.pop()
+        self.add('</div>')
     
-    def write_footer():
+    def write_footer(self):
+        return
+
+    def close_body(self):
+        self.pop()
+        self.add('</body>')
     
-    def write_scripts():
+    def write_scripts(self):
         for script in self.scripts:
-            add('<script src="' + script + '"></script>')
+            self.add('<script src="' + script + '.js"></script>')
     
-    def write_end_of_file():
-        add('</html>')
+    def write_end_of_file(self):
+        self.pop()
+        self.add('</html>')
 
 
-def convert_to_html(in, out):
-    with open(in, 'r') as file_reader, open(out, 'w') as file_writer:
+def convert_to_html(infile, out):
+    with open(infile, 'r') as file_reader, open(out, 'w') as file_writer:
         manager = HTML_Manager(file_writer, file_reader)
         manager.write_head()
-        manager.write_body_header()
-        manager.write_article()
-        manager.write_sidenav()
-        manager.write_footer()
-        manager.write_scripts()
-        manager.write_end_of_file()
+        manager.write_body()
 
 def main(args):
-    """Usage:\ttu-md original.tum [filename.html]
+    """Usage:\ttu-md original.tumd [filename.html]
     
     By default, the output will be a file of the same name as the markdown file,
-    so "tu-md original.tum" will output to "original.html"."""
+    so "tu-md original.tumd" will output to "original.html"."""
     if len(args) <= 1:
         print(main.__doc__)
         return
     
     infile = args[1]
-    outfile = infile
+    if infile[-5:] != '.tumd':
+        print(main.__doc__)
+        return
+    outfile = re.sub('tumd', 'html', infile)
 
-    if len(args) >= 2:
+    if len(args) >= 3:
         outfile = args[2]
 
     convert_to_html(infile, outfile)
