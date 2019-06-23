@@ -10,8 +10,9 @@ class Non_Article_Manager:
 
     necessary_imports = [ "general", "article" ]
     css_edges = ['<link rel="stylesheet" href="', '.css">']
-    css_path = ''
+    css_path = '../css/'
     necessary_scripts = ['sidenav']
+    scripts_path = '../js/'
 
     def __init__(self, html_manager):
         self.html = html_manager
@@ -51,6 +52,7 @@ class Non_Article_Manager:
         self.write_mandatory_stuff()
         self.convert_imports_to_links()
         self.write_title_and_close_head()
+        self.write_body_header()
         self.write_start_of_article()
 
     def add(self, line):
@@ -72,7 +74,7 @@ class Non_Article_Manager:
         self.add('<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">')
 
     def write_mandatory_stuff(self):
-        return
+        self.add('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">')
 
     def convert_imports_to_links(self):
         for css in self.imports:
@@ -82,11 +84,20 @@ class Non_Article_Manager:
         self.add('<title>' + self.metadata.title + '</title>')
         self.pop()
         self.add('</head>')
-        self.add('<body>')
-        self.push()
 
     def write_body_header(self):
         self.add('<body id="body-handle" onload="sidenav_height_adj()">')
+        self.push()
+        self.add('<div id="webpage-header" class="jumbotron jumbotron-fluid">')
+        self.push()
+        self.add('<div class="container">')
+        self.push()
+        self.add('<a href="../">&larr; Back To Resources</a>')
+        self.pop()
+        self.add('</div>')
+        self.pop()
+        self.add('</div>')
+        self.add('<div>')
         self.push()
 
     def write_start_of_article(self):
@@ -103,7 +114,9 @@ class Non_Article_Manager:
         self.write_end_of_file()
 
     def write_footer(self):
-        return
+        self.pop()
+        self.add('</div>')
+        self.add('<div id="footer" style="height: 20vh; background: black; width: 100%; z-index: 100;"></div>')
 
     def close_body(self):
         self.pop()
@@ -111,7 +124,7 @@ class Non_Article_Manager:
 
     def write_scripts(self):
         for script in self.scripts:
-            self.add('<script src="' + script + '.js"></script>')
+            self.add('<script src="' + Non_Article_Manager.scripts_path + script + '.js"></script>')
 
     def write_end_of_file(self):
         self.pop()

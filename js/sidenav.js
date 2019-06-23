@@ -21,21 +21,21 @@ window.onscroll = sidenav_height_adj;
 
 function sidenav_height_adj() {
 	var scroll_location = document.documentElement.scrollTop;
+	var amount_of_visible_footer = scroll_location + bottom_of_sidenav;
+	if (scroll_location >= jumbotron_height || amount_of_visible_footer <= 0) {
+		if (need_to_resize_sidenav) {
+			sidenav.style.top = "0px";
+			sidenav.style.bottom = "0px";
+			need_to_resize_sidenav = false;
+		}
+	}
 	if (scroll_location < jumbotron_height) {
 		sidenav.style.top = jumbotron_height - scroll_location + "px";
 		need_to_resize_sidenav = true;
-	} else {
-		var amount_of_visible_footer = scroll_location + bottom_of_sidenav;
-		if (amount_of_visible_footer > 0) {
-			sidenav.style.bottom = amount_of_visible_footer + "px";
-			need_to_resize_sidenav = true;
-		} else {
-			if (need_to_resize_sidenav) {
-				sidenav.style.top = "0px";
-				sidenav.style.bottom = "0px";
-				need_to_resize_sidenav = false;
-			}
-		}
+	}
+	if (amount_of_visible_footer > 0) {
+		sidenav.style.bottom = amount_of_visible_footer + "px";
+		need_to_resize_sidenav = true;
 	}
 }
 window.onresize = debounce(change_max_height, 50);
