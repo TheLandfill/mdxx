@@ -13,7 +13,7 @@ terminal_variables = {
     'user&comp': '<span style="color:{{u&ccolor}};"><b>{{user}}@{{computer-name}}</b></span>',
     'fulldir': '<span style="color:{{dircolor}};"><b>{{dir}}</b></span>',
     'u&ccolor': '#E23434',
-    'dircolor': '#DC1F63'
+    'dircolor': '#DC1F63',
 }
 
 def open_terminal(html, args):

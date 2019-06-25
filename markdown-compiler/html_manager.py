@@ -22,7 +22,8 @@ class HTML_Manager:
         self.context_dict = { **html_list_dict, **html_paragraph_dict, **terminal_addon_dict, **aside_plugin_dict }
         for key in self.context_dict:
             for key2 in html_default_dict:
-                self.context_dict[key].variables[key2] = html_default_dict[key2]
+                if key2 not in self.context_dict[key].variables:
+                    self.context_dict[key].variables[key2] = html_default_dict[key2]
             print(key + ': ')
             pprint(self.context_dict[key].variables)
             print()
@@ -83,7 +84,7 @@ class HTML_Manager:
             line = re.sub(r'\s*$', '', line)
             hstr = 'h' + str(count)
             if len(self.context) == 2:
-                self.heading_to_section(line)
+                self.heading_to_section(line, count)
                 self.add('<' + hstr + ' id="' + self.headings[-1][0] + '">' + self.headings[-1][1] + '</' + hstr + '>')
             else:
                 line = '<' + hstr + '>' + line + '</' + hstr + '>'
@@ -150,18 +151,18 @@ class HTML_Manager:
         heading = re.sub('^\s*', '', heading)
         heading = re.sub('\s*$', '', heading)
 
-    def heading_to_section(self, heading):
+    def heading_to_section(self, heading, count):
         section = re.sub('^\s*', '', heading)
         section = re.sub('\s*$', '', section)
         section = re.sub('\s+', '-', section)
         section = re.sub('[^\w\-]', '', section)
-        self.headings.append((section.lower(), heading))
+        self.headings.append((section.lower(), heading, count))
 
     def write_sidenav(self):
         self.add('<nav id="sidenav">')
         self.push()
         for heading in self.headings:
-            self.add('<a href="#' + heading[0] + '">' + heading[1] + '</a>')
+            self.add('<a href="#' + heading[0] + '" style="padding-left:' + str((heading[2] + 1) * 12) +'px;">' + heading[1] + '</a>')
         self.pop()
         self.add('</nav>')
 
@@ -182,8 +183,8 @@ class HTML_Manager:
             else:
                 line = line.replace(current_sub.group(), context_variables[current_sub.group()[2:-2]])
             current_sub = re.search(r'\{\{.+?\}\}', line)
-        line = line.replace('{', '<code>')
-        line = line.replace('}', '</code>')
+        line = re.sub(r'(?<!\\){', '<code>', line)
+        line = re.sub(r'(?<!\\)}', '</code>', line)
         line = line.replace(r'\{', '{')
         line = line.replace(r'\}', '}')
         return line

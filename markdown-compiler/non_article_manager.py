@@ -87,7 +87,7 @@ class Non_Article_Manager:
     def write_body_header(self):
         self.add('<body id="body-handle" onload="sidenav_height_adj()">')
         self.push()
-        self.add('<div id="webpage-header" class="jumbotron jumbotron-fluid">')
+        self.add('<div id="webpage-header" class="jumbotron jumbotron-fluid" style="background-color: black;">')
         self.push()
         self.add('<div class="container">')
         self.push()
@@ -102,7 +102,7 @@ class Non_Article_Manager:
     def write_start_of_article(self):
         self.add('<div class="article">')
         self.push()
-        self.html.heading_to_section(self.metadata.title)
+        self.html.heading_to_section(self.metadata.title, 0)
         self.add('<h1 class="display-4"><section id="' + self.html.headings[-1][0] + '">' + self.html.headings[-1][1] + '</section></h1>')
         self.add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date + '</h4>')
 
@@ -128,4 +128,3 @@ class Non_Article_Manager:
     def write_end_of_file(self):
         self.pop()
         self.add('</html>')
-
