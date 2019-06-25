@@ -29,7 +29,6 @@ class Non_Article_Manager:
                 print('Missing a legible ' + tag[0].lower() + ' declaration.' + Non_Article_Manager.metadata_format)
                 raise SystemExit
             data.append(re.sub(tag[0] + r':\s*', '', line))
-            print(data)
         return data
 
     def get_metadata(self):

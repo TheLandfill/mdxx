@@ -13,6 +13,6 @@ def html_paragraph(html, line_data):
         html.add(html.expand_line(line))
 
 html_paragraph_dict = {
-    'paragraph':    Context(None, html_paragraph, None)
+    'paragraph':    Context(None, html_paragraph, None, {})
 }
 
