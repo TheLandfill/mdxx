@@ -6,7 +6,7 @@ def html_paragraph(html, line_data):
     blank_lines = line_data[1] > 1
     if blank_lines:
         html.check_and_close_paragraph()
-        html.add('<p>' + html.expand_line(line))
+        html.add('<p>' + line)
         html.push()
         html.need_to_close_paragraph = True
     else:

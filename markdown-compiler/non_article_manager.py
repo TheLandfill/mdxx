@@ -104,7 +104,7 @@ class Non_Article_Manager:
         self.push()
         self.html.heading_to_section(self.metadata.title)
         self.add('<h1 class="display-4"><section id="' + self.html.headings[-1][0] + '">' + self.html.headings[-1][1] + '</section></h1>')
-        self.add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date)
+        self.add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date + '</h4>')
 
     def write_end(self):
         self.write_footer()
