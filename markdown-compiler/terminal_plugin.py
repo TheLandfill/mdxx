@@ -2,8 +2,6 @@
 import re
 from html_context import Context
 
-terminal_last_line = ''
-
 terminal_variables = {
     'prompt':   '{{oneline}}{{user&comp}}:{{fulldir}}$',
     'user'  :   'joseph',

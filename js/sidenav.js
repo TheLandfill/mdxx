@@ -6,6 +6,8 @@ var window_height = window.innerHeight;
 var bottom_of_sidenav = window_height - footer_position;
 var scale_vh = 100 / max_height;
 var need_to_resize_sidenav = true;
+var sidenav_activator = document.getElementById("sidenav-activator")
+
 function debounce(f, t) {
 	return function (args) {
 		let previousCall = this.lastCall;
@@ -26,18 +28,25 @@ function sidenav_height_adj() {
 		if (need_to_resize_sidenav) {
 			sidenav.style.top = "0px";
 			sidenav.style.bottom = "0px";
+			sidenav_activator.style.top = "0px";
+			sidenav_activator.style.bottom = "0px";
 			need_to_resize_sidenav = false;
 		}
 	}
 	if (scroll_location < jumbotron_height) {
-		sidenav.style.top = jumbotron_height - scroll_location + "px";
+		let new_top = jumbotron_height - scroll_location + "px";
+		sidenav.style.top = new_top;
+		sidenav_activator.style.top = new_top;
 		need_to_resize_sidenav = true;
 	}
 	if (amount_of_visible_footer > 0) {
-		sidenav.style.bottom = amount_of_visible_footer + "px";
+		let new_bottom = amount_of_visible_footer + "px";
+		sidenav.style.bottom = new_bottom;
+		sidenav_activator.style.bottom = new_bottom;
 		need_to_resize_sidenav = true;
 	}
 }
+
 window.onresize = debounce(change_max_height, 50);
 
 function change_max_height() {
@@ -47,3 +56,27 @@ function change_max_height() {
 	scale_vh = 100 / max_height;
 	sidenav_height_adj();
 }
+
+sidenav_activator.onmouseenter = function() {
+	sidenav.style.zIndex = 2;
+}
+
+sidenav.onmouseleave = function() {
+	sidenav.style.zIndex = -1;
+}
+
+function addLoadEvent(func) {
+	var oldonload = window.onload;
+	if (typeof window.onload != 'function') {
+		window.onload = func;
+	} else {
+		window.onload = function() {
+			if (oldonload) {
+				oldonload();
+			}
+			func();
+		}
+	}
+}
+
+addLoadEvent(sidenav_height_adj)

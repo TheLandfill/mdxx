@@ -85,9 +85,9 @@ class Non_Article_Manager:
         self.add('</head>')
 
     def write_body_header(self):
-        self.add('<body id="body-handle" onload="sidenav_height_adj()">')
+        self.add('<body id="body-handle">')
         self.push()
-        self.add('<div id="webpage-header" class="jumbotron jumbotron-fluid" style="background-color: black;">')
+        self.add('<div id="webpage-header" class="jumbotron jumbotron-fluid" style="background-color: black; z-index: 100;">')
         self.push()
         self.add('<div class="container">')
         self.push()

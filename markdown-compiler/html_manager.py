@@ -5,6 +5,7 @@ from html_paragraph import html_paragraph_dict
 from terminal_plugin import terminal_addon_dict
 from aside_plugin import aside_plugin_dict
 from html_default import html_default_dict
+from check_valid_context import check_valid_context, generate_graph
 from pprint import pprint
 
 pre_subs = {}
@@ -27,6 +28,8 @@ class HTML_Manager:
             print(key + ': ')
             pprint(self.context_dict[key].variables)
             print()
+        for key in self.context_dict:
+            self.check_variable_dependency(key)
         self.last_context = ''
         self.line_data = ('', 0)
 
@@ -61,18 +64,18 @@ class HTML_Manager:
             line = self.line_data[0]
             if line == '':
                 break
-            self.handle_context()
+            self.expand_context()
         self.write_end_of_article()
 
-    def handle_context(self):
+    def expand_context(self):
         number_of_headings = len(self.headings)
         self.handle_heading()
         if len(self.headings) > number_of_headings:
             return
-        self.check_context()
+        self.handle_context()
 
     def handle_heading(self):
-        if self.context_dict[self.context[-1]].variables != self.context_dict['paragraph'].variables:
+        if self.cur_context_vars() != self.context_dict['paragraph'].variables:
             return
         line = self.line_data[0]
         count = 0
@@ -90,13 +93,42 @@ class HTML_Manager:
                 line = '<' + hstr + '>' + line + '</' + hstr + '>'
         self.line_data = (line, self.line_data[1])
 
-    def check_context(self):
+    def cur_context_vars(self):
+        return self.cur_context().variables
+
+    def cur_context(self):
+        return self.context_dict[self.context[-1]]
+
+    def check_variable_dependency(self, context):
+        circular_reference = check_valid_context(self.context_dict[context].variables)
+        if len(circular_reference) > 0:
+            dependency_cycle = ''
+            ul_col = '\033[4m'
+            dep_col = '\033[38;5;14m'
+            cont_col = '\033[38;5;33m'
+            for dep in circular_reference:
+                dependency_cycle += ul_col + dep_col + dep + '\033[m depends on '
+            dependency_cycle += ul_col + dep_col + circular_reference[0]
+            dependency_cycle += '\033[m\n\nin context '
+            dependency_cycle += ul_col + cont_col + context + '\033[m'
+            print('\n\033[48;5;196m\033[38;5;15mERROR: circular variable dependency\033[m\n')
+            pprint('When your variables are fully expanded, you end up with something like {{var}}:={{some stuff {{var}} other stuff}}, which is a cyclic dependency that will be expanded recursively. Check the cyclical dependency and the variable dependecy table below.')
+            print()
+            print(ul_col + cont_col + context + '\033[m')
+            pprint(generate_graph(self.context_dict[context].variables))
+            print()
+            print('Circular Dependency:\t' + dependency_cycle)
+            print()
+            raise SystemExit
+
+    def handle_context(self):
         line = self.line_data[0]
         if re.match(r'^\{\{.+\}\}:=\{\{.+\}\}$', line):
             varset = line.split("}}:={{")
             variable_to_set = varset[0][2:]
             value_to_set = varset[1][:-2]
-            self.context_dict[self.context[-1]].variables[variable_to_set] = value_to_set
+            self.cur_context_vars()[variable_to_set] = value_to_set
+            self.check_variable_dependency(self.context[-1])
         elif re.match(r'^\\\{\{\\.*\}\}$', line):
             line = re.sub(r'[\\{}/]', '', line)
             context = self.context_dict[line]
@@ -117,15 +149,11 @@ class HTML_Manager:
                 self.check_and_close_paragraph()
                 self.context_dict[line].open_context(self, args)
             else:
-                print(line.find(' '))
-                print(line.find(' ') != -1)
-                print('line: ' + line)
-                print('args: ' + args)
                 print('ERROR: ' + line + ' is not a specified context.')
                 raise SystemExit
         else:
             line_data = (self.expand_line(self.line_data[0]), self.line_data[1])
-            self.context_dict[self.context[-1]].process_context(self, line_data)
+            self.cur_context().process_context(self, line_data)
 
     def write_end_of_article(self):
         self.check_and_close_paragraph()
@@ -147,10 +175,6 @@ class HTML_Manager:
         line = re.sub('\n', '', line)
         self.line_data = (line, count)
 
-    def heading_without_section(self, heading):
-        heading = re.sub('^\s*', '', heading)
-        heading = re.sub('\s*$', '', heading)
-
     def heading_to_section(self, heading, count):
         section = re.sub('^\s*', '', heading)
         section = re.sub('\s*$', '', section)
@@ -162,12 +186,16 @@ class HTML_Manager:
         self.add('<nav id="sidenav">')
         self.push()
         for heading in self.headings:
-            self.add('<a href="#' + heading[0] + '" style="padding-left:' + str((heading[2] + 1) * 12) +'px;">' + heading[1] + '</a>')
+            sidenav_level = ''
+            for i in range(1, heading[2]):
+                sidenav_level += '<div class="sidenav-level"></div>'
+            self.add(sidenav_level + '<a href="#' + heading[0] + '" style="padding-left:' + str(12 * (heading[2] + 1)) + 'px;">' + heading[1] + '</a>')
         self.pop()
         self.add('</nav>')
+        self.add('<div id="sidenav-activator"></div>')
 
     def expand_line(self, line):
-        context_variables = self.context_dict[self.context[-1]].variables
+        context_variables = self.cur_context_vars()
         current_sub = re.search(r'\{\{.+?\}\}', line)
         while current_sub:
             if (current_sub.group() == '{{rest-of-line}}'):
