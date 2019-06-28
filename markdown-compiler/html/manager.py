@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 import re
-from html_lists import html_list_dict
-from html_paragraph import html_paragraph_dict
-from terminal_plugin import terminal_addon_dict
-from aside_plugin import aside_plugin_dict
-from html_default import html_default_dict
-from check_valid_context import check_valid_context, generate_graph
+from html.lists import list_dict
+from html.paragraph import paragraph_dict
+from html.tumd_comment import comment_dict
+#from plugins.terminal import terminal_dict
+#from plugins.aside import aside_dict
+from html.default import default_dict
+from util.check_valid_context import check_valid_context, generate_graph
 from pprint import pprint
 
 pre_subs = {}
@@ -20,14 +21,11 @@ class HTML_Manager:
         self.current_pre = []
         self.context = ['default', 'paragraph']
         self.need_to_close_paragraph = False
-        self.context_dict = { **html_list_dict, **html_paragraph_dict, **terminal_addon_dict, **aside_plugin_dict }
+        self.context_dict = { **list_dict, **paragraph_dict, **comment_dict }
         for key in self.context_dict:
-            for key2 in html_default_dict:
+            for key2 in default_dict:
                 if key2 not in self.context_dict[key].variables:
-                    self.context_dict[key].variables[key2] = html_default_dict[key2]
-            print(key + ': ')
-            pprint(self.context_dict[key].variables)
-            print()
+                    self.context_dict[key].variables[key2] = default_dict[key2]
         for key in self.context_dict:
             self.check_variable_dependency(key)
         self.last_context = ''
@@ -124,12 +122,14 @@ class HTML_Manager:
     def handle_context(self):
         line = self.line_data[0]
         if re.match(r'^\{\{.+\}\}:=\{\{.+\}\}$', line):
+            # variable definition
             varset = line.split("}}:={{")
             variable_to_set = varset[0][2:]
             value_to_set = varset[1][:-2]
             self.cur_context_vars()[variable_to_set] = value_to_set
             self.check_variable_dependency(self.context[-1])
         elif re.match(r'^\\\{\{\\.*\}\}$', line):
+            # close context
             line = re.sub(r'[\\{}/]', '', line)
             context = self.context_dict[line]
             if line == self.context[-1]:
@@ -139,6 +139,7 @@ class HTML_Manager:
                 print('ERROR: ' + line + ' was not opened but it was closed.')
                 raise SystemExit
         elif re.match(r'^\\\{\{.*\}\}$', line):
+            # open context
             line = re.sub(r'[\\{}/]', '', line)
             args = ''
             if line.find(' ') != -1:

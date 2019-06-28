@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import re
-from html_context import Context
+from html.context import Context
 
 terminal_variables = {
     'prompt':   '{{oneline}}{{user&comp}}:{{fulldir}}$',
@@ -24,6 +24,8 @@ def close_terminal(html):
     html.out.write('</pre>\n')
     html.add('</div>')
 
-terminal_addon_dict = {
+context_dict = {
     'terminal': Context(open_terminal, process_terminal, close_terminal, terminal_variables)
 }
+
+print('Successfully imported terminal.')

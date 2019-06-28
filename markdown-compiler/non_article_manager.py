@@ -1,22 +1,26 @@
 #!/usr/bin/python3
 import re
+import importlib
 from collections import namedtuple
-import html_manager
+from html.default import default_dict
+import html.manager
+from pprint import pprint
 
 Metadata = namedtuple('Metadata', 'title author date')
 
 class Non_Article_Manager:
     metadata_format = '\nPlease use the following format at the top of your article:\n\nTitle:\tHow to Write a Tutorial\nAuthor:\tJoseph Mellor\nDate:\tJune 15, 2019\nImport:\tterminal\taside\nScripts:\tdraw_spiral\tinvert_colors'
 
-    necessary_imports = [ "general", "article" ]
+    necessary_css = [ "general", "article" ]
     css_edges = ['<link rel="stylesheet" href="', '.css">']
-    css_path = '../css/'
+    css_path = '../../css/'
     necessary_scripts = ['sidenav']
-    scripts_path = '../js/'
+    scripts_path = '../../js/'
 
     def __init__(self, html_manager):
         self.html = html_manager
-        self.imports = Non_Article_Manager.necessary_imports
+        self.css = Non_Article_Manager.necessary_css
+        self.imports = []
         self.scripts = Non_Article_Manager.necessary_scripts
         self.metadata = None 
 
@@ -41,6 +45,7 @@ class Non_Article_Manager:
         data = self.get_tags(import_tags)
         imports = data[0].split()
         self.imports += imports
+        self.css += imports
         scripts = data[1].split()
         self.scripts += scripts
        
@@ -50,6 +55,7 @@ class Non_Article_Manager:
         self.write_generic_stuff()
         self.write_mandatory_stuff()
         self.convert_imports_to_links()
+        self.import_contexts()
         self.write_title_and_close_head()
         self.write_body_header()
         self.write_start_of_article()
@@ -76,8 +82,26 @@ class Non_Article_Manager:
         self.add('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">')
 
     def convert_imports_to_links(self):
-        for css in self.imports:
+        for css in self.css:
             self.add(Non_Article_Manager.css_edges[0] + self.css_path + css + Non_Article_Manager.css_edges[1])
+
+    def import_contexts(self):
+        for plugin in self.imports:
+            print('Importing ' + plugin)
+            context_dict = importlib.import_module('plugins.' + plugin).context_dict
+            print()
+            self.add_context(context_dict)
+            for key in context_dict:
+                for key2 in default_dict:
+                    if key2 not in context_dict[key].variables:
+                        context_dict[key].variables[key2] = default_dict[key2]
+                print(key + ': ')
+                pprint(self.html.context_dict[key].variables)
+                print()
+
+    def add_context(self, local_context):
+        context_dict = self.html.context_dict
+        self.html.context_dict = { **local_context, **context_dict }
 
     def write_title_and_close_head(self):
         self.add('<title>' + self.metadata.title + '</title>')

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import re
 import sys
-from html_manager import HTML_Manager
+from html.manager import HTML_Manager
 from non_article_manager import Non_Article_Manager
 
 def convert_to_html(infile, out):
