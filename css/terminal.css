@@ -3,8 +3,9 @@
 	background-color: black;
 	font-family: "Lucidia Console",monospace,"Courier New";
 	border-width: 3px;
-	border-color: #999999;
+	border-color: #D0D0D0;
 	border-style: solid;
+	border-radius: 8px;
 	margin-bottom: 1em;
 }
 

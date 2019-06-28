@@ -49,6 +49,8 @@ Using {type -a NAME} will display all locations containing an executable named N
 For example:
 
 \{{terminal}}
+{{dircolor}}:={{#FF0070}}
+{{u&ccolor}}:={{#3734E2}}
 {{prompt}} which cd
 {{prompt}} type -a cd
 cd is a function
@@ -182,6 +184,7 @@ Worse, if a file in the directory was executable even though it shouldn't be exe
 
 \{{aside}}
 #### Almost a Tragedy
+<hr>
 
 I ran {Makefile} to see what would happen, and it interpreted as a bash script.
 Unfortunately for me, it had one interpretable bash command in it: {rm -rf $(OBJDIR)/* $(PRODUCT) $(DEBUG_PRODUCT)}, which will remove all the intermediate files and all the executables the Makefile generates.
