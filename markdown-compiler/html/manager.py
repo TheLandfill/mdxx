@@ -28,10 +28,11 @@ class HTML_Manager:
                     self.context_dict[key].variables[key2] = default_dict[key2]
         for key in self.context_dict:
             self.check_variable_dependency(key)
-        self.last_context = ''
+        self.line_number = 0
         self.line_data = ('', 0)
 
     def next_line(self):
+        self.line_number += 1
         return self.infile.readline()
 
     def next_line_no_nl(self):
@@ -42,6 +43,9 @@ class HTML_Manager:
 
     def add_pre(self, line):
         self.out.write(line + "\n")
+    
+    def print_line(self):
+        print('\tLine ' + str(self.line_number).zfill(3) + ':\t' + self.line_data[0])
 
     def add_no_nl(self, line):
         self.out.write(self.tab_level + line)
@@ -110,10 +114,14 @@ class HTML_Manager:
             dependency_cycle += '\033[m\n\nin context '
             dependency_cycle += ul_col + cont_col + context + '\033[m'
             print('\n\033[48;5;196m\033[38;5;15mERROR: circular variable dependency\033[m\n')
+            print('File:\t' + self.out.name)
+            self.print_line()
             pprint('When your variables are fully expanded, you end up with something like {{var}}:={{some stuff {{var}} other stuff}}, which is a cyclic dependency that will be expanded recursively. Check the cyclical dependency and the variable dependecy table below.')
             print()
-            print(ul_col + cont_col + context + '\033[m')
+            print(ul_col + cont_col + context + ' dependencies\033[m')
             pprint(generate_graph(self.context_dict[context].variables))
+            print('\n' + ul_col + cont_col + context + '\033[m')
+            pprint(self.context_dict[context].variables)
             print()
             print('Circular Dependency:\t' + dependency_cycle)
             print()

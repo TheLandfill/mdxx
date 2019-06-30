@@ -414,3 +414,8 @@ Symlinks will allow us to achieve all the criteria we made for Linux commands.
 Use aliases when your command is simple.
 
 \{{\ul}}
+
+\{{comment}}
+
+Blaze it.
+\{{\comment}}

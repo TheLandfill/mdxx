@@ -4,9 +4,10 @@ from html.context import Context
 def open_comment(html, args):
     print('\033[48;5;156mEntering commented section. These next lines are commented out.\033[m')
     html.context = html.context[:-1]
+    html.find_next_content_line()
     while html.line_data[0] != r'\{{\comment}}' and html.line_data[0] != '':
+        html.print_line()
         html.find_next_content_line()
-        print(html.line_data[0])
     if html.line_data[0] == '':
         print('ERROR: missing \{{\comment}} tag.')
         raise SystemExit
