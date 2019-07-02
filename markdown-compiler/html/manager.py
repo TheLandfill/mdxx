@@ -3,8 +3,6 @@ import re
 from html.lists import list_dict
 from html.paragraph import paragraph_dict
 from html.tumd_comment import comment_dict
-#from plugins.terminal import terminal_dict
-#from plugins.aside import aside_dict
 from html.default import default_dict
 from util.check_valid_context import check_valid_context, generate_graph
 from pprint import pprint
@@ -18,19 +16,21 @@ class HTML_Manager:
         self.out = file_writer
         self.infile = file_reader
         self.headings = []
-        self.current_pre = []
         self.context = ['default', 'paragraph']
         self.need_to_close_paragraph = False
         self.context_dict = { **list_dict, **paragraph_dict, **comment_dict }
+        self.add_default_variables()
         self.code_style = 'default'
+        self.line_number = 0
+        self.line_data = ('', 0)
+
+    def add_default_variables(self):
         for key in self.context_dict:
             for key2 in default_dict:
                 if key2 not in self.context_dict[key].variables:
                     self.context_dict[key].variables[key2] = default_dict[key2]
         for key in self.context_dict:
             self.check_variable_dependency(key)
-        self.line_number = 0
-        self.line_data = ('', 0)
 
     def next_line(self):
         self.line_number += 1
@@ -40,22 +40,29 @@ class HTML_Manager:
         return re.sub('\n', '', self.next_line())
 
     def add(self, line):
-        self.out.write(self.tab_level + line + "\n")
+        self.write(self.tab_level + line + "\n")
 
     def add_pre(self, line):
-        self.out.write(line + "\n")
-    
-    def print_line(self):
-        print('\tLine ' + str(self.line_number).zfill(3) + ':\t' + self.line_data[0])
+        self.write(line + "\n")
 
     def add_no_nl(self, line):
-        self.out.write(self.tab_level + line)
+        self.write(self.tab_level + line)
+
+    def write(self, line):
+        line = self.remove_empty(line)
+        self.out.write(line)
+
+    def remove_empty(self, line):
+        return line.replace(self.cur_context_vars()['empty'], '')
 
     def push(self):
         self.tab_level += "\t"
 
     def pop(self):
         self.tab_level = self.tab_level[:-1]
+    
+    def print_line(self):
+        print('\tLine ' + str(self.line_number).zfill(3) + ':\t' + self.line_data[0])
 
     def write_body(self):
         self.write_article()
@@ -208,7 +215,6 @@ class HTML_Manager:
         context_variables = self.cur_context_vars()
         current_sub = re.search(r'\{\{[^{]+?\}\}', line)
         while current_sub:
-            print(line)
             if (current_sub.group() == '{{rest-of-line}}'):
                 rest_of_line = line[current_sub.span()[1]:]
                 text_to_end = re.search(r'\{\{end-of-line\}\}', line)
@@ -226,5 +232,4 @@ class HTML_Manager:
         line = re.sub(r'(?<!\\)}', context_variables['}'], line)
         line = line.replace(r'\{', context_variables['\{'])
         line = line.replace(r'\}', context_variables['\}'])
-        line = line.replace(context_variables['empty'], '')
         return line

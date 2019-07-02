@@ -25,7 +25,7 @@ def process_terminal(html, line_data):
     html.add_pre(line_data[0])
 
 def close_terminal(html):
-    html.out.write('</pre>\n')
+    html.add_pre('</pre>')
     html.add('</div>')
 
 context_dict = {

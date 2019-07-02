@@ -101,9 +101,6 @@ class Non_Article_Manager:
                 for key2 in default_dict:
                     if key2 not in context_dict[key].variables:
                         context_dict[key].variables[key2] = default_dict[key2]
-                print(key + ': ')
-                pprint(self.html.context_dict[key].variables)
-                print()
 
     def add_context(self, local_context):
         context_dict = self.html.context_dict

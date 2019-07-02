@@ -54,8 +54,6 @@ def close_code_block(html):
     formatter = HtmlFormatter(linenos=add_line_numbers, style=html.code_style, hl_lines=lines_to_highlight, cssclass='code-block')
     highlight(code_block, lexer, formatter, outfile=html.out)
     html.add('')
-    print(lines_to_highlight)
-    print(line_number)
     code_block = ''
     lines_to_highlight = []
     line_number = 0;
