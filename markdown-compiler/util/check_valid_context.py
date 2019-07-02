@@ -9,7 +9,7 @@ def check_valid_context(context_dict):
 def generate_graph(context_dict):
     con_dict = { **context_dict, **{ 'rest-of-line': '', 'end-of-line': ''}}
     graph = {}
-    var_re = r'\{\{.+?\}\}'
+    var_re = r'\{\{[^{]+?\}\}'
     for key in con_dict:
         expansion = con_dict[key]
         cur_sub = re.search(var_re, expansion)

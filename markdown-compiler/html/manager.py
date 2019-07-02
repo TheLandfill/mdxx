@@ -206,8 +206,9 @@ class HTML_Manager:
 
     def expand_line(self, line):
         context_variables = self.cur_context_vars()
-        current_sub = re.search(r'\{\{.+?\}\}', line)
+        current_sub = re.search(r'\{\{[^{]+?\}\}', line)
         while current_sub:
+            print(line)
             if (current_sub.group() == '{{rest-of-line}}'):
                 rest_of_line = line[current_sub.span()[1]:]
                 text_to_end = re.search(r'\{\{end-of-line\}\}', line)
@@ -220,9 +221,10 @@ class HTML_Manager:
                 line = begin + middle + end
             else:
                 line = line.replace(current_sub.group(), context_variables[current_sub.group()[2:-2]])
-            current_sub = re.search(r'\{\{.+?\}\}', line)
+            current_sub = re.search(r'\{\{[^{]+?\}\}', line)
         line = re.sub(r'(?<!\\){', context_variables['{'], line)
         line = re.sub(r'(?<!\\)}', context_variables['}'], line)
         line = line.replace(r'\{', context_variables['\{'])
         line = line.replace(r'\}', context_variables['\}'])
+        line = line.replace(context_variables['empty'], '')
         return line
