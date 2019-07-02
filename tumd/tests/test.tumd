@@ -1,0 +1,158 @@
+Title:    How to Write a Tutorial
+Author:    Joseph Mellor
+Date:    June 15, 2019
+Import:    aside terminal code-block
+Scripts:
+Code Style: fruity
+
+# Heading one
+##Heading two
+###                Heading three
+#### Heading Four 
+##### Heading Five
+###### Heading Six
+####### Should Only Go Up to Six
+
+I just want to see if this works. If it does, that would be great.
+This line should be in the same paragraph as the last line.
+
+\{{ul}}
+Should be an unordered list.
+If it's not, I'll be mad.
+
+Should only have three elements.
+
+#TEST
+Just for fun.
+\{{\ul}}
+
+Just a middle paragraph.
+
+\{{ol}}
+Should be an unordered list.
+I want to test this out.
+
+Should only have three elements.
+
+I hope it does OK.
+\{{\ol}}
+
+\{{terminal}}
+{{user}}:={{nikita}}
+
+{{prompt}} echo "test"
+{{empty}}
+test
+{{prompt}} echo "data"
+data
+{{prompt}} cd ../
+{{dir}}:={{~}}
+{{dircolor}}:={{#0000FF}}
+{{prompt}} pwd
+/home/nikita
+{{empty}}
+#Shouldn't Render as a Heading
+\{{\terminal}}
+
+This line should be in its own paragraph.
+Testing to see if adding a line adds the number of lines it handles.
+{{PATH}}:={{<code>PATH</code>}}
+These next few lines should be in the same paragraph. I think this part will
+work, but I have no idea how to pull it off.
+I defined {{PATH}} earlier to be rendered as code, so let's see if that works.
+
+\{{aside}}
+#### How to Write an Aside<hr>
+This should render as an aside box.
+I should also be able to use {{PATH}} inside the aside.
+\{{\aside}}
+
+\{{comment}}
+Just another attempt to make sure comments are working.
+
+\{{terminal}}
+test
+{{prompt} test
+\{{\terminal}}
+\{{aside}}
+print nothing
+\{{\aside}}
+
+\{{\comment}}
+
+\{{code-block python}}
+
+{{name}}:={{'Joseph Mellor'}}
+\{{comment}}
+Defining {{name}}:={{'Joseph Mellor'}} up here will come in handy later at the bottom.
+\{{\comment}}
+#!/usr/bin/python3
+from html.context import Context
+
+hlfrom pygments import highlight
+hlfrom pygments.lexers import get_lexer_by_name
+hlfrom pygments.formatters import HtmlFormatter
+
+code_block = ''
+code_language = ''
+css_class = 'code-block'
+line_number = 0
+lines_to_highlight = []
+
+def open_code_block(html, args):
+    global code_language
+    split_args = args.split()
+    code_language = args[0]
+
+def process_code_block(html, line_data):
+    global line_number
+    global code_block
+    global lines_to_highlight
+    line_number += 1
+    skip_hl = 0
+    if line_data[0][0:2] == 'hl':
+        skip_hl = 2
+        lines_to_highlight.append(line_number)
+    code_block += line_data[0][skip_hl:]
+
+def close_code_block(html):
+    global code_block
+    global code_language
+    lexer = get_lexer_by_name(code_language, stripall=True)
+    formatter = HtmlFormatter(linenos=True, style=html.code_style, cssclass='code-block')
+    highlight(code, lexer, formatter, outfile=html.out)
+    code_block = ''
+    # The next line actually says 'print({{ldb}}name}})' in the tumd file,
+    # but since {{ldb}}name}} is a variable, it is completely replaced
+    # within the code. To display {{ldb}}name}}, I had to type {{ldb}}ldb}}name}}
+    print({{name}})
+
+context_dict = {
+    'code': Context(open_code_block, process_code_block, close_code_block, {})
+}
+
+print('Successfully imported terminal.')
+
+\{{\code-block}}
+
+\{{code-block cpp}}
+#include <iostream>
+
+int main(int argc, char** argv) {
+    std::cout << "Hello World!\n"; //>
+    return 0;
+}
+
+{{empty}}hlstatus
+hlstatus
+
+def shouldn't be highlighted.
+\{{\code-block}}
+
+\{{raw-html}}
+<div>
+tumd_push()
+<img src="../../resources/sm_5b321ca7a1ca4.png" alt="Heart icon.">
+tumd_pop()
+</div>
+\{{\raw-html}}
