@@ -59,21 +59,22 @@
 .article {
 	padding: 26px 0px;
 	position: relative;
-	margin-left: 260px; /* Same as the width of the sidebar */
+	margin-left: 240px; /* Same as the width of the sidebar */
 	padding-bottom: 6em;
-	width: 800px;
+	width: 760px;
 }
 
 @media screen and (max-height: 450px) {
 	#sidenav {padding-top: 15px;}
 }
 
-@media screen and (max-width: 1000px) {
-	#sidenav {
+@media screen and (max-width: 1020px) {
+	#sidenav, #sidenav-activator {
 		display: none !important;
 	}
 	.article {
-		padding-left: 40px;
+		padding-left: 100px;
+		width: 760px;
 		margin-left: 0px;
 	}
 }

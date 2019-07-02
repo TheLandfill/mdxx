@@ -1,8 +1,9 @@
 Title: How to Write a Linux Command
 Author: Joseph Mellor
 Date: June 24, 2019
-Import: terminal aside
+Import: terminal aside code-block
 Scripts:
+Code Style: vim
 
 Although the purpose of a computer is to automate tasks, programmers still have to do some tasks manually.
 For instance, to set up a c/c++ project on my computer, I would have to create a bunch of directories, copy a Makefile (it's like a project file for c/c++) into the right directory, modify the Makefile to generate the specific program, etc.
@@ -55,9 +56,9 @@ For example:
 {{prompt}} type -a cd
 cd is a function
 cd ()
-\{
+{
     builtin cd "$@" && chpwd
-\}
+}
 cd is a shell builtin
 {{prompt}} which mv
 /bin/mv
@@ -386,9 +387,9 @@ In this case, I would use an <b>alias</b>.
 
 Aliases have an easy syntax.
 
-\{{terminal}}
+\{{code-block bash no-line-numbers}}
 alias vip="vim -p"
-\{{\terminal}}
+\{{\code-block}}
 
 This line will create a Linux command called {vip} that will run {vim -p} whenever you call it.
 Since I want it to stay across login sessions, I needed to put it in one of those scripts that run when you login or create a new terminal.
@@ -416,6 +417,5 @@ Use aliases when your command is simple.
 \{{\ul}}
 
 \{{comment}}
-
 Blaze it.
 \{{\comment}}

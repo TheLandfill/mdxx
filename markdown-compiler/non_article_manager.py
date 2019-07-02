@@ -9,11 +9,12 @@ from pprint import pprint
 Metadata = namedtuple('Metadata', 'title author date')
 
 class Non_Article_Manager:
-    metadata_format = '\nPlease use the following format at the top of your article:\n\nTitle:\tHow to Write a Tutorial\nAuthor:\tJoseph Mellor\nDate:\tJune 15, 2019\nImport:\tterminal\taside\nScripts:\tdraw_spiral\tinvert_colors'
+    metadata_format = '\nPlease use the following format at the top of your article:\n\nTitle:\tHow to Write a Tutorial\nAuthor:\tJoseph Mellor\nDate:\tJune 15, 2019\nImport:\tterminal\taside\nScripts:\tdraw_spiral\tinvert_colors\nCode Style:\tdefault'
 
     necessary_css = [ "general", "article" ]
     css_edges = ['<link rel="stylesheet" href="', '.css">']
     css_path = '../../css/'
+    code_style_path = 'code-style/'
     necessary_scripts = ['sidenav']
     scripts_path = '../../js/'
 
@@ -41,13 +42,18 @@ class Non_Article_Manager:
         self.metadata = Metadata(title=data[0], author=data[1], date=data[2])
    
     def get_imports(self):
-        import_tags = [(r'Import', False), (r'Scripts', False)]
+        import_tags = [(r'Import', False), (r'Scripts', False), (r'Code Style', False)]
         data = self.get_tags(import_tags)
         imports = data[0].split()
         self.imports += imports
         self.css += imports
         scripts = data[1].split()
         self.scripts += scripts
+        code_style = data[2]
+        code_style = re.sub('\s*$', '', code_style)
+        if code_style != '':
+            self.html.code_style = code_style
+        self.css.append(Non_Article_Manager.code_style_path + self.html.code_style)
        
     def write_head(self):
         self.get_metadata()

@@ -22,6 +22,7 @@ class HTML_Manager:
         self.context = ['default', 'paragraph']
         self.need_to_close_paragraph = False
         self.context_dict = { **list_dict, **paragraph_dict, **comment_dict }
+        self.code_style = 'default'
         for key in self.context_dict:
             for key2 in default_dict:
                 if key2 not in self.context_dict[key].variables:
@@ -151,7 +152,7 @@ class HTML_Manager:
             line = re.sub(r'[\\{}/]', '', line)
             args = ''
             if line.find(' ') != -1:
-                args = line[line.find(' '):]
+                args = line[line.find(' ') + 1:]
                 line = line[:line.find(' ')]
             if line in self.context_dict:
                 self.context += [line]
@@ -220,8 +221,8 @@ class HTML_Manager:
             else:
                 line = line.replace(current_sub.group(), context_variables[current_sub.group()[2:-2]])
             current_sub = re.search(r'\{\{.+?\}\}', line)
-        line = re.sub(r'(?<!\\){', '<code>', line)
-        line = re.sub(r'(?<!\\)}', '</code>', line)
-        line = line.replace(r'\{', '{')
-        line = line.replace(r'\}', '}')
+        line = re.sub(r'(?<!\\){', context_variables['{'], line)
+        line = re.sub(r'(?<!\\)}', context_variables['}'], line)
+        line = line.replace(r'\{', context_variables['\{'])
+        line = line.replace(r'\}', context_variables['\}'])
         return line

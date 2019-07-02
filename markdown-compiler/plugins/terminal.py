@@ -12,6 +12,10 @@ terminal_variables = {
     'fulldir': '<span style="color:{{dircolor}};"><b>{{dir}}</b></span>',
     'u&ccolor': '#E23434',
     'dircolor': '#DC1F63',
+    '{': '{',
+    '}': '}',
+    r'\{' : r'\{',
+    r'\}' : r'\}'
 }
 
 def open_terminal(html, args):

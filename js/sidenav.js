@@ -57,7 +57,7 @@ function change_max_height() {
 	sidenav_height_adj();
 }
 
-sidenav_activator.onmouseenter = function() {
+sidenav_activator.onmousemove = function() {
 	sidenav.style.zIndex = 2;
 }
 
