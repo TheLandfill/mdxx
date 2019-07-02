@@ -22,6 +22,8 @@ def open_terminal(html, args):
     html.add_no_nl('<div class="terminal"' + args + '><pre>')
 
 def process_terminal(html, line_data):
+    for i in range(1, line_data[1]):
+        html.add_pre('')
     html.add_pre(line_data[0])
 
 def close_terminal(html):

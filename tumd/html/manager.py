@@ -4,6 +4,7 @@ from html.lists import list_dict
 from html.paragraph import paragraph_dict
 from html.tumd_comment import comment_dict
 from html.default import default_dict
+from html.raw_html import raw_html_dict
 from util.check_valid_context import check_valid_context, generate_graph
 from pprint import pprint
 
@@ -18,7 +19,7 @@ class HTML_Manager:
         self.headings = []
         self.context = ['default', 'paragraph']
         self.need_to_close_paragraph = False
-        self.context_dict = { **list_dict, **paragraph_dict, **comment_dict }
+        self.context_dict = { **list_dict, **paragraph_dict, **comment_dict, **raw_html_dict }
         self.add_default_variables()
         self.code_style = 'default'
         self.line_number = 0
