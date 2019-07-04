@@ -21,7 +21,7 @@ def process_html(html, line_data):
         html.add(line_data[0])
     if re.search('<pre>', line_data[0]):
         in_pre_section = True
-    elif re.search('</pre>', line_data[0]):
+    if re.search('</pre>', line_data[0]):
         in_pre_section = False
 
 def close_html(html):

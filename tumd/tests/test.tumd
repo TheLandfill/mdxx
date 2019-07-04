@@ -150,9 +150,5 @@ def shouldn't be highlighted.
 \{{\code-block}}
 
 \{{raw-html}}
-<div>
-tumd_push()
-<img src="../../resources/sm_5b321ca7a1ca4.png" alt="Heart icon.">
-tumd_pop()
-</div>
+<div><img src="../../resources/sm_5b321ca7a1ca4.png" alt="Heart icon."></div>
 \{{\raw-html}}

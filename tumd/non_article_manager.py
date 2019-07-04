@@ -58,12 +58,12 @@ class Non_Article_Manager:
     def write_head(self):
         self.get_metadata()
         self.get_imports()
-        self.write_generic_stuff()
-        self.write_mandatory_stuff()
+        self.copy_raw_html('snippets_html/generic.html')
+        self.copy_raw_html('snippets_html/mandatory.html')
         self.convert_imports_to_links()
         self.import_contexts()
         self.write_title_and_close_head()
-        self.write_body_header()
+        self.copy_raw_html('snippets_html/body_header.html')
         self.write_start_of_article()
 
     def add(self, line):
@@ -75,17 +75,17 @@ class Non_Article_Manager:
     def pop(self):
         self.html.pop()
 
-    def write_generic_stuff(self):
-        self.add('<!doctype html>')
-        self.add('<html lang="en">')
-        self.push()
-        self.add('<head>')
-        self.push()
-        self.add('<meta charset="utf-8">')
-        self.add('<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">')
-
-    def write_mandatory_stuff(self):
-        self.add('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">')
+    def copy_raw_html(self, infile):
+        with open(infile, 'r') as file_reader:
+            line = re.sub('\n','', file_reader.readline())
+            while line != '':
+                if line == 'tumd_pop()':
+                    self.pop()
+                elif line == 'tumd_push()':
+                    self.push()
+                else:
+                    self.add(line)
+                line = re.sub('\n', '', file_reader.readline())
 
     def convert_imports_to_links(self):
         for css in self.css:
@@ -111,21 +111,6 @@ class Non_Article_Manager:
         self.pop()
         self.add('</head>')
 
-    def write_body_header(self):
-        self.add('<body id="body-handle">')
-        self.push()
-        self.add('<div id="webpage-header" class="jumbotron jumbotron-fluid" style="background-color: black; z-index: 100;">')
-        self.push()
-        self.add('<div class="container">')
-        self.push()
-        self.add('<a href="../">&larr; Back To Resources</a>')
-        self.pop()
-        self.add('</div>')
-        self.pop()
-        self.add('</div>')
-        self.add('<div>')
-        self.push()
-
     def write_start_of_article(self):
         self.add('<div class="article">')
         self.push()
@@ -134,24 +119,10 @@ class Non_Article_Manager:
         self.add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date + '</h4>')
 
     def write_end(self):
-        self.write_footer()
-        self.close_body()
+        self.copy_raw_html('snippets_html/footer.html')
         self.write_scripts()
-        self.write_end_of_file()
-
-    def write_footer(self):
-        self.pop()
-        self.add('</div>')
-        self.add('<div id="footer" style="height: 20vh; background: black; width: 100%; z-index: 100;"></div>')
-
-    def close_body(self):
-        self.pop()
-        self.add('</body>')
+        self.copy_raw_html('snippets_html/end_of_file.html')
 
     def write_scripts(self):
         for script in self.scripts:
             self.add('<script src="' + Non_Article_Manager.scripts_path + script + '.js"></script>')
-
-    def write_end_of_file(self):
-        self.pop()
-        self.add('</html>')

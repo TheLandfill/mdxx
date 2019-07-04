@@ -1,1 +1,2 @@
 *.html
+!snippets_html/*
