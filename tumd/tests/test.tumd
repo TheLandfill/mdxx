@@ -1,9 +1,9 @@
-Title:    How to Write a Tutorial
-Author:    Joseph Mellor
-Date:    June 15, 2019
-Import:    aside terminal code-block
+Title:		How to Write a Tutorial
+Author:		Joseph Mellor
+Date:		June 15, 2019
+Import:		aside terminal code-block
 Scripts:
-Code Style: fruity
+Code Style:	trac+dark
 
 # Heading one
 ##Heading two

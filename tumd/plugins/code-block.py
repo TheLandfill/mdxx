@@ -15,7 +15,7 @@ code_block_variables = {
 code_block = ''
 code_language = ''
 css_class = 'code-block'
-line_number = 0
+line_number = -1
 lines_to_highlight = []
 add_line_numbers = True
 
@@ -56,7 +56,7 @@ def close_code_block(html):
     html.add('')
     code_block = ''
     lines_to_highlight = []
-    line_number = 0;
+    line_number = -1;
     add_line_numbers = True;
 
 context_dict = {

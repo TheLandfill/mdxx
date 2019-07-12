@@ -7,6 +7,7 @@ def open_aside(html, args):
     html.push()
 
 def close_aside(html):
+    html.check_and_close_paragraph()
     html.pop()
     html.add('</div>')
 

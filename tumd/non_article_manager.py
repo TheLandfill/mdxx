@@ -52,8 +52,8 @@ class Non_Article_Manager:
         code_style = data[2]
         code_style = re.sub('\s*$', '', code_style)
         if code_style != '':
-            self.html.code_style = code_style
-        self.css.append(Non_Article_Manager.code_style_path + self.html.code_style)
+            self.html.code_style = re.sub(r'\+.*', '', code_style)
+        self.css.append(Non_Article_Manager.code_style_path + code_style)
        
     def write_head(self):
         self.get_metadata()

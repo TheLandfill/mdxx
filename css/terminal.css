@@ -1,7 +1,6 @@
 .terminal {
 	padding: 10px 10px 10px 10px;
 	background-color: black;
-	font-family: "Lucidia Console",monospace,"Courier New";
 	border-width: 3px;
 	border-color: #D0D0D0;
 	border-style: solid;
@@ -16,6 +15,7 @@
 .terminal pre {
 	color: #EC1111;
 	white-space: pre-wrap;
+	font-family: "Lucidia Console",monospace,"Courier New";
 	word-wrap: break-word;
 	margin-bottom: 0;
 }
