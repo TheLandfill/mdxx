@@ -3,7 +3,7 @@ from html.context import Context
 from html.paragraph import *
 
 def open_aside(html, args):
-    html.add('<div class="aside"' + args + '>')
+    html.add('<div class="aside" ' + args + '>')
     html.push()
 
 def close_aside(html):

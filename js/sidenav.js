@@ -45,6 +45,7 @@ function sidenav_height_adj() {
 		sidenav_activator.style.bottom = new_bottom;
 		need_to_resize_sidenav = true;
 	}
+	sidenav.style.zIndex = -1;
 }
 
 window.onresize = debounce(change_max_height, 50);

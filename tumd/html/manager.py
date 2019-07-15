@@ -93,6 +93,10 @@ class HTML_Manager:
         while line[count] == '#' and count < 6:
             count += 1
         if count > 0:
+            if self.need_to_close_paragraph:
+                self.pop()
+                self.add('</p>')
+                self.need_to_close_paragraph = False
             line = self.expand_line(line)
             line = re.sub(r'^#*\s*', '', line)
             line = re.sub(r'\s*$', '', line)
@@ -194,10 +198,11 @@ class HTML_Manager:
         self.line_data = (line, count)
 
     def heading_to_section(self, heading, count):
-        section = re.sub('^\s*', '', heading)
-        section = re.sub('\s*$', '', section)
-        section = re.sub('\s+', '-', section)
-        section = re.sub('[^\w\-]', '', section)
+        section = re.sub(r'^\s*', '', heading)
+        section = re.sub(r'\s*$', '', section)
+        section = re.sub(r'\s+', '-', section)
+        section = re.sub(r'<.*?>', '', section)
+        section = re.sub(r'[^\w\-]', '', section)
         self.headings.append((section.lower(), heading, count))
 
     def write_sidenav(self):

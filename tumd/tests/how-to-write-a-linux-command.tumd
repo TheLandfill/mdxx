@@ -40,10 +40,12 @@ You'll see an example of both a builtin and a function later, and we'll go into 
 \{{aside}}
 #### Quick Note on Aliases
 <hr>
+
 You can make an alias out of almost anything you could type on the command line, but aliases have severe limits on what they can do.
 They also rely on builtins and other Linux commands.
 We'll discuss how to create an alias <a href="#what-if-i-dont-need-an-entire-executable">later in the article</a>.
 Since {minit} is too complex to be an alias, I had to use a script.
+
 \{{\aside}}
 
 You can use the {which} command to see which executable the computer will run when you type in a command.
@@ -75,6 +77,7 @@ cd is a shell builtin
 \{{aside}}
 #### Why is {cd} a Function?
 <hr>
+
 I had to write a function that modified the behavior of {cd} slightly so that my prompt <a href="https://unix.stackexchange.com/a/217097">displays the current and parent directories</a>, but it doesn't matter for the tutorial.
 On most computers, {cd} will be a shell builtin.
 Since the only way to write a shell builtin is to write or modify a shell, we aren't going to deal with that here.
@@ -83,6 +86,7 @@ If you want more information on when to use a function, alias, or script to make
 
 Also, notice that it prints out both that {cd is a function} and {cd is a shell builtin}.
 In other words, multiple commands are named {cd}, but the computer will run just the first one when you type {cd} into the console.
+
 \{{\aside}}
 
 Most of the other commands are actually executables in either {/bin} or {/usr/bin/}.
@@ -149,6 +153,7 @@ work on most, if not all, standard Linux distros.
 
 \{{aside style="border-width: 8px; border-radius: 12px;"}}
 <h3 style="color: red; text-align: center">WARNING</h3><hr>
+
 Before you interact with anything related to the operating system or anything related to configurations, always make sure to back your data up.
 Modifying {PATH} isn't too severe, but it could still be annoying.
 In this case, make sure to record the value of {PATH} somewhere so you can revert it back to normal.
@@ -161,6 +166,7 @@ If you mess up and don't record the value of {PATH}, record its current value us
 
 This command will search your {PATH} variable for any string starting with a colon and ending with {/dev/minit} and remove it from {PATH}.
 If your command is in a different directory, replace {\/dev\/minit} with your path to the directory, making sure that you add a backslash before every slash.
+
 \{{\aside}}
 
 Add the directory to your PATH variable, using the syntax:
@@ -410,6 +416,10 @@ Creating your own command generally means adding an alias or putting an executab
 
 We can add or remove directories to {PATH}.
 
+\{{comment}}
+Blaze it.
+\{{\comment}}
+
 Some scripts run when you login and you can customize them to alter the behavior of your computer or terminal.
 
 We can also move or copy the executable to any directory already in {PATH}.
@@ -422,6 +432,3 @@ Use aliases when your command is simple.
 
 \{{\ul}}
 
-\{{comment}}
-Blaze it.
-\{{\comment}}

@@ -61,6 +61,7 @@ class Non_Article_Manager:
         self.copy_raw_html('snippets_html/generic.html')
         self.copy_raw_html('snippets_html/mandatory.html')
         self.convert_imports_to_links()
+        self.write_scripts()
         self.import_contexts()
         self.write_title_and_close_head()
         self.copy_raw_html('snippets_html/body_header.html')
@@ -115,14 +116,13 @@ class Non_Article_Manager:
         self.add('<div class="article">')
         self.push()
         self.html.heading_to_section(self.metadata.title, 0)
-        self.add('<h1 class="display-4"><section id="' + self.html.headings[-1][0] + '">' + self.html.headings[-1][1] + '</section></h1>')
+        self.add('<h1 class="display-4" id="' + self.html.headings[-1][0] + '">' + self.html.headings[-1][1] + '</h1>')
         self.add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date + '</h4>')
 
     def write_end(self):
         self.copy_raw_html('snippets_html/footer.html')
-        self.write_scripts()
         self.copy_raw_html('snippets_html/end_of_file.html')
 
     def write_scripts(self):
         for script in self.scripts:
-            self.add('<script src="' + Non_Article_Manager.scripts_path + script + '.js"></script>')
+            self.add('<script src="' + Non_Article_Manager.scripts_path + script + '.js" async></script>')
