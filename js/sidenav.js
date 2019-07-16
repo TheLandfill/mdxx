@@ -39,6 +39,7 @@ function sidenav_height_adj() {
 		sidenav_activator.style.top = new_top;
 		need_to_resize_sidenav = true;
 	}
+	console.log(amount_of_visible_footer)
 	if (amount_of_visible_footer > 0) {
 		let new_bottom = amount_of_visible_footer + "px";
 		sidenav.style.bottom = new_bottom;
