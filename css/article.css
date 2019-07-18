@@ -61,7 +61,7 @@
 	position: relative;
 	margin-left: 240px; /* Same as the width of the sidebar */
 	padding-bottom: 6em;
-	width: 760px;
+	width: 81ch;
 }
 
 @media screen and (max-height: 450px) {
@@ -92,3 +92,6 @@
 	}
 }
 
+html {
+	scroll-behavior: smooth;
+}

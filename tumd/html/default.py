@@ -2,9 +2,11 @@
 
 default_dict = {
     'empty': u"\u200B",
-    '{': '<code>',
-    '}': '</code>',
+    '{' : '<code>',
+    '}' : '</code>',
     r'\{' : '{',
     r'\}' : '}',
-    'ldb' : '{{{empty}}{'
+    'ldb' : '{{{empty}}{',
+    'lt' : '&lt;',
+    'gt' : '&gt;'
 }

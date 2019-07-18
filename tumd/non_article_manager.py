@@ -13,10 +13,10 @@ class Non_Article_Manager:
 
     necessary_css = [ "general", "article" ]
     css_edges = ['<link rel="stylesheet" href="', '.css">']
-    css_path = '../../css/'
+    css_path = '../../../css/'
     code_style_path = 'code-style/'
     necessary_scripts = ['sidenav']
-    scripts_path = '../../js/'
+    scripts_path = '../../../js/'
 
     def __init__(self, html_manager):
         self.html = html_manager

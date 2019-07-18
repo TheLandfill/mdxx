@@ -9,7 +9,9 @@ code_block_variables = {
     '{': '{',
     '}': '}',
     r'\{' : r'\{',
-    r'\}' : r'\}'
+    r'\}' : r'\}',
+    'lt' : '<',
+    'gt' : '>'
 }
 
 code_block = ''
