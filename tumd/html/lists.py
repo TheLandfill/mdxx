@@ -4,7 +4,7 @@ from html.paragraph import paragraph_dict
 
 list_first_element = True
 
-def open_ol(html, args):
+def open_ol(html, args, tumd):
     global list_first_element
     html.add('<ol>')
     html.push()
@@ -16,7 +16,7 @@ def close_ol(html):
     html.pop()
     html.add('</ol>')
 
-def open_ul(html, args):
+def open_ul(html, args, tumd):
     global list_first_element
     html.add('<ul>')
     html.push()

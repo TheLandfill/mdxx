@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+tumd_push()
+<head>
+tumd_push()
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{{links}}:={{from non_article_manager import Non_Article_Manager.convert_imports_to_links}}
+{{links (meta)}}
+<title>{{title}}</title>
+tumd_pop()
+</head>
+<body id="body-handle">
+tumd_push()
+<div id="webpage-header" class="jumbotron jumbotron-fluid" style="background-color: black; z-index: 100;">
+tumd_push()
+<div class="container">
+tumd_push()
+<a href="../">&larr; Back to Resources</a>
+tumd_pop()
+</div>
+tumd_pop()
+</div>
+<div>
+tumd_push()
+<div class="article">
+tumd_push()
+{{heading-to-section}}:={{from html.article import Article_Manager.heading_to_section}}
+{{title-link}}:="{{heading-to-section (article) (title) 0}}"
+<h1 class="display-4" id="{{title-link}}">{{title}}</h1>
+<h4 style="margin-bottom: 1em; text-align: right;">{{author}}&middot;{{date}}</h4>
+{{write_article}}:={{from html.article import Article_Manager.write_article}}
+{{write_article (article)}}
+{{sidenav}}:={{from html.article import Article_Manager.write_sidenav}}
+{{sidenav (article) (title) (title-link)}}
+tumd_pop()
+</div>
+<div id="footer" style="height: 20vh; background: black; width: 100%; z-index: 100;"></div>
+{{scripts}}:={{from non_article_manager import Non_Article_Manager.write_scripts}}
+{{scripts (meta)}}
+tumd_pop()
+</body>
+tumd_pop()
+</html>

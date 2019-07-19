@@ -4,7 +4,9 @@ import importlib
 from collections import namedtuple
 from html.default import default_dict
 import html.manager
+from tumd_manager import TUMD_Manager
 from pprint import pprint
+from non_article import non_article_dict
 
 Metadata = namedtuple('Metadata', 'title author date')
 
@@ -18,17 +20,25 @@ class Non_Article_Manager:
     necessary_scripts = ['sidenav']
     scripts_path = '../../../js/'
 
-    def __init__(self, html_manager):
+    def __init__(self, html_manager, article_manager):
         self.html = html_manager
         self.css = Non_Article_Manager.necessary_css
         self.imports = []
         self.scripts = Non_Article_Manager.necessary_scripts
-        self.metadata = None 
+        self.metadata = None
+        self.article = article_manager
+        self.tumd = self.article.tumd
+        self.template = TUMD_Manager(open('templates/article.tumd', 'r'))
+        self.template.context_dict = non_article_dict
+        self.template.context_dict['non-article'].variables['meta'] = self
+        self.template.context_dict['non-article'].variables['article'] = self.article
+        self.template.context = ['default', 'non-article']
+        self.template.add_default_variables()
 
     def get_tags(self, tag_list):
         data = []
         for tag in tag_list:
-            line = self.html.next_line_no_nl()
+            line = self.tumd.next_line_no_nl()
             re_test = r'^' + tag[0] + r':\s*\S.*'
             if re.match(re_test, line) is None and tag[1]:
                 print('Missing a legible ' + tag[0].lower() + ' declaration.' + Non_Article_Manager.metadata_format)
@@ -40,6 +50,9 @@ class Non_Article_Manager:
         metadata_tags = [(r'Title', True), (r'Author', True), (r'Date', True)]
         data = self.get_tags(metadata_tags)
         self.metadata = Metadata(title=data[0], author=data[1], date=data[2])
+        self.template.cur_context_vars()['title'] = self.metadata.title
+        self.template.cur_context_vars()['author'] = self.metadata.author
+        self.template.cur_context_vars()['date'] = self.metadata.date
    
     def get_imports(self):
         import_tags = [(r'Import', False), (r'Scripts', False), (r'Code Style', False)]
@@ -54,17 +67,19 @@ class Non_Article_Manager:
         if code_style != '':
             self.html.code_style = re.sub(r'\+.*', '', code_style)
         self.css.append(Non_Article_Manager.code_style_path + code_style)
-       
-    def write_head(self):
+
+    def get_data(self):
         self.get_metadata()
         self.get_imports()
-        self.copy_raw_html('snippets_html/generic.html')
-        self.copy_raw_html('snippets_html/mandatory.html')
-        self.convert_imports_to_links()
         self.import_contexts()
-        self.write_title_and_close_head()
-        self.copy_raw_html('snippets_html/body_header.html')
-        self.write_start_of_article()
+       
+    def process_template(self):
+        self.get_data()
+        while (True):
+            self.template.find_next_content_line()
+            if self.template.line_data[0] == '':
+                break
+            self.template.handle_context(self.html)
 
     def add(self, line):
         self.html.add(line)
@@ -75,21 +90,10 @@ class Non_Article_Manager:
     def pop(self):
         self.html.pop()
 
-    def copy_raw_html(self, infile):
-        with open(infile, 'r') as file_reader:
-            line = re.sub('\n','', file_reader.readline())
-            while line != '':
-                if line == 'tumd_pop()':
-                    self.pop()
-                elif line == 'tumd_push()':
-                    self.push()
-                else:
-                    self.add(line)
-                line = re.sub('\n', '', file_reader.readline())
-
-    def convert_imports_to_links(self):
-        for css in self.css:
-            self.add(Non_Article_Manager.css_edges[0] + self.css_path + css + Non_Article_Manager.css_edges[1])
+    def convert_imports_to_links(args):
+        for css in args[0].css:
+            args[0].add(Non_Article_Manager.css_edges[0] + args[0].css_path + css + Non_Article_Manager.css_edges[1])
+        return ''
 
     def import_contexts(self):
         for plugin in self.imports:
@@ -97,32 +101,13 @@ class Non_Article_Manager:
             context_dict = importlib.import_module('plugins.' + plugin).context_dict
             print()
             self.add_context(context_dict)
-            for key in context_dict:
-                for key2 in default_dict:
-                    if key2 not in context_dict[key].variables:
-                        context_dict[key].variables[key2] = default_dict[key2]
+        self.tumd.add_default_variables()
 
     def add_context(self, local_context):
-        context_dict = self.html.context_dict
-        self.html.context_dict = { **local_context, **context_dict }
+        context_dict = self.tumd.context_dict
+        self.tumd.context_dict = { **local_context, **context_dict }
 
-    def write_title_and_close_head(self):
-        self.add('<title>' + self.metadata.title + '</title>')
-        self.pop()
-        self.add('</head>')
-
-    def write_start_of_article(self):
-        self.add('<div class="article">')
-        self.push()
-        self.html.heading_to_section(self.metadata.title, 0)
-        self.add('<h1 class="display-4" id="' + self.html.headings[-1][0] + '">' + self.html.headings[-1][1] + '</h1>')
-        self.add('<h4>' + self.metadata.author + '&middot;' + self.metadata.date + '</h4>')
-
-    def write_end(self):
-        self.copy_raw_html('snippets_html/footer.html')
-        self.write_scripts()
-        self.copy_raw_html('snippets_html/end_of_file.html')
-
-    def write_scripts(self):
-        for script in self.scripts:
-            self.add('<script src="' + Non_Article_Manager.scripts_path + script + '.js"></script>')
+    def write_scripts(args):
+        for script in args[0].scripts:
+            args[0].add('<script src="' + Non_Article_Manager.scripts_path + script + '.js"></script>')
+        return ''

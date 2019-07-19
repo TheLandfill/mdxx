@@ -38,7 +38,7 @@ I hope it does OK.
 \{{\ol}}
 
 \{{terminal}}
-{{user}}:={{nikita}}
+{{user}}:="nikita"
 
 {{prompt}} echo "test"
 {{empty}}
@@ -46,8 +46,8 @@ test
 {{prompt}} echo "data"
 data
 {{prompt}} cd ../
-{{dir}}:={{~}}
-{{dircolor}}:={{#0000FF}}
+{{dir}}:="~"
+{{dircolor}}:="#0000FF"
 {{prompt}} pwd
 /home/nikita
 {{empty}}
@@ -56,7 +56,7 @@ data
 
 This line should be in its own paragraph.
 Testing to see if adding a line adds the number of lines it handles.
-{{PATH}}:={{<code>PATH</code>}}
+{{PATH}}:="<code>PATH</code>"
 These next few lines should be in the same paragraph. I think this part will
 work, but I have no idea how to pull it off.
 I defined {{PATH}} earlier to be rendered as code, so let's see if that works.
@@ -82,7 +82,7 @@ print nothing
 
 \{{code-block python}}
 
-{{name}}:={{'Joseph Mellor'}}
+{{name}}:="'Joseph Mellor'"
 \{{comment}}
 Defining {{name}}:={{'Joseph Mellor'}} up here will come in handy later at the bottom.
 \{{\comment}}
@@ -136,10 +136,10 @@ print('Successfully imported terminal.')
 \{{\code-block}}
 
 \{{code-block cpp}}
-#include <iostream>
+#include {{lt}}iostream{{gt}}
 
 int main(int argc, char** argv) {
-    std::cout << "Hello World!\n"; //>
+    std::cout {{lt}}{{lt}} "Hello World!\n";
     return 0;
 }
 
@@ -151,4 +151,7 @@ def shouldn't be highlighted.
 
 \{{raw-html}}
 <div><img src="../../resources/sm_5b321ca7a1ca4.png" alt="Heart icon."></div>
+
+<p>Just testing if raw-html expands variables like {{ldb}}lt\}\}: {{lt}}.
+</p>
 \{{\raw-html}}

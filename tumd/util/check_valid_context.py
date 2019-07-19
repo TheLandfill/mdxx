@@ -12,11 +12,20 @@ def generate_graph(context_dict):
     var_re = r'\{\{[^{]+?\}\}'
     for key in con_dict:
         expansion = con_dict[key]
-        cur_sub = re.search(var_re, expansion)
+        cur_sub = None
+        if isinstance(expansion, str):
+            cur_sub = re.search(var_re, expansion)
         graph[key] = []
         while cur_sub:
-            graph[key].append(cur_sub.group()[2:-2])
-            expansion = expansion.replace(cur_sub.group(), '')
+            prev_dep = cur_sub.group()
+            cur_dep = prev_dep[2:-2].replace('(', '{{').replace(')', '}}')
+            cur_sub = cur_dep.split()
+            graph[key].append(cur_sub[0])
+            if len(cur_sub) > 1:
+                expansion = expansion.replace(prev_dep, ' '.join(cur_sub[1:]))
+            else:
+                expansion = expansion.replace(prev_dep, '')
+            expansion = expansion.replace(prev_dep, '')
             cur_sub = re.search(var_re, expansion)
     return graph
 

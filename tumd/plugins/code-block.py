@@ -6,6 +6,7 @@ from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 
 code_block_variables = {
+    'ldb': '{{{empty}}{',
     '{': '{',
     '}': '}',
     r'\{' : r'\{',
@@ -21,7 +22,7 @@ line_number = -1
 lines_to_highlight = []
 add_line_numbers = True
 
-def open_code_block(html, args):
+def open_code_block(html, args, tumd):
     global code_language
     global add_line_numbers
     split_args = args.split()

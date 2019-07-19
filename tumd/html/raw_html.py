@@ -4,7 +4,7 @@ from html.context import Context
 
 in_pre_section = False
 
-def open_html(html, args):
+def open_html(html, args, tumd):
     return
 
 def process_html(html, line_data):

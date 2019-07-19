@@ -13,7 +13,7 @@ def paragraph(html, line_data):
         html.push()
         html.need_to_close_paragraph = True
     else:
-        html.add(html.expand_line(line))
+        html.add(line)
 
 paragraph_dict = {
     'paragraph':    Context(None, paragraph, None, context_dict)

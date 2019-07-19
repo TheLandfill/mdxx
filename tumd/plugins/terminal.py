@@ -15,10 +15,11 @@ terminal_variables = {
     '{': '{',
     '}': '}',
     r'\{' : r'\{',
-    r'\}' : r'\}'
+    r'\}' : r'\}',
+    'ldb' : '{{{empty}}{'
 }
 
-def open_terminal(html, args):
+def open_terminal(html, args, tumd):
     html.add_no_nl('<div class="terminal"' + args + '><pre>')
 
 def process_terminal(html, line_data):

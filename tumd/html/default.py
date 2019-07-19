@@ -6,7 +6,7 @@ default_dict = {
     '}' : '</code>',
     r'\{' : '{',
     r'\}' : '}',
-    'ldb' : '{{{empty}}{',
+    'ldb' : r'\{{{empty}}\{',
     'lt' : '&lt;',
     'gt' : '&gt;'
 }

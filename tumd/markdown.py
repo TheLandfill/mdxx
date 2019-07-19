@@ -3,14 +3,16 @@ import re
 import sys
 from html.manager import HTML_Manager
 from non_article_manager import Non_Article_Manager
+from tumd_manager import TUMD_Manager
+from html.article import Article_Manager
 
 def convert_to_html(infile, out):
     with open(infile, 'r') as file_reader, open(out, 'w') as file_writer:
-        manager = HTML_Manager(file_writer, file_reader)
-        non_article_manager = Non_Article_Manager(manager)
-        non_article_manager.write_head()
-        manager.write_body()
-        non_article_manager.write_end()
+        tumd = TUMD_Manager(file_reader)
+        writer = HTML_Manager(file_writer)
+        article = Article_Manager(writer, tumd)
+        meta = Non_Article_Manager(writer, article)
+        meta.process_template()
 
 def main(args):
     """Usage:\ttu-md original.tumd [filename.html]
@@ -31,7 +33,6 @@ def main(args):
         outfile = args[2]
 
     convert_to_html(infile, outfile)
-
 
 if __name__ == "__main__":
     main(sys.argv)    

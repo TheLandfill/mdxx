@@ -2,7 +2,7 @@
 from html.context import Context
 from html.paragraph import *
 
-def open_aside(html, args):
+def open_aside(html, args, tumd):
     html.add('<div class="aside" ' + args + '>')
     html.push()
 
