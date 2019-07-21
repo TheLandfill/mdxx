@@ -81,6 +81,24 @@ class Non_Article_Manager:
                 break
             self.template.handle_context(self.html)
 
+    def title_adjustment(args):
+        title = args[0].template.cur_context_vars()['title']
+        num_chars = len(title) - title.count(' ')
+        word_length_avg = num_chars / (title.count(' ') + 1)
+        title = title.split()
+        new_title = [title[0], '&nbsp;']
+        title = title[1:]
+        cur_length = 0
+        for word in title:
+            new_title.append(word)
+            cur_length += len(word)
+            if cur_length < word_length_avg:
+                new_title.append('&nbsp;')
+            else:
+                new_title.append(' ')
+                cur_length = 0
+        return ''.join(new_title[:-1])
+
     def add(self, line):
         self.html.add(line)
 

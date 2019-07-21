@@ -65,8 +65,8 @@ class Article_Manager:
         args[0].html.push()
         for heading in args[0].headings:
             sidenav_level = ''
-            for i in range(1, heading[2]):
-                sidenav_level += '<div class="sidenav-level"></div>'
+#           for i in range(1, heading[2]):
+#               sidenav_level += '<div class="sidenav-level"></div>'
             args[0].html.add(sidenav_level + '<a href="#' + heading[0] + '" style="padding-left:' + str(12 * (heading[2] + 1)) + 'px;">' + heading[1] + '</a>')
         args[0].html.pop()
         args[0].html.add('</nav>')

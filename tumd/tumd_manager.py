@@ -128,6 +128,7 @@ class TUMD_Manager:
         context_variables = self.cur_context_vars()
         current_sub = re.search(r'\{\{[^{]+?\}\}', line)
         while current_sub:
+            # Could make {{rest-of-line}} handling its own function
             if (current_sub.group() == '{{rest-of-line}}'):
                 rest_of_line = line[current_sub.span()[1]:]
                 text_to_end = re.search(r'\{\{end-of-line\}\}', line)
@@ -139,6 +140,7 @@ class TUMD_Manager:
                 begin = line[:current_sub.span()[0]]
                 line = begin + middle + end
             else:
+                # This next line needs to only replace outer parentheses
                 var_args = current_sub.group()[2:-2].replace('(', '{{').replace(')', '}}')
                 var_args = var_args.split()
                 var = var_args[0]
@@ -162,7 +164,6 @@ class TUMD_Manager:
         line = re.sub(r'(?<!\\)}', context_variables['}'], line)
         line = line.replace(r'\{', context_variables['\{'])
         line = line.replace(r'\}', context_variables['\}'])
-#       print(line)
         return line
 
     def check_variable_dependency(self, context):

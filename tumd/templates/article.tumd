@@ -28,12 +28,23 @@ tumd_push()
 tumd_push()
 {{heading-to-section}}:={{from html.article import Article_Manager.heading_to_section}}
 {{title-link}}:="{{heading-to-section (article) (title) 0}}"
-<h1 class="display-4" id="{{title-link}}">{{title}}</h1>
-<h4 style="margin-bottom: 1em; text-align: right;">{{author}}&middot;{{date}}</h4>
+{{title-correction}}:={{from non_article_manager import Non_Article_Manager.title_adjustment}}
+<h1 class="display-4" id="{{title-link}}">{{title-correction (meta)}}</h1>
+{{description}}:="This is just a test."
+<div id="meta-description">{{description}}</div>
+{{tags}}:="{{empty}}"
+<div id="date-and-tags">Posted {{date}} {{tags}}</div>
+<div style="background: #E0E0E0; border-radius: 9999px; display: inline-block; margin-bottom: 1em;">
+tumd_push()
+{{author-image}}:="../../../resources/968361.jpg"
+<div style="background: url({{author-image}}) 50% 50% no-repeat; background-size: auto 50px; width: 50px; height: 50px; overflow: hidden; border-radius: 9999px; margin: 0.5ch; float: left; display: inline-block;"></div>
+<div style="padding-left: 1ch; padding-right: 2ch; display: inline-block; margin-top: calc((50px - 1em)/2);">By {{author}}</div>
+tumd_pop()
+</div>
 {{write_article}}:={{from html.article import Article_Manager.write_article}}
 {{write_article (article)}}
 {{sidenav}}:={{from html.article import Article_Manager.write_sidenav}}
-{{sidenav (article) (title) (title-link)}}
+{{sidenav (article)}}
 tumd_pop()
 </div>
 <div id="footer" style="height: 20vh; background: black; width: 100%; z-index: 100;"></div>
