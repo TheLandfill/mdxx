@@ -57,7 +57,11 @@ def close_code_block(html):
     code_block = code_block.replace(code_block_variables['empty'], '')
     lexer = get_lexer_by_name(code_language, stripall=True)
     formatter = HtmlFormatter(linenos=add_line_numbers, style=html.code_style, hl_lines=lines_to_highlight, cssclass='code-block')
-    highlight(code_block, lexer, formatter, outfile=html.out)
+    if add_line_numbers:
+        html.add('<div class="code-blocktable">')
+    html.out.write(highlight(code_block, lexer, formatter).replace('<table class="code-blocktable">', '<table>'))
+    if add_line_numbers:
+        html.add('</div>')
     html.add('')
     code_block = ''
     lines_to_highlight = []
