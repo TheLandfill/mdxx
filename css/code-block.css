@@ -6,10 +6,21 @@
 	margin-bottom: 0;
 }
 
+.aside .code-block {
+	border-color: #B0B0B0;
+	box-shadow: 0px 0px 0 2px #F0F0F0;
+}
+
+.aside .code-blocktable {
+	border-color: #B0B0B0;
+	background: #B0B0B0;
+	box-shadow: 0px 0px 0 2px #F0F0F0;
+}
+
 .code-block {
 	padding: 5px 10px 5px 10px;
 	border-width: 3px;
-	border-color: #A0A0A0;
+	border-color: #B0B0B0;
 	border-style: solid;
 	border-radius: 8px;
 	overflow: auto;
@@ -18,10 +29,10 @@
 
 .code-blocktable {
 	border-width: 3px;
-	border-color: #A0A0A0;
+	border-color: #D0D0D0;
 	border-style: solid;
 	border-radius: 8px;
-	background: #A0A0A0;
+	background: #D0D0D0;
 	margin-bottom: 1em;
 }
 
@@ -30,9 +41,15 @@
 	border-width: 0px;
 	border-radius: 0px;
 	margin-bottom: 0px;
+	box-shadow: none;
 }
 
-table, thead, tbody, th, td, tr {
+.code-block table, .code-block thead, .code-block tbody, .code-block th, .code-block td, .code-block tr {
+	display: block;
+	position: relative;
+}
+
+.code-blocktable table, .code-blocktable thead, .code-blocktable tbody, .code-blocktable th, .code-blocktable td, .code-blocktable tr {
 	display: block;
 	position: relative;
 }
@@ -57,7 +74,7 @@ table, thead, tbody, th, td, tr {
 
 @media screen and (max-width: 1020px) {
 	.code-blocktable {
-		width: 100%;
+		width: calc(100% - 0.5ch);
 	}
 
 	.code-blocktable tbody {
@@ -69,11 +86,15 @@ table, thead, tbody, th, td, tr {
 }
 
 .linenos {
-	background: #A0A0A0;
+	background: #D0D0D0;
 	padding-top: 6px;
 	border-width: 0px;
 	padding-bottom: 5px;
 	width: 3ch;
+}
+
+.aside .linenos {
+	background: #B0B0B0;
 }
 
 .linenos pre {

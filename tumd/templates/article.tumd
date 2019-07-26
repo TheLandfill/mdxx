@@ -28,11 +28,10 @@ tumd_push()
 tumd_push()
 {{heading-to-section}}:={{from html.article import Article_Manager.heading_to_section}}
 {{title-link}}:="{{heading-to-section (article) (title) 0}}"
-{{title-correction}}:={{from non_article_manager import Non_Article_Manager.title_adjustment}}
-<h1 class="display-4" id="{{title-link}}">{{title-correction (meta)}}</h1>
-{{description}}:="This is just a test."
+<div id="article-title"><h1 id="{{title-link}}">{{title}}</h1></div>
 <div id="meta-description">{{description}}</div>
 {{tags}}:="{{empty}}"
+{{date}}:={{from util.date import date}}
 <div id="date-and-tags">Posted {{date}} {{tags}}</div>
 <div style="background: #E0E0E0; border-radius: 9999px; display: inline-block; margin-bottom: 1em;">
 tumd_push()

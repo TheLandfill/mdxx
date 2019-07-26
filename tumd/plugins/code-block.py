@@ -53,6 +53,8 @@ def close_code_block(html):
     global lines_to_highlight
     global line_number
     global add_line_numbers
+    global code_block_variables
+    code_block = code_block.replace(code_block_variables['empty'], '')
     lexer = get_lexer_by_name(code_language, stripall=True)
     formatter = HtmlFormatter(linenos=add_line_numbers, style=html.code_style, hl_lines=lines_to_highlight, cssclass='code-block')
     highlight(code_block, lexer, formatter, outfile=html.out)

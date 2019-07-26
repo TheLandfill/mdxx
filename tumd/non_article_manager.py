@@ -1,14 +1,11 @@
 #!/usr/bin/python3
 import re
 import importlib
-from collections import namedtuple
 from html.default import default_dict
 import html.manager
 from tumd_manager import TUMD_Manager
 from pprint import pprint
 from non_article import non_article_dict
-
-Metadata = namedtuple('Metadata', 'title author date')
 
 class Non_Article_Manager:
     metadata_format = '\nPlease use the following format at the top of your article:\n\nTitle:\tHow to Write a Tutorial\nAuthor:\tJoseph Mellor\nDate:\tJune 15, 2019\nImport:\tterminal\taside\nScripts:\tdraw_spiral\tinvert_colors\nCode Style:\tdefault'
@@ -47,12 +44,11 @@ class Non_Article_Manager:
         return data
 
     def get_metadata(self):
-        metadata_tags = [(r'Title', True), (r'Author', True), (r'Date', True)]
+        metadata_tags = [(r'Title', True), (r'Author', True), (r'Descrip', True)]
         data = self.get_tags(metadata_tags)
-        self.metadata = Metadata(title=data[0], author=data[1], date=data[2])
-        self.template.cur_context_vars()['title'] = self.metadata.title
-        self.template.cur_context_vars()['author'] = self.metadata.author
-        self.template.cur_context_vars()['date'] = self.metadata.date
+        self.template.cur_context_vars()['title'] = data[0]
+        self.template.cur_context_vars()['author'] = data[1]
+        self.template.cur_context_vars()['description'] = data[2]
    
     def get_imports(self):
         import_tags = [(r'Import', False), (r'Scripts', False), (r'Code Style', False)]
@@ -80,24 +76,6 @@ class Non_Article_Manager:
             if self.template.line_data[0] == '':
                 break
             self.template.handle_context(self.html)
-
-    def title_adjustment(args):
-        title = args[0].template.cur_context_vars()['title']
-        num_chars = len(title) - title.count(' ')
-        word_length_avg = num_chars / (title.count(' ') + 1)
-        title = title.split()
-        new_title = [title[0], '&nbsp;']
-        title = title[1:]
-        cur_length = 0
-        for word in title:
-            new_title.append(word)
-            cur_length += len(word)
-            if cur_length < word_length_avg:
-                new_title.append('&nbsp;')
-            else:
-                new_title.append(' ')
-                cur_length = 0
-        return ''.join(new_title[:-1])
 
     def add(self, line):
         self.html.add(line)

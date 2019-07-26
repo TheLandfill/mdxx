@@ -52,6 +52,8 @@ window.onresize = debounce(change_max_height, 50);
 
 function change_max_height() {
 	window_height = window.innerHeight;
+	jumbotron_height = document.getElementById("webpage-header").clientHeight;
+	footer_position = document.getElementById("footer").offsetTop;
 	bottom_of_sidenav = window_height - footer_position;
 	max_height = document.documentElement.clientHeight;
 	scale_vh = 100 / max_height;

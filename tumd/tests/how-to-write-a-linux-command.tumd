@@ -1,6 +1,6 @@
 Title:		How to Write a Linux Command
 Author:		Joseph Mellor
-Date:		June 24, 2019
+Descrip:	What is your computer doing when you type a command in the terminal?
 Import:		terminal aside code-block
 Scripts:
 Code Style:	trac+dark

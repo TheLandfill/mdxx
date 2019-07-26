@@ -79,7 +79,7 @@
 	}
 }
 
-@media screen and (max-width: 840px) {
+@media screen and (max-width: 780px) {
 	.article {
 		padding-left: 20px;
 		width: 95%;
@@ -96,10 +96,15 @@ html {
 	scroll-behavior: smooth;
 }
 
+#article-title h1 {
+	font-size: 3.5rem;
+}
+
 #meta-description {
 	color: #707070;
 	font-size: 1.7em;
 	font-weight: normal;
+	margin-bottom: 0.1em;
 }
 
 #date-and-tags {
@@ -129,4 +134,5 @@ html {
 	border-radius: 9999px;
 	display: inline-block;
 	margin-bottom: 1em;
+	margin-top: 1em;
 }

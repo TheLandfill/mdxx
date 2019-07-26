@@ -1,6 +1,6 @@
 Title:		How to Write a Tutorial
 Author:		Joseph Mellor
-Date:		June 15, 2019
+Descrip:	This is just a test to see what it looks like. Since most of these are going to be shorter, I'm going to try a much longer one.
 Import:		aside terminal code-block
 Scripts:
 Code Style:	trac+dark
@@ -135,6 +135,12 @@ print('Successfully imported terminal.')
 
 \{{\code-block}}
 
+\{{aside}}
+#### Testing Code Blocks inside an aside
+<hr>
+
+This should look decent.
+
 \{{code-block cpp}}
 #include {{lt}}iostream{{gt}}
 
@@ -148,6 +154,10 @@ hlstatus
 
 def shouldn't be highlighted.
 \{{\code-block}}
+
+If it doesn't, I'll be mad.
+
+\{{\aside}}
 
 \{{raw-html}}
 <div><img src="../../resources/sm_5b321ca7a1ca4.png" alt="Heart icon."></div>
