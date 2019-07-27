@@ -8,8 +8,8 @@ Code Style:	trac+dark
 Although the purpose of a computer is to automate tasks, programmers still have
 to do some tasks manually.
 For instance, to set up a C/C++ project on my computer, I would have to create a
-bunch of directories, copy a Makefile (it's like a project file for C/C++) into
-the right directory, modify the Makefile to generate the specific program, etc.
+bunch of directories, copy a Makefile (it's a project file for C/C++) into the
+right directory, modify the Makefile to generate the specific program, etc.
 Doing so requires me to remember both the directories I need to create and where
 I stored the original Makefile.
 Furthermore, since I wrote the Makefile specifically for C++ projects, I have to
@@ -21,20 +21,19 @@ a project, especially since I have to follow the same exact steps for every
 project.
 
 Since I was typing in the same bash commands over and over again, I decided to
-write a script that would execute the bash commands for me.
+write a script that would execute the bash commands for me whenever I ran it.
 Since I wanted to be able to use the script from any directory, I decided to
-make the script into the Linux command.
+make the script into the Linux command, which I called <a
+href="https://github.com/TheLandfill/minit">minit</a>.
 
 In this article, I'm going to discuss what a Linux command is, the basics of how
 Linux processes commands, and how to make one yourself.
-I will use the command I made above to help me set up a build system for C/C++
-projects, which I called <a
-href="https://github.com/TheLandfill/minit">minit</a>, as a guide.
+I will use {minit}, as a guide.
 To run {minit}, you need to run {./install.sh} so it can figure out where the
-specific files are and to make sure it's not overwriting any other commands.
-To make it a command, we don't necessarily need it to run, but if you do want it
-to run and use this tutorial, type {./install.sh tutorial} into your terminal
-instead of {./install.sh}.
+specific files are and ensure it's not overwriting any other commands.
+To make {minit} a command, we don't necessarily need it to run properly, but if
+you do want it to run and use this tutorial, type {./install.sh tutorial} into
+your terminal instead of {./install.sh}.
 You can also remove the command by running {./uninstall.sh} and then deleting
 the whole {minit} directory.
 I will assume that the {minit.sh} script is in the directory {~/dev/minit} as if
@@ -46,8 +45,45 @@ you ran {git clone https://github.com/TheLandfill/minit} while in the directory
 As with most topics involving computers, there is a distinction between what a
 command is to the user and what a command is to the computer.
 
-To the user, <b>Linux commands are phrases you type into the terminal to do
-something on your computer</b>.
+To the user, <b>Linux commands are phrases you type into the terminal that allow
+you to interact with the computer</b>.
+
+\{{aside}}
+#### Why Use a Terminal?
+<hr>
+
+Before computers were powerful enough to use Graphical User Interfaces (GUI),
+which you would recognize as your desktop where you click icons to run programs
+or open windows, you had to use the terminal to do anything on your computer.
+While GUIs may be more intuitive for first time users, the terminal is much more
+powerful than a GUI because the terminal can automate processes the GUI can't.
+
+For example, if I were to use a GUI to do what {minit} does, I would have to
+create a new directory with the project name, move to that directory, create
+{bin}, {obj}, {src}, and {includes}, copy the {Makefile} (whose location I
+would have to remember) into the {bin} directory and then go through the
+Makefile and change what I need to change to make it actually work.
+
+With {minit}, I type {minit project-name outfile-name} and I'm done.
+
+As another example, I went on a trip and took a ton of photos, but since I
+couldn't force everyone to wait for me to get all the settings exactly right to
+take the best possible picture, I took a bunch of pictures of the same object
+with different settings (stuff like exposure and white balance) in the hopes
+that at least one of them would be good.
+I ended up taking hundreds more pictures than I was going to use and I needed to
+get rid of them.
+I figured that if I could group together pictures that were taken around the
+same time, I would group together pictures of the same object, which would make
+it easier for me to get rid of the bad pictures.
+
+Doing so manually would have required me to look at the file name (which is
+based on the time at which the picture was taken) and sort them into folders.
+Using a bash script, however, I was able to group each picture into its proper
+folder, which made finding bad pictures a lot easier.
+
+\{{\aside}}
+
 If you have any experience with Linux or bash, you'll already know some standard
 Linux commands, such as {cd} (change current directory), {mv} (move or rename
 files and directories), and {cp} (copy files).
@@ -75,8 +111,9 @@ more detail about the specifics.
 You can make an alias out of almost anything you could type on the command line,
 but aliases have severe limits on what they can do.
 They also rely on builtins and other Linux commands.
-We'll discuss how to create an alias <a
-href="#what-if-i-dont-need-an-entire-executable">later in the article</a>.
+We'll discuss <a
+href="#what-if-i-dont-need-an-entire-executable">how to create an alias</a>
+later in the article.
 Since {minit} is too complex to be an alias, I had to use a script.
 
 \{{\aside}}
@@ -123,12 +160,15 @@ Since the only way to write a shell builtin is to write or modify a shell, we
 aren't going to deal with that here.
 Since I use cd frequently, the actual function is simple (it calls the builtin
 {cd} and then runs another function if the builtin {cd} ran properly), and I
-need to call it instead of the builtin {cd} (see <a
-href="#more-directories-means-more-to-search">here</a> for more details), I had
-to make it a function.
+need to call it instead of the builtin {cd} (see the <a
+href="#more-directories-means-more-to-search">command hierarchy</a> I
+described later in the article for more info), I had to make it a function.
 If you want more information on when to use a function, alias, or script to make
 a Linux command, see <a href="https://unix.stackexchange.com/a/30964">this
 answer</a> on StackOverflow.
+<a href="https://unix.stackexchange.com/a/30964">This answer on
+StackOverflow</a> gives some reasons for why you would choose to use a function,
+alias, or script.
 
 Also, notice that it prints out both that {cd is a function} and {cd is a shell
 builtin}.
@@ -151,7 +191,8 @@ To see the full list, type {echo $PATH} into your terminal.
 \{{\terminal}}
 
 You should see a list of directories separated by colons, as shown above.
-{PATH} contains text, which will determine how we alter it later.
+{PATH} contains plain text, which means altering it will require us to replace
+the old text with the new text.
 
 ## Making an Executable
 
@@ -160,20 +201,22 @@ run it by using the {chmod} command.
 The {chmod} command allows you to set who can read, write, and execute a file.
 In most cases, you can use {chmod 755 exe}, which will allow anyone to execute
 {exe} and allow the user to modify it.
-For more information about the intricacies of the {chmod} command, see this <a
-href="https://askubuntu.com/questions/932713/what-is-the-difference-between-chmod-x-and-chmod-755">answer</a>,
-this <a
-href="https://www.thegeekstuff.com/2010/06/chmod-command-examples/">article</a>,
-or read the man page by typing {man chmod} in the terminal.
+This <a
+href="https://askubuntu.com/questions/932713/what-is-the-difference-between-chmod-x-and-chmod-755">
+article on chmod</a> and the man page for chmod (which you can see by typing
+{man chmod} in the terminal) contain more information about the {chmod} command.
 
 ## Absolute vs. Relative Paths
 
-An absolute filepath starts from either your root directory. {/} or your home
+An absolute filepath starts from either your root directory, {/}, or your home
 directory, {~/}.
-The {~/} is shorthand for {/home/username}.
-A relative filepath is from your current location in the terminal.
-When making Linux commands, they have to run from anywhere, meaning your current
-location is going to change.
+The {~/} is shorthand for {/home/[username]}, where {[username]} is the username
+of the person currently logged in.
+A relative filepath starts from your current directory in the terminal and moves
+around to different directories.
+When making Linux commands, they have to properly run in any directory, meaning
+your current directory is going to change, meaning any relative filepaths you
+use will be wrong.
 <b>If you want to make use of a specific file or directory, then you must use an
 absolute path.</b>
 For example, {minit} copies the Makefile in {~/dev/minit/} (or wherever you
@@ -187,27 +230,30 @@ Since any executable must be in one of the directories specified in {PATH}, we
 now have two ways to turn an executable into a Linux command.
 
 \{{ul}}
+
 Add the directory containing your executable to the {PATH} variable.
 
 Move the executable into one of the directories in {PATH}.
+
 \{{\ul}}
 
 While both of these methods will work, we want to set up some criteria for
 determining the best method.
-As with most programming projects, we have to focus mainly on user experience
-and development ease.
+As with most programming projects, we have to focus on user experience and ease
+of development.
 We'll use the standard Linux commands as a guide for user experience and general
 development knowledge for development ease.
 The method we use to create a command should
 
 \{{ul}}
+
 look like a Linux command, since <a
 href="https://en.wikipedia.org/wiki/Principle_of_least_astonishment">that's what
 people expect</a>.
 
 not create extraneous commands.
 
-work with the organization of a project or at least not complicate the project.
+work with the organization of a project or, at least, not complicate the project.
 
 use the fewest resources it can.
 
@@ -224,7 +270,8 @@ work on most, if not all, standard Linux distros.
 
 Before you interact with anything related to the operating system or anything
 related to configurations, always make sure to back your data up.
-Modifying {PATH} isn't too severe, but it could still be annoying.
+Modifying {PATH} doesn't severely modify your configuration, but you should
+still back your {PATH} variable up.
 In this case, make sure to record the value of {PATH} somewhere so you can
 revert it back to normal.
 You can use {echo $PATH} to print out {PATH} to the terminal.
@@ -242,7 +289,7 @@ path to the directory, making sure that you add a backslash before every slash.
 
 \{{\aside}}
 
-Add the directory to your PATH variable, using the syntax:
+Add the directory to your PATH variable using the syntax:
 
 \{{terminal}}
 {{prompt}} export PATH=$PATH:~/dev/minit
@@ -254,15 +301,16 @@ The {export} will mean that all that the current and all future terminal
 windows/bash sessions you create will also have {PATH} set, {PATH=} will set the
 {PATH} environment variable to everything that's after it, {$PATH} will expand
 out the contents of {PATH} (which include all the directories in {PATH}), and
-{:~/dev/minit} will be expanded to {:/home/username/dev/minit} and then appended
-to the contents of {PATH}.
+{:~/dev/minit} will be expanded to {:/home/[username]/dev/minit} (where
+{[username]} is the username of the current user) and then appended to the
+contents of {PATH}.
 Now, you can call every executable in the directory from anywhere.
-You will have to type the command every time you log into your computer, unless
+You will have to type the command every time you log into your computer unless
 you have some script that automatically runs when you login.
 Instead of making your own, though, add the command to the end of your
 {~/.bash_profile} or {~/.profile} file.
-It's one of the <a href="https://superuser.com/a/183980">main scripts</a> that
-runs when you login.
+It's one of the <a href="https://superuser.com/a/183980">main scripts that runs
+when you login</a>.
 Once again, <b style="color: #FF0000">DO NOT MODIFY IMPORTANT SYSTEM FILES OR
 VARIABLES WITHOUT MAKING SOME SORT OF A BACKUP</b>.
 

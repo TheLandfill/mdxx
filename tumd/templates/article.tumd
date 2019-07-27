@@ -6,6 +6,7 @@ tumd_push()
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="preload" href="https://tuacm.com/css/author-description.css" as="stylesheet">
 {{links}}:={{from non_article_manager import Non_Article_Manager.convert_imports_to_links}}
 {{links (meta)}}
 <title>{{title}}</title>
@@ -33,15 +34,17 @@ tumd_push()
 {{tags}}:="{{empty}}"
 {{date}}:={{from util.date import date}}
 <div id="date-and-tags">Posted {{date}} {{tags}}</div>
-<div style="background: #E0E0E0; border-radius: 9999px; display: inline-block; margin-bottom: 1em;">
+<div id="author-box">
 tumd_push()
-{{author-image}}:="../../../resources/968361.jpg"
-<div style="background: url({{author-image}}) 50% 50% no-repeat; background-size: auto 50px; width: 50px; height: 50px; overflow: hidden; border-radius: 9999px; margin: 0.5ch; float: left; display: inline-block;"></div>
-<div style="padding-left: 1ch; padding-right: 2ch; display: inline-block; margin-top: calc((50px - 1em)/2);">By {{author}}</div>
+{{author-image}}:={{from util.author import get_author_image}}
+<div id="author-image" style="background: url({{author-image (author)}}) 50% 50% no-repeat; background-size: auto 50px;"></div>
+<div id="author-name">By {{author}}</div>
 tumd_pop()
 </div>
 {{write_article}}:={{from html.article import Article_Manager.write_article}}
 {{write_article (article)}}
+{{author_description}}:={{from util.author import get_author_description}}
+{{author_description (author)}}
 {{sidenav}}:={{from html.article import Article_Manager.write_sidenav}}
 {{sidenav (article)}}
 tumd_pop()
