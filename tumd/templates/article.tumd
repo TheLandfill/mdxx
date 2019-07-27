@@ -6,7 +6,7 @@ tumd_push()
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="preload" href="https://tuacm.com/css/author-description.css" as="stylesheet">
+<link rel="stylesheet" href="https://tuacm.com/css/author-description.css">
 {{links}}:={{from non_article_manager import Non_Article_Manager.convert_imports_to_links}}
 {{links (meta)}}
 <title>{{title}}</title>
@@ -43,8 +43,8 @@ tumd_pop()
 </div>
 {{write_article}}:={{from html.article import Article_Manager.write_article}}
 {{write_article (article)}}
-{{author_description}}:={{from util.author import get_author_description}}
-{{author_description (author)}}
+{{author_description}}:={{from util.author import write_author_description}}
+{{author_description (meta)}}
 {{sidenav}}:={{from html.article import Article_Manager.write_sidenav}}
 {{sidenav (article)}}
 tumd_pop()
