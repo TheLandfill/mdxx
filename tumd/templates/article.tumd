@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-US">
 tumd_push()
 <head>
 tumd_push()
@@ -14,13 +14,9 @@ tumd_pop()
 </head>
 <body id="body-handle">
 tumd_push()
-<div id="webpage-header" class="jumbotron jumbotron-fluid" style="background-color: black; z-index: 100;">
+<div id="webpage-header" class="text-center py-5 mb-5 bg-yellow" style="background: black;">
 tumd_push()
-<div class="container">
-tumd_push()
-<a href="../">&larr; Back to Resources</a>
-tumd_pop()
-</div>
+<h2 class="font-weight-bolder" style="color: #DC143C;">blog</h2>
 tumd_pop()
 </div>
 <div>
@@ -49,7 +45,19 @@ tumd_pop()
 {{sidenav (article)}}
 tumd_pop()
 </div>
-<div id="footer" style="height: 20vh; background: black; width: 100%; z-index: 100;"></div>
+<div id="footer" class="mt-5 py-5 text-center px-4" style="background: #000000; text: #DC143C;">
+tumd_push()
+<a href="#" style="color: #DC143C">Blog</a> <br>
+<a href="#" style="color: #DC143C">Get Involved</a> <br>
+<a href="http://hacktulsa.com" style="color: #DC143C">Hackathon</a> <br>
+<a href="#" style="color: #DC143C">GitHub</a>
+<div id="copyright" class="mt-4" style="color: #FFFFFF;">
+tumd_push()
+&copy; 2019 TUACM &sdot; <a href="" style="color: #DC143C">LICENSE</a>
+tumd_pop()
+</div>
+tumd_pop()
+</div>
 {{scripts}}:={{from non_article_manager import Non_Article_Manager.write_scripts}}
 {{scripts (meta)}}
 tumd_pop()

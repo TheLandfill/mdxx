@@ -14,7 +14,7 @@ def write_author_description(args):
     html.push()
     html.add('<div id="author-description-local">')
     html.push()
-    html.add('<img src="' + get_author_image([author]) + '" id="author-description-image">')
+    html.add('<img src="' + get_author_image([author]) + '" id="author-description-image" alt="A picture of ' + author + ', the author.">')
     html.add('<div id="author-description-text">')
     html.push()
     html.add_no_nl('<p>')
