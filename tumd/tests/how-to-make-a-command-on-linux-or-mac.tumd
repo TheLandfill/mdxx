@@ -554,7 +554,7 @@ exist.
 
 As you can see, none of the methods above will satisfy all the criteria I
 suggested.
-Unfortunately, there is no way to make an executable a Linux command unless the
+Unfortunately, there is no way to make an executable a command unless the
 executable is in one of the directories in {PATH}.
 Reviewing the problems with the proposed solutions and the criteria, we can come
 up with our ideal solution:
@@ -571,7 +571,7 @@ Nothing in the code base must depend on {minit}.
 
 {minit} shouldn't waste space.
 
-Making {minit} shouldn't rely on anything unique to a specific Linux distro.
+Making {minit} shouldn't rely on anything unique to a specific Linux distro or Mac version.
 
 \{{\ul}}
 
@@ -620,8 +620,8 @@ When you open multiple files at once with {vim}, it will open them like an old
 Unix terminal: you have to cycle through them and there's one open at a time.
 {vim} can open them in tabs (like a modern text editor) if you use {vim -p} on
 the command line.
-Since I strongly prefer using tabs as opposed to the old Unix style, I wanted to
-make a Linux command that would work as if I had typed {vim -p}.
+Since I strongly prefer using tabs as opposed to the old Unix style, I wanted
+to make a command that would work as if I had typed {vim -p}.
 If I were to write a bash script, it would have one line of code.
 In this case, I would use an <b>alias</b>.
 
@@ -631,8 +631,8 @@ Aliases have an easy syntax.
 alias vip="vim -p"
 \{{\code-block}}
 
-This line will create a Linux command called {vip} that will run {vim -p}
-whenever you call it.
+This line will create a command called {vip} that will run {vim -p} whenever
+you call it.
 Since I want it to stay across login sessions, I needed to put it in one of
 those scripts that run when you login or create a new terminal.
 On my computer, my {~/.bashrc} would run all the commands in the file
@@ -673,7 +673,7 @@ on setting up brew for Mac</a>) like so:
 
 Furthermore, there are sometimes package managers specific to languages, such as
 <a href="https://en.wikipedia.org/wiki/Pip_(package_manager)">{pip}</a> for
-{python}.
+{python} and <a href="https://www.npmjs.com/">{npm}</a> for {javascript}.
 
 Package managers are out of the scope of this article, but the general process
 for having your package manager recognize and install your software is to either
@@ -687,15 +687,22 @@ you to send them your software, which is why I can't explain more in this long
 article.
 To start you off, though, someone already asked <a
 href="https://askubuntu.com/q/16446">how to get software into Ubuntu</a> on
-StackExchange and the people behind {brew} wrote their own documentation on <a
-href="https://docs.brew.sh/Formula-Cookbook">how to add a package to {brew}</a>.
+StackExchange, the people behind {brew} wrote their own documentation on <a
+href="https://docs.brew.sh/Formula-Cookbook">how to add a package to
+{brew}</a>, someone already wrote a guide on <a
+href="https://dzone.com/articles/executable-package-pip-install">how to add a
+package to {pip}</a>, and <a
+href="https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry">{npm}
+has their own documentation for adding a package</a>.
+For any other package manager, you'll have to look up how to add a package to
+the specific package manager.
 
 # Summary
 
 \{{ul}}
 
-Linux commands are generally executables in one of the directories defined in
-{PATH}, aliases, or shell builtins.
+Linux and Mac commands are generally executables in one of the directories
+defined in {PATH}, aliases, or shell builtins.
 
 Creating your own command generally means adding an alias or putting an
 executable in {PATH}.
@@ -709,7 +716,7 @@ We can also move or copy the executable to any directory already in {PATH}.
 
 Symlinks are files that point to other files.
 
-Symlinks will allow us to achieve all the criteria we made for Linux commands.
+Symlinks will allow us to achieve all the criteria we made for commands.
 
 Use aliases when your command is simple.
 
