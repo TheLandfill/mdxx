@@ -6,6 +6,7 @@ tumd_push()
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="icon" href="">
 <link rel="stylesheet" href="https://tuacm.com/css/author-description.css">
 {{links}}:={{from non_article_manager import Non_Article_Manager.convert_imports_to_links}}
 {{links (meta)}}
@@ -16,6 +17,7 @@ tumd_pop()
 tumd_push()
 <div id="webpage-header" class="text-center py-5 mb-5 bg-yellow" style="background: black;">
 tumd_push()
+<img src="https://tuacm.com/resources/tuacm-logo.svg?sanitize=True" alt="TU ACM logo." style="width: 50%;">
 <h2 class="font-weight-bolder" style="color: #DC143C;">blog</h2>
 tumd_pop()
 </div>
@@ -37,6 +39,7 @@ tumd_push()
 <div id="author-name">By {{author}}</div>
 tumd_pop()
 </div>
+<hr style="border: 3px solid black;">
 {{write_article}}:={{from html.article import Article_Manager.write_article}}
 {{write_article (article)}}
 {{author_description}}:={{from util.author import write_author_description}}
@@ -45,15 +48,19 @@ tumd_pop()
 {{sidenav (article)}}
 tumd_pop()
 </div>
-<div id="footer" class="mt-5 py-5 text-center px-4" style="background: #000000; text: #DC143C;">
+<div id="footer" class="mt-5 py-5 text-center px-4">
 tumd_push()
-<a href="#" style="color: #DC143C">Blog</a> <br>
-<a href="#" style="color: #DC143C">Get Involved</a> <br>
-<a href="http://hacktulsa.com" style="color: #DC143C">Hackathon</a> <br>
-<a href="#" style="color: #DC143C">GitHub</a>
-<div id="copyright" class="mt-4" style="color: #FFFFFF;">
+<div id="footer-links">
 tumd_push()
-&copy; 2019 TUACM &sdot; <a href="" style="color: #DC143C">LICENSE</a>
+<a href="#">Blog</a>
+<a href="#">Get Involved</a>
+<a href="http://hacktulsa.com">Hackathon</a>
+<a href="#">GitHub</a>
+tumd_pop()
+</div>
+<div id="copyright" class="mt-4">
+tumd_push()
+&copy; 2019 TUACM &sdot; <a href="">LICENSE</a>
 tumd_pop()
 </div>
 tumd_pop()
