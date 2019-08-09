@@ -10,6 +10,8 @@ tumd_push()
 <link rel="stylesheet" href="https://tuacm.com/css/author-description.css">
 {{links}}:={{from non_article_manager import Non_Article_Manager.convert_imports_to_links}}
 {{links (meta)}}
+{{style}}:={{from html.style import get_style}}
+{{style (article)}}
 <title>{{title}}</title>
 tumd_pop()
 </head>

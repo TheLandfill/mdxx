@@ -27,11 +27,11 @@ def main(args):
     if infile[-5:] != '.tumd':
         print(main.__doc__)
         return
-    outfile = re.sub('tumd', 'html', infile)
+    outfile = re.sub('\.tumd$', '.html', infile)
 
     if len(args) >= 3:
         outfile = args[2]
-
+    print(infile)
     convert_to_html(infile, outfile)
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from html.paragraph import paragraph_dict
 from html.tumd_comment import comment_dict
 from html.default import default_dict
 from html.raw_html import raw_html_dict
+from html.style import style_dict
 from util.check_valid_context import check_valid_context, generate_graph
 from pprint import pprint
 import re
@@ -14,7 +15,7 @@ class TUMD_Manager:
     def __init__(self, file_reader):
         self.infile = file_reader
         self.context = ['default']
-        self.context_dict = { **list_dict, **paragraph_dict, **comment_dict, **raw_html_dict }
+        self.context_dict = { **list_dict, **paragraph_dict, **comment_dict, **raw_html_dict, **style_dict }
         self.add_default_variables()
         self.line_number = 0
         self.line_data = ('', 0)
@@ -110,13 +111,15 @@ class TUMD_Manager:
         line = '    '
         count = 0
         if self.line_stack != '':
+            count = len(self.line_stack) - len(self.line_stack.lstrip('\n')) + 1
+            self.line_stack = self.line_stack.lstrip('\n')
             line_split = self.line_stack.split('\n', 1)
             line = line_split[0]
             if len(line_split) == 1:
                 self.line_stack = ''
             else:
                 self.line_stack = line_split[1]
-            self.line_data = (line, 1)
+            self.line_data = (line, count)
             return
         while re.match('^\s*$', line) and line != '':
             count += 1
