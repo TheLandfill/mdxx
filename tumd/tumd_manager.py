@@ -51,6 +51,8 @@ class TUMD_Manager:
             self.variable_definition(line)
         elif re.match(r'^\{\{.+?\}\}:=\{\{from\s+.+\s+import\s+.+\}\}', line):
             self.python_import(line)
+        elif re.match(r'^\{\{.+\}\}=".+"$', line):
+            self.immediate_substitution(line)
         elif re.match(r'^\\\{\{\\.*\}\}$', line):
             self.close_context(line, html)
         elif re.match(r'^\\\{\{.+\}\}$', line):
@@ -79,6 +81,12 @@ class TUMD_Manager:
         for obj in py_object:
             cur_object = getattr(cur_object, obj)
         self.cur_context_vars()[variable_to_set] = cur_object
+
+    def immediate_substitution(self, line):
+        varset = line.split('}}="')
+        variable_to_set = varset[0][2:]
+        value_to_set = self.expand_line(varset[1][:-1])
+        self.cur_context_vars()[variable_to_set] = value_to_set
 
     def close_context(self, line, html):
         line = re.sub(r'[\\{}/]', '', line)

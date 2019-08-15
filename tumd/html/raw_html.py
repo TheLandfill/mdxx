@@ -6,7 +6,9 @@ from html.manager import pop, push
 in_pre_section = False
 html_variables = {
     'pop' : pop,
-    'push' : push
+    'push' : push,
+    'tupo' : '{{pop (html)}}',
+    'tupu' : '{{push (html)}}'
 }
 
 def open_html(html, args, tumd):
@@ -14,11 +16,8 @@ def open_html(html, args, tumd):
 
 def process_html(html, line_data):
     global in_pre_section
-    if line_data[0] == 'tumd_pop()':
-        pop([html])
-    elif line_data[0] == 'tumd_push()':
-        push([html])
-    elif in_pre_section:
+    html_variables['html'] = html
+    if in_pre_section:
         for i in range(1, line_data[1]):
             html.add_pre('')
         html.add_pre(line_data[0])

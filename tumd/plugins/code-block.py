@@ -60,9 +60,9 @@ def close_code_block(html):
     if add_line_numbers:
         html.add('<div class="code-blocktable">')
     html.out.write(highlight(code_block, lexer, formatter).replace('<table class="code-blocktable">', '<table>'))
+    html.add('')
     if add_line_numbers:
         html.add('</div>')
-    html.add('')
     code_block = ''
     lines_to_highlight = []
     line_number = -1;
