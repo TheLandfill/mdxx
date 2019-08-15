@@ -1,31 +1,32 @@
 #!/usr/bin/python3
 from html.context import Context
 from html.paragraph import paragraph_dict
+from html.manager import pop, push
 
 list_first_element = True
 
 def open_ol(html, args, tumd):
     global list_first_element
     html.add('<ol>')
-    html.push()
+    push([html])
     list_first_element = True
 
 def close_ol(html):
-    html.pop()
+    pop([html])
     html.add('</li>')
-    html.pop()
+    pop([html])
     html.add('</ol>')
 
 def open_ul(html, args, tumd):
     global list_first_element
     html.add('<ul>')
-    html.push()
+    push([html])
     list_first_element = True
 
 def close_ul(html):
-    html.pop()
+    pop([html])
     html.add('</li>')
-    html.pop()
+    pop([html])
     html.add('</ul>')
 
 def add_li(html, line_data):
@@ -34,14 +35,14 @@ def add_li(html, line_data):
     blank_lines = line_data[1] > 1
     if list_first_element:
         html.add('<li>' + line)
-        html.push()
+        push([html])
         list_first_element = False
         return
     if blank_lines:
-        html.pop()
+        pop([html])
         html.add('</li>')
         html.add('<li>' + line)
-        html.push()
+        push([html])
     else:
         html.add(line) 
 

@@ -1,14 +1,15 @@
 #!/usr/bin/python3
 from html.context import Context
 from html.paragraph import *
+from html.manager import push, pop
 
 def open_aside(html, args, tumd):
     html.add('<div class="aside" ' + args + '>')
-    html.push()
+    push([html])
 
 def close_aside(html):
     html.check_and_close_paragraph()
-    html.pop()
+    pop([html])
     html.add('</div>')
 
 context_dict = {

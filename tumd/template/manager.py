@@ -5,9 +5,9 @@ from html.default import default_dict
 import html.manager
 from tumd_manager import TUMD_Manager
 from pprint import pprint
-from non_article import non_article_dict
+from template.context import template_dict
 
-class Non_Article_Manager:
+class Template_Manager:
     metadata_format = '\nPlease use the following format at the top of your article:\n\nTitle:\tHow to Write a Tutorial\nAuthor:\tJoseph Mellor\nDate:\tJune 15, 2019\nImport:\tterminal\taside\nScripts:\tdraw_spiral\tinvert_colors\nCode Style:\tdefault'
 
     necessary_css = [ "general", "article" ]
@@ -19,16 +19,18 @@ class Non_Article_Manager:
 
     def __init__(self, html_manager, article_manager):
         self.html = html_manager
-        self.css = Non_Article_Manager.necessary_css
+        self.css = Template_Manager.necessary_css
         self.imports = []
-        self.scripts = Non_Article_Manager.necessary_scripts
+        self.scripts = Template_Manager.necessary_scripts
         self.metadata = None
         self.article = article_manager
         self.tumd = self.article.tumd
         self.template = TUMD_Manager(open('templates/article.tumd', 'r'))
-        self.template.context_dict = non_article_dict
+        self.template.context_dict = template_dict
         self.template.context_dict['non-article'].variables['meta'] = self
         self.template.context_dict['non-article'].variables['article'] = self.article
+        self.template.context_dict['non-article'].variables['html'] = self.html
+        self.tumd.context_dict['raw-html'].variables['html'] = self.html
         self.template.context = ['default', 'non-article']
         self.template.add_default_variables()
 
@@ -38,13 +40,13 @@ class Non_Article_Manager:
             line = self.tumd.next_line_no_nl()
             re_test = r'^' + tag[0] + r':\s*\S.*'
             if re.match(re_test, line) is None and tag[1]:
-                print('Missing a legible ' + tag[0].lower() + ' declaration.' + Non_Article_Manager.metadata_format)
+                print('Missing a legible ' + tag[0].lower() + ' declaration.' + Template_Manager.metadata_format)
                 raise SystemExit
             data.append(re.sub(tag[0] + r':\s*', '', line))
         return data
 
     def get_metadata(self):
-        metadata_tags = [(r'Title', True), (r'Author', True), (r'Descrip', True)]
+        metadata_tags = [(r'Title', True), (r'Author', True), (r'Tagline', True)]
         data = self.get_tags(metadata_tags)
         self.template.cur_context_vars()['title'] = data[0]
         self.template.cur_context_vars()['author'] = data[1]
@@ -62,7 +64,7 @@ class Non_Article_Manager:
         code_style = re.sub('\s*$', '', code_style)
         if code_style != '':
             self.html.code_style = re.sub(r'\+.*', '', code_style)
-        self.css.append(Non_Article_Manager.code_style_path + code_style)
+        self.css.append(Template_Manager.code_style_path + code_style)
 
     def get_data(self):
         self.get_metadata()
@@ -88,7 +90,7 @@ class Non_Article_Manager:
 
     def convert_imports_to_links(args):
         for css in args[0].css:
-            args[0].add(Non_Article_Manager.css_edges[0] + args[0].css_path + css + Non_Article_Manager.css_edges[1])
+            args[0].add(Template_Manager.css_edges[0] + args[0].css_path + css + Template_Manager.css_edges[1])
         return ''
 
     def import_contexts(self):
@@ -105,5 +107,5 @@ class Non_Article_Manager:
 
     def write_scripts(args):
         for script in args[0].scripts:
-            args[0].add('<script src="' + Non_Article_Manager.scripts_path + script + '.js"></script>')
+            args[0].add('<script src="' + Template_Manager.scripts_path + script + '.js"></script>')
         return ''

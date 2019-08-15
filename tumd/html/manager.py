@@ -25,14 +25,16 @@ class HTML_Manager:
     def remove_empty(self, line):
         return line.replace(default_dict['empty'], '')
 
-    def push(self):
-        self.tab_level += "\t"
-
-    def pop(self):
-        self.tab_level = self.tab_level[:-1]
-
     def check_and_close_paragraph(self):
         if self.need_to_close_paragraph:
-            self.pop()
+            pop([self])
             self.add('</p>')
             self.need_to_close_paragraph = False
+
+def push(args):
+    args[0].tab_level += "\t"
+    return ''
+
+def pop(args):
+    args[0].tab_level = args[0].tab_level[:-1]
+    return ''

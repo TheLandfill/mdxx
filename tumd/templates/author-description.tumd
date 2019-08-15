@@ -1,0 +1,9 @@
+<div class="article">
+{{tupu}}<div id="author-description-local">
+{{tupu}}<img src="{{author-image (author)}}" id="author-description-image" alt="A picture of {{author}}, the author.">
+<div id="author-description-text">
+{{tupu}}<p>{{author-description-text}}
+</p>
+{{tupo}}</div>
+{{tupo}}</div>
+{{tupo}}</div>

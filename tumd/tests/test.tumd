@@ -1,6 +1,6 @@
 Title:		How to Write a Tutorial
 Author:		Joseph Mellor
-Descrip:	This is just a test to see what it looks like. Since most of these are going to be shorter, I'm going to try a much longer one.
+Tagline:	This is just a test to see what it looks like. Since most of these are going to be shorter, I'm going to try a much longer one.
 Import:		aside terminal code-block
 Scripts:
 Code Style:	trac+dark

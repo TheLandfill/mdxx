@@ -1,32 +1,25 @@
 <!doctype html>
 <html lang="en-US">
-tumd_push()
-<head>
-tumd_push()
-<meta charset="utf-8">
+{{tupu}}<head>
+{{tupu}}<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="icon" href="">
 <link rel="stylesheet" href="https://tuacm.com/css/author-description.css">
-{{links}}:={{from non_article_manager import Non_Article_Manager.convert_imports_to_links}}
+{{links}}:={{from template.manager import Template_Manager.convert_imports_to_links}}
 {{links (meta)}}
 {{style}}:={{from html.style import get_style}}
 {{style (article)}}
 <title>{{title}}</title>
-tumd_pop()
-</head>
+{{tupo}}</head>
 <body id="body-handle">
-tumd_push()
-<div id="webpage-header" class="text-center py-5 mb-5 bg-yellow" style="background: black;">
-tumd_push()
-<img src="https://tuacm.com/resources/tuacm-logo.svg?sanitize=True" alt="TU ACM logo." style="width: 50%;">
+{{tupu}}<div id="webpage-header" class="text-center py-5 mb-5 bg-yellow" style="background: black;">
+{{tupu}}<img src="https://tuacm.com/resources/tuacm-logo.svg?sanitize=True" alt="TU ACM logo." style="width: 50%;">
 <h2 class="font-weight-bolder" style="color: #DC143C;">blog</h2>
-tumd_pop()
-</div>
+{{tupo}}</div>
 <div>
-tumd_push()
-<div class="article">
-tumd_push()
+{{tupu}}<div class="article">
+{{tupu}}
 {{heading-to-section}}:={{from html.article import Article_Manager.heading_to_section}}
 {{title-link}}:="{{heading-to-section (article) (title) 0}}"
 <div id="article-title"><h1 id="{{title-link}}">{{title}}</h1></div>
@@ -35,12 +28,11 @@ tumd_push()
 {{date}}:={{from util.date import date}}
 <div id="date-and-tags">Posted {{date}} {{tags}}</div>
 <div id="author-box">
-tumd_push()
+{{tupu}}
 {{author-image}}:={{from util.author import get_author_image}}
 <div id="author-image" style="background: url({{author-image (author)}}) 50% 50% no-repeat; background-size: auto 50px;"></div>
 <div id="author-name">By {{author}}</div>
-tumd_pop()
-</div>
+{{tupo}}</div>
 <hr style="border: 3px solid black;">
 {{write_article}}:={{from html.article import Article_Manager.write_article}}
 {{write_article (article)}}
@@ -48,28 +40,19 @@ tumd_pop()
 {{author_description (meta)}}
 {{sidenav}}:={{from html.article import Article_Manager.write_sidenav}}
 {{sidenav (article)}}
-tumd_pop()
-</div>
+{{tupo}}</div>
 <div id="footer" class="mt-5 py-5 text-center px-4">
-tumd_push()
-<div id="footer-links">
-tumd_push()
-<a href="#">Blog</a>
+{{tupu}}<div id="footer-links">
+{{tupu}}<a href="#">Blog</a>
 <a href="#">Get Involved</a>
 <a href="http://hacktulsa.com">Hackathon</a>
 <a href="#">GitHub</a>
-tumd_pop()
-</div>
+{{tupo}}</div>
 <div id="copyright" class="mt-4">
-tumd_push()
-&copy; 2019 TUACM &sdot; <a href="">LICENSE</a>
-tumd_pop()
-</div>
-tumd_pop()
-</div>
-{{scripts}}:={{from non_article_manager import Non_Article_Manager.write_scripts}}
+{{tupu}}&copy; 2019 TUACM &sdot; <a href="">LICENSE</a>
+{{tupo}}</div>
+{{tupo}}</div>
+{{scripts}}:={{from template.manager import Template_Manager.write_scripts}}
 {{scripts (meta)}}
-tumd_pop()
-</body>
-tumd_pop()
-</html>
+{{tupo}}</body>
+{{tupo}}</html>

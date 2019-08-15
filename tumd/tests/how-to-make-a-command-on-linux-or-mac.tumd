@@ -1,6 +1,6 @@
 Title:		How to Make a Command on Linux or Mac
 Author:		Joseph Mellor
-Descrip:	What is your computer doing when you type a command in the terminal?
+Tagline:	What is your computer doing when you type a command in the terminal?
 Import:		terminal aside code-block
 Scripts:
 Code Style:	trac+dark

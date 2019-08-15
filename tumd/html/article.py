@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import re
-from html.manager import HTML_Manager
+from html.manager import HTML_Manager, push, pop
 from tumd_manager import TUMD_Manager
 
 class Article_Manager:
@@ -36,7 +36,7 @@ class Article_Manager:
             count += 1
         if count > 0:
             if self.html.need_to_close_paragraph:
-                self.html.pop()
+                pop([self.html])
                 self.html.add('</p>')
                 self.html.need_to_close_paragraph = False
             line = self.tumd.expand_line(line)
@@ -62,18 +62,18 @@ class Article_Manager:
 
     def write_sidenav(args):
         args[0].html.add('<nav id="sidenav">')
-        args[0].html.push()
+        push([args[0].html])
         for heading in args[0].headings:
             sidenav_level = ''
 #           for i in range(1, heading[2]):
 #               sidenav_level += '<div class="sidenav-level"></div>'
             args[0].html.add(sidenav_level + '<a href="#' + heading[0] + '" style="padding-left:' + str(12 * (heading[2] + 1)) + 'px;">' + heading[1] + '</a>')
-        args[0].html.pop()
+        pop([args[0].html])
         args[0].html.add('</nav>')
         args[0].html.add('<div id="sidenav-activator"></div>')
         return ''
 
     def write_end_of_article(self):
         self.html.check_and_close_paragraph()
-        self.html.pop()
+        pop([self.html])
         self.html.add('</div>')

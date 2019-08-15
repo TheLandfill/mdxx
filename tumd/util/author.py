@@ -1,5 +1,9 @@
 #/usr/bin/python3
 from urllib.request import urlopen
+from html.manager import pop, push
+from tumd_manager import TUMD_Manager
+from html.context import Context
+from html.default import default_dict
 
 def get_author_image(args):
     name = args[0]
@@ -7,32 +11,49 @@ def get_author_image(args):
 
 def write_author_description(args):
     meta = args[0]
-    title = meta.template.cur_context_vars()['title']
-    author = meta.template.cur_context_vars()['author']
+    author_variables['author'] = meta.template.cur_context_vars()['author']
     html = meta.html
-    html.add('<div class="article">')
-    html.push()
-    html.add('<div id="author-description-local">')
-    html.push()
-    html.add('<img src="' + get_author_image([author]) + '" id="author-description-image" alt="A picture of ' + author + ', the author.">')
-    html.add('<div id="author-description-text">')
-    html.push()
-    html.add_no_nl('<p>')
-    html.push()
-    print(author_name(author) + '/description.txt')
-    data = urlopen(author_name(author) + '/description.txt')
-    html.out.write(data.readline().decode("utf-8"))
-    for line in data:
-        html.add_no_nl(line.decode("utf-8"))
-    html.pop()
-    html.add('</p>')
-    html.pop()
-    html.add('</div>')
-    html.pop()
-    html.add('</div>')
-    html.pop()
-    html.add('</div>')
+    author_variables['html'] = html
+    with open("templates/author-description.tumd", "r") as reader:
+        tumd = TUMD_Manager(reader)
+        tumd.context_dict = author_dict
+        tumd.context = ['default', 'author-description']
+        while (True):
+            tumd.find_next_content_line()
+            if tumd.line_data[0] == '':
+                break
+            tumd.handle_context(html)
     return ''
+
+def get_author_description(args):
+    author = author_variables['author']
+    author_url = author_name(author) + '/description.txt'
+    print(author_url)
+    data = urlopen(author_url)
+    description = data.readline().decode("utf-8")
+    for line in data:
+        description += '\t' + line.decode("utf-8")
+    return description
+
+author_variables = {
+    'author-image' : get_author_image,
+    'author' : 'MISSING',
+    'author-description-text' : get_author_description,
+    'html' : None,
+    'pop' : pop,
+    'push' : push,
+    'tupu' : '{{push (html)}}',
+    'tupo' : '{{pop (html)}}'
+}
+
+author_variables = { **default_dict, **author_variables }
+
+def process_author(html, line_data):
+    html.add(line_data[0])
+
+author_dict = {
+    'author-description': Context(None, process_author, None, author_variables)
+}
 
 def author_name(name):
     return 'https://tuacm.com/authors/' + '-'.join(name.split()).lower()

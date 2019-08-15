@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from html.context import Context
+from html.manager import pop, push
 
 context_dict = {
 }
@@ -10,7 +11,7 @@ def paragraph(html, line_data):
     if blank_lines:
         html.check_and_close_paragraph()
         html.add('<p>' + line)
-        html.push()
+        push([html])
         html.need_to_close_paragraph = True
     else:
         html.add(line)

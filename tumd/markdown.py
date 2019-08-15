@@ -2,7 +2,7 @@
 import re
 import sys
 from html.manager import HTML_Manager
-from non_article_manager import Non_Article_Manager
+from template.manager import Template_Manager
 from tumd_manager import TUMD_Manager
 from html.article import Article_Manager
 
@@ -11,7 +11,7 @@ def convert_to_html(infile, out):
         tumd = TUMD_Manager(file_reader)
         writer = HTML_Manager(file_writer)
         article = Article_Manager(writer, tumd)
-        meta = Non_Article_Manager(writer, article)
+        meta = Template_Manager(writer, article)
         meta.process_template()
 
 def main(args):
