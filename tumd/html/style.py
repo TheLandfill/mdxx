@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from html.context import Context
+from html.manager import push, pop
 
 style_variables = {
     '{': '{',
@@ -21,13 +22,13 @@ def open_style(html, args, tumd):
         raise SystemExit
     html.add('<style>')
     used_style = True
-    html.push()
+    push([html])
 
 def process_style(html, line_data):
     html.add(line_data[0])
 
 def close_style(html):
-    html.pop()
+    pop([html])
     html.add('</style>')
 
 style_dict = {

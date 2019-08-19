@@ -12,7 +12,8 @@ code_block_variables = {
     r'\{' : r'\{',
     r'\}' : r'\}',
     'lt' : '<',
-    'gt' : '>'
+    'gt' : '>',
+    'amp' : '&'
 }
 
 code_block = ''
