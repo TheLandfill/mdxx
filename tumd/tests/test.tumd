@@ -1,14 +1,15 @@
+article
 Title:		How to Write a Tutorial
-Author:		Joseph Mellor
+Author:		Nikita Zdvijkov
 Tagline:	This is just a test to see what it looks like. Since most of these are going to be shorter, I'm going to try a much longer one.
+Code Style:	trac+dark
 Import:		aside terminal code-block
 Scripts:
-Code Style:	trac+dark
 
 # Heading one
 ##Heading two
 ###                Heading three
-#### Heading Four 
+#### Heading Four
 ##### Heading Five
 ###### Heading Six
 ####### Should Only Go Up to Six

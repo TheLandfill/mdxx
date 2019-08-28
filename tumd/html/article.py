@@ -4,7 +4,7 @@ from html.manager import HTML_Manager, push, pop
 from tumd_manager import TUMD_Manager
 
 class Article_Manager:
-    
+
     def __init__(self, html_manager, tumd_manager):
         self.html = html_manager
         self.tumd = tumd_manager
@@ -77,3 +77,19 @@ class Article_Manager:
         self.html.check_and_close_paragraph()
         pop([self.html])
         self.html.add('</div>')
+
+def get_metadata(args):
+    template = args[0]
+    code_style_path = args[1]
+    metadata_tags = [(r'Title', True), (r'Author', True), (r'Tagline', True), (r'Code Style', False)]
+    tumd = template.template
+    data = template.get_tags(metadata_tags)
+    tumd.cur_context_vars()['title'] = data[0]
+    tumd.cur_context_vars()['author'] = data[1]
+    tumd.cur_context_vars()['description'] = data[2]
+    code_style = data[3]
+    code_style = re.sub('\s*$', '', code_style)
+    if code_style != '':
+        template.html.code_style = re.sub(r'\+.*', '', code_style)
+    template.css.append(code_style_path + code_style)
+    return ''

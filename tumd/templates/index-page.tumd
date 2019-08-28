@@ -1,0 +1,50 @@
+{{root}}="https://tuacm.com/"
+{{css}}="{{root}}css/"
+{{topic}}="TESTING"
+
+{{imports}}:={{from template.manager import Template_Manager.get_data}}
+{{links}}:={{from template.manager import Template_Manager.convert_imports_to_links}}
+{{style}}:={{from html.style import get_style}}
+{{get-description}}:={{from html.index_page import get_description}}
+{{get-metadata}}:={{from html.index_page import get_metadata}}
+{{get-article-links}}:={{from html.index_page import print_subfolders}}
+
+
+<!doctype html>
+<html lang="en-US">
+{{tupu}}<head>
+{{tupu}}<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">{{get-metadata (template)}}{{imports (template)}}
+<link rel="icon" href="">
+<link rel="stylesheet" href="{{css}}nanobs.css">
+<link rel="stylesheet" href="{{css}}general.css">
+<link rel="stylesheet" href="{{css}}index-page.css">{{links (template)}}{{style (content)}}
+<title>{{topic}}</title>
+{{description}}="{{get-description (content)}}"
+<meta name="description" content="{{description}}">
+{{tupo}}</head>
+<body id="body-handle">
+{{tupu}}<div id="webpage-header" class="text-center py-5 mb-5 bg-yellow" style="background: black;">
+{{tupu}}<img src="{{root}}resources/tuacm-logo.svg?sanitize=True" alt="TU ACM logo." style="width: calc(30% + 150px);">
+<div>
+{{tupu}}<a href="{{root}}blog" class="font-weight-bolder" style="color: #DC143C; font-size: calc(1.5em + 1vw);">blog</a>
+{{tupo}}</div>
+{{tupo}}</div>
+<div id="index-page-content">
+{{tupu}}<h1>{{topic}}</h1>
+<p>{{description}}</p>
+{{get-article-links (html) (content)}}{{tupo}}</div>
+<div id="footer" class="mt-5 py-5 text-center px-4">
+{{tupu}}<div id="footer-links">
+{{tupu}}<a href="{{root}}blog">Blog</a>
+<a href="#">Get Involved</a>
+<a href="http://hacktulsa.com">Hackathon</a>
+<a href="#">GitHub</a>
+{{tupo}}</div>
+<div id="copyright" class="mt-4">
+{{tupu}}&copy; 2019 TUACM &sdot; <a href="">LICENSE</a>
+{{tupo}}</div>
+{{tupo}}</div>
+
+{{tupo}}</body>
+{{tupo}}</html>

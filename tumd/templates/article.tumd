@@ -1,28 +1,48 @@
+{{root}}="https://tuacm.com/"
+{{css}}="{{root}}css/"
+{{js}}="{{root}}js/"
+
+{{article}}:="{{content}}"
+
+{{article-meta}}:={{from html.article import get_metadata}}
+{{imports}}:={{from template.manager import Template_Manager.get_data}}
+
 {{links}}:={{from template.manager import Template_Manager.convert_imports_to_links}}
 {{style}}:={{from html.style import get_style}}
+
 {{heading-to-section}}:={{from html.article import Article_Manager.heading_to_section}}
-{{title-link}}="{{heading-to-section (article) (title) 0}}"
 {{tags}}:="{{empty}}"
+
 {{date-func}}:={{from util.date import date}}
 {{date}}="{{date-func}}"
-{{write_article}}:={{from html.article import Article_Manager.write_article}}
-{{author_description}}:={{from util.author import write_author_description}}
+
+{{author-image}}:={{from util.author import get_author_image}}
+{{author-description}}:={{from util.author import write_author_description}}
+
+{{write-article}}:={{from html.article import Article_Manager.write_article}}
 {{sidenav}}:={{from html.article import Article_Manager.write_sidenav}}
+
 {{scripts}}:={{from template.manager import Template_Manager.write_scripts}}
+
 <!doctype html>
 <html lang="en-US">
 {{tupu}}<head>
 {{tupu}}<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="icon" href="">
-<link rel="stylesheet" href="https://tuacm.com/css/author-description.css">{{links (meta)}}{{style (article)}}
+<link rel="stylesheet" href="{{css}}nanobs.css">
+<link rel="stylesheet" href="{{css}}general.css">
+<link rel="stylesheet" href="{{css}}article.css">
+<link rel="stylesheet" href="{{css}}author-description.css">{{article-meta (template) code-style/}}{{imports (template)}}{{links (template)}}{{style (article)}}
+{{title-link}}="{{heading-to-section (article) (title) 0}}"
 <title>{{title}}</title>
 {{tupo}}</head>
 <body id="body-handle">
 {{tupu}}<div id="webpage-header" class="text-center py-5 mb-5 bg-yellow" style="background: black;">
-{{tupu}}<img src="https://tuacm.com/resources/tuacm-logo.svg?sanitize=True" alt="TU ACM logo." style="width: 50%;">
-<h2 class="font-weight-bolder" style="color: #DC143C;">blog</h2>
+{{tupu}}<img src="{{root}}resources/tuacm-logo.svg?sanitize=True" alt="TU ACM logo." style="width: calc(30% + 150px);">
+<div>
+{{tupu}}<a href="{{root}}blog" class="font-weight-bolder" style="color: #DC144C; font-size: calc(1.5em + 1vw);">blog</a>
+{{tupo}}</div>
 {{tupo}}</div>
 <div>
 
@@ -31,13 +51,12 @@
 <div id="meta-description">{{description}}</div>
 <div id="date-and-tags">Posted {{date}} {{tags}}</div>
 <div id="author-box">
-{{author-image}}:={{from util.author import get_author_image}}
 {{tupu}}<div id="author-image" style="background: url({{author-image (author)}}) 50% 50% no-repeat; background-size: auto 50px;"></div>
 <div id="author-name">By {{author}}</div>
 {{tupo}}</div>
 
 <hr style="border: 3px solid black;">
-{{write_article (article)}}{{author_description (meta)}}{{sidenav (article)}}{{tupo}}</div>
+{{write-article (article)}}{{author-description (template)}}{{sidenav (article)}}{{tupo}}</div>
 
 <div id="footer" class="mt-5 py-5 text-center px-4">
 {{tupu}}<div id="footer-links">
@@ -51,5 +70,6 @@
 {{tupo}}</div>
 {{tupo}}</div>
 
-{{scripts (meta)}}{{tupo}}</body>
+<script src="https://tuacm.com/js/sidenav.js"></script>
+{{scripts (template)}}{{tupo}}</body>
 {{tupo}}</html>

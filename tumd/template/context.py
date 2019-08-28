@@ -19,5 +19,5 @@ metadata_variables = {
 metadata_variables = { **default_dict, **metadata_variables }
 
 template_dict = {
-    'non-article' : Context(None, process_html, None, metadata_variables)
+    'template' : Context(None, process_html, None, metadata_variables)
 }

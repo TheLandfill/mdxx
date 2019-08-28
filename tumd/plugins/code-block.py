@@ -29,7 +29,7 @@ def open_code_block(html, args, tumd):
     split_args = args.split()
     if len(split_args) < 1:
         print('ERROR: Need to specify the language.')
-        html.print_line()
+        tumd.print_line()
         raise SystemExit
     code_language = split_args[0]
     if len(split_args) > 1:
