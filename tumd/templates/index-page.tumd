@@ -15,13 +15,22 @@
 {{tupu}}<head>
 {{tupu}}<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">{{get-metadata (template)}}{{imports (template)}}
-<link rel="icon" href="">
+<link rel="icon" type="image/x-icon" href="{{root}}resources/favicon.png">
 <link rel="stylesheet" href="{{css}}nanobs.css">
 <link rel="stylesheet" href="{{css}}general.css">
 <link rel="stylesheet" href="{{css}}index-page.css">{{links (template)}}{{style (content)}}
 <title>{{topic}}</title>
 {{description}}="{{get-description (content)}}"
 <meta name="description" content="{{description}}">
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-146716017-1"></script>
+<script>
+{{tupu}}window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'UA-146716017-1');
+{{tupo}}</script>
 {{tupo}}</head>
 <body id="body-handle">
 {{tupu}}<div id="webpage-header" class="text-center py-5 mb-5 bg-yellow" style="background: black;">
