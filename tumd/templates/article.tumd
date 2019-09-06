@@ -7,6 +7,8 @@
 {{article-meta}}:={{from html.article import get_metadata}}
 {{imports}}:={{from template.manager import Template_Manager.get_data}}
 
+{{meta-description}}:={{from util.meta_description import get_meta_description}}
+
 {{links}}:={{from template.manager import Template_Manager.convert_imports_to_links}}
 {{style}}:={{from html.style import get_style}}
 
@@ -14,7 +16,7 @@
 {{tags}}:="{{empty}}"
 
 {{date-func}}:={{from util.date import date}}
-{{date}}="{{date-func}}"
+{{date}}="{{date-func (path)}}"
 
 {{author-image}}:={{from util.author import get_author_image}}
 {{author-description}}:={{from util.author import write_author_description}}
@@ -29,6 +31,7 @@
 {{tupu}}<head>
 {{tupu}}<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="{{meta-description (path)}}">
 <link rel="icon" type="image/x-icon" href="{{root}}resources/favicon.png">
 <link rel="stylesheet" href="{{css}}nanobs.css">
 <link rel="stylesheet" href="{{css}}general.css">
@@ -40,7 +43,7 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-146716017-1"></script>
 <script>
 {{tupu}}window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
+function gtag()\{dataLayer.push(arguments);\}
 gtag('js', new Date());
 
 gtag('config', 'UA-146716017-1');
@@ -79,6 +82,6 @@ gtag('config', 'UA-146716017-1');
 {{tupo}}</div>
 {{tupo}}</div>
 
-<script src="https://tuacm.com/js/sidenav.js"></script>
+<script src="{{js}}sidenav.js"></script>
 {{scripts (template)}}{{tupo}}</body>
 {{tupo}}</html>

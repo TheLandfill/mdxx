@@ -16,8 +16,10 @@ class TUMD_Manager:
         self.infile = file_reader
         self.context = ['default']
         self.context_dict = { **list_dict, **paragraph_dict, **comment_dict, **raw_html_dict, **style_dict }
+        default_dict['self'] = self
         self.add_default_variables()
         self.line_number = 0
+        self.print_expansion = False
         self.line_data = ('', 0)
         self.line_stack = ''
 
@@ -136,6 +138,7 @@ class TUMD_Manager:
         self.line_data = (line, count)
 
     def expand_line(self, line):
+        complete_line = line + '\n-->\n'
         context_variables = self.cur_context_vars()
         current_sub = re.search(r'\{\{[^{]+?\}\}', line)
         while current_sub:
@@ -175,6 +178,8 @@ class TUMD_Manager:
         line = re.sub(r'(?<!\\)}', context_variables['}'], line)
         line = line.replace(r'\{', context_variables['\{'])
         line = line.replace(r'\}', context_variables['\}'])
+        if self.print_expansion:
+            print(complete_line + line + '\n')
         return line
 
     def check_variable_dependency(self, context):

@@ -5,6 +5,8 @@ from tumd_manager import TUMD_Manager
 from html.context import Context
 from html.default import default_dict
 
+path = 'https://tuacm.com/authors/'
+
 def get_author_image(args):
     name = args[0]
     return author_name(name) + '/large.jpg'
@@ -56,4 +58,4 @@ author_dict = {
 }
 
 def author_name(name):
-    return 'https://tuacm.com/authors/' + '-'.join(name.split()).lower()
+    return path + '-'.join(name.split()).lower()

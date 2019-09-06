@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+def print_expansion(args):
+    tumd = args[0]
+    tumd.print_expansion = not tumd.print_expansion
+    return ''
+
 default_dict = {
     'empty': u"\u0007",             # The 'bell' character hasn't been used in
                                     # twenty years and it wouldn't even work in
@@ -11,5 +16,7 @@ default_dict = {
     r'\}' : '}',
     'ldb' : r'\{{{empty}}\{',
     'lt' : '&lt;',
-    'gt' : '&gt;'
+    'gt' : '&gt;',
+    'print_expansion' : print_expansion,
+    'print' : '{{print_expansion (self)}}'
 }

@@ -6,6 +6,7 @@ import html.manager
 from tumd_manager import TUMD_Manager
 from pprint import pprint
 from template.context import template_dict
+import os
 
 class Template_Manager:
     metadata_format = '\nPlease use the following format at the top of your article:\n\nTitle:\tHow to Write a Tutorial\nAuthor:\tJoseph Mellor\nDate:\tJune 15, 2019\nImport:\tterminal\taside\nScripts:\tdraw_spiral\tinvert_colors\nCode Style:\tdefault'
@@ -27,6 +28,7 @@ class Template_Manager:
         self.template.context_dict['template'].variables['template'] = self
         self.template.context_dict['template'].variables['content'] = self.content
         self.template.context_dict['template'].variables['html'] = self.html
+        self.template.context_dict['template'].variables['path'] = os.path.dirname(os.path.realpath(self.content.tumd.infile.name))
         self.tumd.context_dict['raw-html'].variables['html'] = self.html
         self.template.context = ['default', 'template']
         self.template.add_default_variables()
