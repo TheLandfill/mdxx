@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="{{css}}general.css">
 <link rel="stylesheet" href="{{css}}article.css">
 <link rel="stylesheet" href="{{css}}author-description.css">{{article-meta (template) code-style/}}{{imports (template)}}{{links (template)}}{{style (article)}}
-{{title-link}}="{{heading-to-section (article) (title) 0}}"
+{{title-link}}="{{heading-to-section (article) (title) 1}}"
 <title>{{title}}</title>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-146716017-1"></script>
@@ -76,9 +76,6 @@ gtag('config', 'UA-146716017-1');
 <a href="#">Get Involved</a>
 <a href="http://hacktulsa.com">Hackathon</a>
 <a href="#">GitHub</a>
-{{tupo}}</div>
-<div id="copyright" class="mt-4">
-{{tupu}}&copy; 2019 TUACM &sdot; <a href="">LICENSE</a>
 {{tupo}}</div>
 {{tupo}}</div>
 

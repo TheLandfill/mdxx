@@ -1,0 +1,6 @@
+<div class="article-box">
+{{tupu}}<h2 class="article-box-text"><a href="{{directory}}">{{title}}</a></h2><br>
+<h4 class="article-box-text">by <a href="{{author-name (author)}}">{{author}}</a></h4><br>
+<span style="font-size: 1.25em">{{tagline}}</span>
+<a href="{{directory}}" class="article-box-link"></a>
+{{tupo}}</div>

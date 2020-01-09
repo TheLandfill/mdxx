@@ -48,7 +48,7 @@ test
 data
 {{prompt}} cd ../
 {{dir}}:="~"
-{{dircolor}}:="#0000FF"
+{{dir-color}}:="#0000FF"
 {{prompt}} pwd
 /home/nikita
 {{empty}}

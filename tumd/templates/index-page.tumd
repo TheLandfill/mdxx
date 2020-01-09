@@ -7,7 +7,7 @@
 {{style}}:={{from html.style import get_style}}
 {{get-description}}:={{from html.index_page import get_description}}
 {{get-metadata}}:={{from html.index_page import get_metadata}}
-{{get-article-links}}:={{from html.index_page import print_subfolders}}
+{{get-article-links}}:={{from util.tags import print_tagged_articles}}
 
 
 <!doctype html>
@@ -42,7 +42,7 @@ gtag('config', 'UA-146716017-1');
 <div id="index-page-content">
 {{tupu}}<h1>{{topic}}</h1>
 <p>{{description}}</p>
-{{get-article-links (html) (content)}}{{tupo}}</div>
+{{get-article-links (html) (path)}}{{tupo}}</div>
 <div id="footer" class="mt-5 py-5 text-center px-4">
 {{tupu}}<div id="footer-links">
 {{tupu}}<a href="{{root}}blog">Blog</a>

@@ -16,7 +16,6 @@ class TUMD_Manager:
         self.infile = file_reader
         self.context = ['default']
         self.context_dict = { **list_dict, **paragraph_dict, **comment_dict, **raw_html_dict, **style_dict }
-        default_dict['self'] = self
         self.add_default_variables()
         self.line_number = 0
         self.print_expansion = False
@@ -25,6 +24,7 @@ class TUMD_Manager:
 
     def add_default_variables(self):
         for key in self.context_dict:
+            self.context_dict[key].variables['self'] = self
             for key2 in default_dict:
                 if key2 not in self.context_dict[key].variables:
                     self.context_dict[key].variables[key2] = default_dict[key2]
@@ -142,6 +142,8 @@ class TUMD_Manager:
         context_variables = self.cur_context_vars()
         current_sub = re.search(r'\{\{[^{]+?\}\}', line)
         while current_sub:
+            if self.print_expansion:
+                print(complete_line + line + '\n')
             # Could make {{rest-of-line}} handling its own function
             if (current_sub.group() == '{{rest-of-line}}'):
                 rest_of_line = line[current_sub.span()[1]:]

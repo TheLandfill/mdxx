@@ -5,6 +5,7 @@ from html.manager import pop, push
 
 in_pre_section = False
 html_variables = {
+    'html' : '',
     'pop' : pop,
     'push' : push,
     'tupo' : '{{pop (html)}}',
@@ -12,6 +13,7 @@ html_variables = {
 }
 
 def open_html(html, args, tumd):
+    html_variables['html'] = html
     return
 
 def process_html(html, line_data):
@@ -32,5 +34,5 @@ def close_html(html):
     return
 
 raw_html_dict = {
-    'raw-html': Context(open_html, process_html, close_html, {})
+    'raw-html': Context(open_html, process_html, close_html, html_variables)
 }

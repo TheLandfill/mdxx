@@ -58,18 +58,16 @@ def print_subfolders(args):
     dirs = get_immediate_subdirectories(maindir)
     dirs.sort()
     articles = []
-    subtopics = []
     for directory in dirs:
-        data = None
-        with open(maindir + '/' + directory + '/index.tumd', 'r') as file_reader:
-            line = file_reader.readline().rstrip()
-            if line == 'article':
-                data = articles
-            elif line == 'index-page':
-                data = subtopics
-            content_dict = get_tags(file_reader, line)
-            content_dict['Directory'] = directory
-            data.append(content_dict)
+        try:
+            with open(maindir + '/' + directory + '/index.tumd', 'r') as file_reader:
+                line = file_reader.readline().rstrip()
+                if line == 'article':
+                    content_dict = get_tags(file_reader, line)
+                    content_dict['Directory'] = directory
+                    articles.append(content_dict)
+        except:
+            pass
     if len(articles) > 0:
         html.add('<h1 class="section-head">Articles</h1>')
     for article in articles:
@@ -79,16 +77,6 @@ def print_subfolders(args):
         html.add('<h4 class="article-box-text">by <a href="' + author_name(article['Author']) + '">' + article['Author'] + '</a></h4><br>')
         html.add('<span style="font-size: 1.25em">' + article['Tagline'] + '</span>')
         html.add('<a href="' + article['Directory'] + '" class="article-box-link"></a>')
-        pop([html])
-        html.add('</div>')
-    if len(subtopics) > 0:
-        html.add('<h1 class="section-head">Subtopics</h1>')
-    for subtopic in subtopics:
-        html.add('<div class="article-box">')
-        push([html])
-        html.add('<h2 class="article-box-text"><a href="' + subtopic['Directory'] + '">' + subtopic['Topic'] + '</a></h2><br>')
-        html.add(subtopic['Description'])
-        html.add('<a href="' + subtopic['Directory'] + '" class="article-box-link"></a>')
         pop([html])
         html.add('</div>')
     return ''

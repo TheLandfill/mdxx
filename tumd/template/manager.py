@@ -27,6 +27,7 @@ class Template_Manager:
         self.template.context_dict = template_dict
         self.template.context_dict['template'].variables['template'] = self
         self.template.context_dict['template'].variables['content'] = self.content
+        self.template.context_dict['template'].variables['self'] = self.content
         self.template.context_dict['template'].variables['html'] = self.html
         self.template.context_dict['template'].variables['path'] = os.path.dirname(os.path.realpath(self.content.tumd.infile.name))
         self.tumd.context_dict['raw-html'].variables['html'] = self.html

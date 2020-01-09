@@ -32,9 +32,10 @@ class Article_Manager:
             return
         line = self.tumd.line_data[0]
         count = 0
-        while line[count] == '#' and count < 6:
+        while line[count] == '#' and count < 5:
             count += 1
         if count > 0:
+            count += 1
             if self.html.need_to_close_paragraph:
                 pop([self.html])
                 self.html.add('</p>')
@@ -67,7 +68,7 @@ class Article_Manager:
             sidenav_level = ''
 #           for i in range(1, heading[2]):
 #               sidenav_level += '<div class="sidenav-level"></div>'
-            args[0].html.add(sidenav_level + '<a href="#' + heading[0] + '" style="padding-left:' + str(12 * (heading[2] + 1)) + 'px;">' + heading[1] + '</a>')
+            args[0].html.add(sidenav_level + '<a href="#' + heading[0] + '" style="padding-left:' + str(12 * (heading[2])) + 'px;">' + heading[1] + '</a>')
         pop([args[0].html])
         args[0].html.add('</nav>')
         args[0].html.add('<div id="sidenav-activator"></div>')
