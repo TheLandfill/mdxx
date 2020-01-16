@@ -1,4 +1,5 @@
-{{redir-func}}:={{from template.manager import Template_Manager.get_data}}
+{{redir-func}}:={{from html.redirect import get_link}}
+{{get_link (template)}}
 
 <!doctype html>
 <head>
