@@ -48,6 +48,10 @@ def process_code_block(html, line_data):
         code_block += '\n'
     code_block += line_data[0][skip_hl:] + '\n'
 
+def code_block_substitutions(code):
+    code = code.replace('<table class="code-blocktable">', '<table>')
+    return code
+
 def close_code_block(html):
     global code_block
     global code_language
@@ -60,7 +64,8 @@ def close_code_block(html):
     formatter = HtmlFormatter(linenos=add_line_numbers, style=html.code_style, hl_lines=lines_to_highlight, cssclass='code-block')
     if add_line_numbers:
         html.add('<div class="code-blocktable">')
-    html.out.write(highlight(code_block, lexer, formatter).replace('<table class="code-blocktable">', '<table>'))
+    code = highlight(code_block, lexer, formatter)
+    html.out.write(code_block_substitutions(code))
     html.add('')
     if add_line_numbers:
         html.add('</div>')
