@@ -1,0 +1,9 @@
+{{redir-func}}:={{from template.manager import Template_Manager.get_data}}
+
+<!doctype html>
+<head>
+	<meta charset="utf-8">
+	<title>Redirecting to {{redir}}</title>
+	<meta http-equiv="refresh" content="0; URL={{redir}}">
+	<link rel="canonical" href="{{redir}}">
+</head>
