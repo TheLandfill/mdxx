@@ -1,7 +1,6 @@
 {{redir-func}}:={{from html.redirect import get_link}}
-{{get_link (template)}}
 
-<!doctype html>
+<!doctype html>{{redir-func (template)}}
 <head>
 	<meta charset="utf-8">
 	<title>Redirecting to {{redir}}</title>
