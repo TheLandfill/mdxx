@@ -4,9 +4,11 @@ from html.context import Context
 
 terminal_variables = {
     'prompt':   '{{oneline}}{{user_and_comp}}:{{fulldir}}$',
+    'mac-prompt': '{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$',
     'user'  :   'joseph',
     'computer-name': 'tutorials',
     'dir': '~/dev',
+    'mac-dir': '~',
     'oneline': '<span class="terminal-oneline">{{rest-of-line}}</span>{{end-of-line}}',
     'user_and_comp': '<span style="color:{{u-and-c-color}};"><b>{{user}}@{{computer-name}}</b></span>',
     'fulldir': '<span style="color:{{dir-color}};"><b>{{dir}}</b></span>',
@@ -20,7 +22,10 @@ terminal_variables = {
 }
 
 def open_terminal(html, args, tumd):
-    html.add_no_nl('<div class="terminal"' + args + '><pre>')
+    if args[0:3] == "mac":
+        html.add_no_nl('<div class="mac-terminal"' + args[3:] + '><pre>')
+    else:
+        html.add_no_nl('<div class="terminal"' + args + '><pre>')
 
 def process_terminal(html, line_data):
     for i in range(1, line_data[1]):
