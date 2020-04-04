@@ -22,11 +22,16 @@ def get_description(args):
     content = args[0]
     content.tumd.context = [ 'default', 'description' ]
     description = ''
+    content.tumd.find_next_content_line()
+    if content.tumd.line_data[0] == '':
+        return
+    description += content.tumd.line_data[0].rstrip() + ' '
     while (True):
         content.tumd.find_next_content_line()
-        if content.tumd.line_data[0] == '':
+        if content.tumd.line_data[0] == '' or content.tumd.line_data[1] > 1:
             break
         description += content.tumd.line_data[0].rstrip() + ' '
+    description = re.sub(r"<.?>", "", description)
     return description.rstrip()
 
 def get_tags(infile, template):
