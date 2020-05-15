@@ -85,10 +85,11 @@ class Template_Manager:
 
     def import_contexts(self):
         for plugin in self.imports:
-            print('Importing ' + plugin)
-            context_dict = importlib.import_module('plugins.' + plugin).context_dict
-            print()
-            self.add_context(context_dict)
+            if (os.path.isfile('plugins/' + plugin + ".py")):
+                print('Importing ' + plugin)
+                context_dict = importlib.import_module('plugins.' + plugin).context_dict
+                print()
+                self.add_context(context_dict)
         self.tumd.add_default_variables()
 
     def add_context(self, local_context):
