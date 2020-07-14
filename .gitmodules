@@ -1,0 +1,3 @@
+[submodule "md++/vendors/re2"]
+	path = md++/vendors/re2
+	url = https://github.com/google/re2.git
