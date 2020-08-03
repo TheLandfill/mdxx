@@ -17,6 +17,8 @@ std::unordered_map<std::string, gen_func> MDXX_Manager::imported_function_dict;
 
 MDXX_Manager::MDXX_Manager(std::ifstream& i) : in(i) {}
 
+MDXX_Manager::MDXX_Manager(std::ifstream&& i) : in(i) {}
+
 void MDXX_Manager::print_expansion_flip() {
 	print_expansion = !print_expansion;
 }
@@ -182,6 +184,11 @@ void MDXX_Manager::find_next_content_line() {
 	line_data = Line_Data{ line, count };
 }
 
+std::string MDXX_Manager::find_and_return_next_content_line() {
+	find_next_content_line();
+	return line_data.line;
+}
+
 std::string MDXX_Manager::expand_line(std::string & line) {
 	std::string complete_line = line + "\n-->\n";
 	variable_map& context_vars = cur_context_vars();
@@ -253,6 +260,7 @@ void MDXX_Manager::throw_exception_if_variable_not_found(const std::string& var)
 			error_message += vars_in_context.first;
 			error_message += "  -->  ";
 			error_message += vars_in_context.second->to_string();
+			error_message += "\n";
 		}
 		error_message += "\nLine that caused the problem:\n";
 		error_message += print_line();
@@ -260,9 +268,21 @@ void MDXX_Manager::throw_exception_if_variable_not_found(const std::string& var)
 	}
 }
 
-template<typename T>
-void MDXX_Manager::add_new_context(const std::string name, variable_map variables) {
-	context_dict.insert({name, std::make_unique<T>(name, variables)});
+void MDXX_Manager::throw_exception_if_context_not_found(const std::string& con) {
+	if (context_dict.count(con) == 0) {
+		std::string error_message = "ERROR: ";
+		error_message.reserve(2048);
+		error_message += con;
+		error_message += " is not a defined context.\n\nValid Contexts:\n";
+		for (auto& vars_in_context : context_dict) {
+			error_message += "\t";
+			error_message += vars_in_context.first;
+			error_message += "\n";
+		}
+		error_message += "\nLine that caused the problem:\n";
+		error_message += print_line();
+		throw std::runtime_error(error_message);
+	}
 }
 
 }

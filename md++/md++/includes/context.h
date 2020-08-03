@@ -17,18 +17,23 @@ class HTML_Manager;
 class Context {
 public:
 	Context(std::string name, variable_map& v);
-	virtual void open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) const = 0;
-	virtual void process(HTML_Manager& html, Line_Data& ls) const = 0;
-	virtual void close(HTML_Manager& html) const = 0;
+	Context(std::string name);
+	virtual void open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) = 0;
+	virtual void process(HTML_Manager& html, Line_Data& ls) = 0;
+	virtual void close(HTML_Manager& html) = 0;
 	variable_map& get_variables();
 	template<typename T>
 	void add_variable(std::string variable_name, T variable_value) {
-		variables.insert({variable_name, make_expansion(variable_value)});
+		variables.insert({variable_name, MAKE_EXPANSION(T, variable_value)});
 	}
+	std::string get_name();
 protected:
 	std::string name;
 	variable_map variables;
 };
+
+template<>
+void Context::add_variable<gen_func>(std::string variable_name, gen_func variable_value);
 
 }
 

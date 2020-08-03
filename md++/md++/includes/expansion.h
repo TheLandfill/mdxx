@@ -66,6 +66,11 @@ std::unique_ptr<Expansion_Base> Expansion<T>::make_deep_copy() {
 	return MAKE_EXPANSION(T, data);
 }
 
+template<typename T>
+std::unique_ptr<Expansion_Base> Expansion<T *>::make_deep_copy() {
+	return MAKE_EXPANSION(T*, data);
+}
+
 }
 
 #endif
