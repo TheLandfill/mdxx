@@ -5,7 +5,7 @@ set(CMAKE_CXX_COMPILER g++)
 
 add_compile_options(-Wall -Wextra)
 add_compile_options(
-	"$<$<STREQUAL:$<TARGET_PROPERTY:LINKER_LANGUAGE>,CXX>:-std=c++11>"
+	"$<$<STREQUAL:$<TARGET_PROPERTY:LINKER_LANGUAGE>,CXX>:-std=c++17>"
 	"$<$<STREQUAL:$<TARGET_PROPERTY:LINKER_LANGUAGE>,C>:-std=c99>"
 )
 add_compile_options(

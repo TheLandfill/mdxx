@@ -3,8 +3,8 @@
 #include <string>
 
 struct Line_Data {
-	size_t num_lines;
 	std::string line;
+	size_t num_lines;
 };
 
 #endif

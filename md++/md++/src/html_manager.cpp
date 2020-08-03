@@ -1,4 +1,5 @@
 #include "html_manager.h"
+#include "default.h"
 #include "re2/re2.h"
 
 namespace mdxx {
@@ -33,8 +34,8 @@ void HTML_Manager::write_empty(std::string str) {
 }
 
 void HTML_Manager::remove_empty(std::string& str) {
-	re2::RE2 empty_reg(empty_str);
-	re2::RE2::Replace(str, empty_reg, "");
+	static const re2::RE2 empty_regex(empty_str);
+	re2::RE2::Replace(&str, empty_regex, "");
 }
 
 void HTML_Manager::check_and_close_paragraph() {

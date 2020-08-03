@@ -1,2 +1,12 @@
+.ycm_extra_conf.py
+obj/
+libs/*
+Debug
+Release
+bin/Debug
+bin/Release
+commit-file
+*.pc
+.DS_Store*
 *.zip
 __pycache__/
