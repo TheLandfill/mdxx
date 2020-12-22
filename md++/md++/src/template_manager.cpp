@@ -23,6 +23,7 @@ Template_Manager::Template_Manager(HTML_Manager& h, Content_Manager& c, std::str
 	template_mdxx.add_variable_to_context("template", "html", html);
 	template_mdxx.add_variable_to_context("template", "path", "");
 	template_mdxx.add_variable_to_context("raw-html", "html", html);
+	template_mdxx.set_context({"default", "template"});
 }
 
 template<>

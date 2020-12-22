@@ -245,6 +245,10 @@ std::string MDXX_Manager::expand_line(std::string & line) {
 	return line;
 }
 
+void MDXX_Manager::set_context(std::vector<std::string> new_context) {
+	context = new_context;
+}
+
 void MDXX_Manager::throw_exception_if_variable_not_found(const std::string& var) {
 	variable_map& context_vars = cur_context_vars();
 	if (context_vars.count(var) == 0) {
