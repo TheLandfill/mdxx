@@ -11,6 +11,7 @@ namespace mdxx {
 class HTML_Manager {
 public:
 	HTML_Manager(std::ofstream& o);
+	HTML_Manager(std::ofstream&& o);
 	void add(std::string& line);
 	void add_pre(std::string& line);
 	void add_no_nl(std::string& line);

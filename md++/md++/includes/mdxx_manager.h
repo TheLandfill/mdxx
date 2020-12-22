@@ -17,6 +17,7 @@ public:
 	const std::vector<std::string>& context_stack() const;
 	std::unique_ptr<Context>& cur_context();
 	variable_map& cur_context_vars();
+	std::unique_ptr<Expansion_Base>& get_var(std::string variable);
 	std::string next_line();
 	std::string next_line_no_nl();
 	std::string print_line();
@@ -42,7 +43,7 @@ private:
 	void close_context(std::string& line, HTML_Manager& html);
 	void check_variable_dependency(const Context& c);
 
-	void throw_exception_if_variable_not_found(const std::string& var);
+	std::string throw_exception_if_variable_not_found(const std::string& var);
 	void throw_exception_if_context_not_found(const std::string& context);
 private:
 	std::ifstream& in;

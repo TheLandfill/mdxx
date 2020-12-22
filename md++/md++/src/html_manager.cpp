@@ -11,6 +11,10 @@ HTML_Manager::HTML_Manager(std::ofstream& o) : out(o) {
 	tab_level.reserve(32);
 }
 
+HTML_Manager::HTML_Manager(std::ofstream&& o) : out(o) {
+	tab_level.reserve(32);
+}
+
 void HTML_Manager::add(std::string& line) {
 	write(tab_level);
 	write_empty(line);

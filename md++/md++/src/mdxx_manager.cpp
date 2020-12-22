@@ -27,13 +27,17 @@ const std::vector<std::string>& MDXX_Manager::context_stack() const {
 	return context;
 }
 
-
 std::unique_ptr<Context>& MDXX_Manager::cur_context() {
 	return context_dict.at(context.back());
 }
 
 variable_map& MDXX_Manager::cur_context_vars() {
 	return cur_context()->get_variables();
+}
+
+std::unique_ptr<Expansion_Base>& MDXX_Manager::get_var(std::string variable) {
+	std::string context_with_variable = throw_exception_if_variable_not_found(variable);
+	return context_dict.at(context_with_variable)->get_variables()[variable];
 }
 
 std::string MDXX_Manager::next_line() {
@@ -98,7 +102,7 @@ void MDXX_Manager::function_import(std::string& line) {
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value_id = line.substr(value_start, line.length() - value_start - sizeof("}}"));
 	gen_func value = imported_function_dict.at(value_id);
-	cur_context_vars().insert({variable, MAKE_GEN_FUNC_EXPANSION(value)});
+	cur_context_vars().insert({variable, std::make_unique<Expansion<gen_func>>(value, value_id)});
 }
 
 void MDXX_Manager::immediate_substitution(std::string& line) {
@@ -206,14 +210,12 @@ std::string MDXX_Manager::expand_line(std::string & line) {
 		for (auto i = var_args.begin() + 1; i != var_args.end(); i++) {
 			if (i->front() == '(' && i->back() == ')') {
 				std::string current_arg = i->substr(0, i->length() - 1);
-				throw_exception_if_variable_not_found(current_arg);
-				args.push_back(context_vars[current_arg]->make_deep_copy());
+				args.push_back(get_var(current_arg)->make_deep_copy());
 			} else {
 				args.push_back(MAKE_EXPANSION(std::string, *i));
 			}
 		}
-		throw_exception_if_variable_not_found(var);
-		std::unique_ptr<Expansion_Base>& expanded_var = context_vars[var];
+		std::unique_ptr<Expansion_Base>& expanded_var = get_var(var);
 		Expansion<gen_func>* func_holder = dynamic_cast<Expansion<gen_func>*>(expanded_var.get());
 		if (func_holder == nullptr) {
 			size_t replace_start = current_sub.begin() - re_line.begin();
@@ -249,15 +251,26 @@ void MDXX_Manager::set_context(std::vector<std::string> new_context) {
 	context = new_context;
 }
 
-void MDXX_Manager::throw_exception_if_variable_not_found(const std::string& var) {
-	variable_map& context_vars = cur_context_vars();
-	if (context_vars.count(var) == 0) {
-		std::string error_message = "ERROR: ";
-		error_message.reserve(2048);
-		error_message += var;
-		error_message += " is not a variable in the current context.\n";
-		error_message += "Current context: ";
-		error_message += context.back();
+std::string MDXX_Manager::throw_exception_if_variable_not_found(const std::string& var) {
+	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
+		variable_map& context_vars = context_dict.at(*cur_context)->get_variables();
+		if (context_vars.count(var) != 0) {
+			return *cur_context;
+		}
+	}
+	std::string error_message = "ERROR: ";
+	error_message.reserve(2048);
+	error_message += var;
+	error_message += " is not a variable in the current context stack.\n";
+	error_message += "Current context: { ";
+	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
+		error_message += *cur_context;
+		error_message += " ";
+	}
+	error_message += "}\n\n";
+	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
+		variable_map& context_vars = context_dict.at(*cur_context)->get_variables();
+		error_message += *cur_context;
 		error_message += "\n";
 		for (auto& vars_in_context : context_vars) {
 			error_message += "\t";
@@ -266,10 +279,10 @@ void MDXX_Manager::throw_exception_if_variable_not_found(const std::string& var)
 			error_message += vars_in_context.second->to_string();
 			error_message += "\n";
 		}
-		error_message += "\nLine that caused the problem:\n";
-		error_message += print_line();
-		throw std::runtime_error(error_message);
 	}
+	error_message += "\nLine that caused the problem:\n";
+	error_message += print_line();
+	throw std::runtime_error(error_message);
 }
 
 void MDXX_Manager::throw_exception_if_context_not_found(const std::string& con) {

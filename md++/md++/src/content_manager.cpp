@@ -1,6 +1,7 @@
 #include "content_manager.h"
 #include <memory>
 #include <sstream>
+#include <vector>
 
 namespace mdxx {
 
