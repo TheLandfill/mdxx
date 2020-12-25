@@ -15,10 +15,10 @@ def convert_to_html(infile, out):
         meta.process_template()
 
 def main(args):
-    """Usage:\ttu-md original.tumd [filename.html]
+    """Usage:\ttumd original.tumd [filename.html]
 
     By default, the output will be a file of the same name as the markdown file,
-    so "tu-md original.tumd" will output to "original.html"."""
+    so "tumd original.tumd" will output to "original.html"."""
     if len(args) <= 1:
         print(main.__doc__)
         return

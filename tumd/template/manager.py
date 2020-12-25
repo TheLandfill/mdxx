@@ -23,7 +23,7 @@ class Template_Manager:
         self.tumd = self.content.tumd
         self.tumd.find_next_content_line()
         template = self.tumd.line_data[0]
-        self.template = TUMD_Manager(open('templates/' + template + '.tumd', 'r'))
+        self.template = TUMD_Manager(open(template + '.tumd', 'r'))
         self.template.context_dict = template_dict
         self.template.context_dict['template'].variables['template'] = self
         self.template.context_dict['template'].variables['content'] = self.content
