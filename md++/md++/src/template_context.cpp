@@ -5,12 +5,7 @@
 
 namespace mdxx {
 
-Template_Context::Template_Context(const std::string name) : Context(name) {
-	add_variable<gen_func>("pop", HTML_Manager::pop);
-	add_variable<gen_func>("push", HTML_Manager::push);
-	add_variable("mdpu", "{{push (html)}}");
-	add_variable("mdpo", "{{pop (html)}}");
-}
+Template_Context::Template_Context(const std::string name) : Context(name) {}
 
 void Template_Context::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
 	(void)html;

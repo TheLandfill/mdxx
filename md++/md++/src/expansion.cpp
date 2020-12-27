@@ -31,7 +31,7 @@ std::string Expansion<char *>::to_string() {
 }
 
 std::unique_ptr<Expansion_Base> Expansion<gen_func>::make_deep_copy() {
-	return MAKE_GEN_FUNC_EXPANSION(func);
+	return std::make_unique<Expansion<gen_func>>( func, name );
 }
 
 }

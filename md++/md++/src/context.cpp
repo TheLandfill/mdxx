@@ -1,4 +1,5 @@
 #include "context.h"
+#include <memory>
 
 namespace mdxx {
 
@@ -12,7 +13,7 @@ variable_map& Context::get_variables() {
 
 template<>
 void Context::add_variable<gen_func>(std::string variable_name, gen_func variable_value) {
-	variables.insert({variable_name, MAKE_GEN_FUNC_EXPANSION(variable_value)});
+	variables[variable_name] = std::make_unique<Expansion<gen_func>>(variable_value, variable_name);
 }
 
 }

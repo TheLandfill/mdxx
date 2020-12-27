@@ -19,6 +19,8 @@ MDXX_Manager::MDXX_Manager(std::ifstream& i) : in(i) {}
 
 MDXX_Manager::MDXX_Manager(std::ifstream&& i) : in(i) {}
 
+MDXX_Manager::MDXX_Manager(std::string filename) : in_if_need_to_allocate(new std::ifstream(filename)), in(*in_if_need_to_allocate) {}
+
 void MDXX_Manager::print_expansion_flip() {
 	print_expansion = !print_expansion;
 }
@@ -28,6 +30,7 @@ const std::vector<std::string>& MDXX_Manager::context_stack() const {
 }
 
 std::unique_ptr<Context>& MDXX_Manager::cur_context() {
+	throw_exception_if_context_not_found(context.back());
 	return context_dict.at(context.back());
 }
 
@@ -36,15 +39,19 @@ variable_map& MDXX_Manager::cur_context_vars() {
 }
 
 std::unique_ptr<Expansion_Base>& MDXX_Manager::get_var(std::string variable) {
-	std::string context_with_variable = throw_exception_if_variable_not_found(variable);
-	return context_dict.at(context_with_variable)->get_variables()[variable];
+	std::string context_with_variable = find_context_with_variable(variable);
+	return context_dict.at(context_with_variable)->get_variables().at(variable);
 }
 
 std::string MDXX_Manager::next_line() {
 	line_number += 1;
-	std::string current_line;
-	std::getline(in, current_line);
-	return current_line;
+	if (in.peek() == EOF) {
+		line_data.line = "";
+		finished_reading = true;
+	} else {
+		std::getline(in, line_data.line);
+	}
+	return line_data.line;
 }
 
 std::string MDXX_Manager::next_line_no_nl() {
@@ -92,7 +99,7 @@ void MDXX_Manager::variable_definition(std::string& line) {
 	size_t value_start = variable_end + sizeof("}}:=\"");
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("}}"));
-	cur_context_vars().insert({variable, MAKE_EXPANSION(std::string, value)});
+	cur_context_vars()[variable] = std::make_unique<Expansion<std::string>>(value);
 }
 
 void MDXX_Manager::function_import(std::string& line) {
@@ -101,8 +108,9 @@ void MDXX_Manager::function_import(std::string& line) {
 	size_t value_start = line.find_first_not_of(" \t", variable_end + sizeof("}}:={{import "));
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value_id = line.substr(value_start, line.length() - value_start - sizeof("}}"));
+	check_if_imported_function_found(value_id);
 	gen_func value = imported_function_dict.at(value_id);
-	cur_context_vars().insert({variable, std::make_unique<Expansion<gen_func>>(value, value_id)});
+	cur_context_vars()[variable] = std::make_unique<Expansion<gen_func>>(value, value_id);
 }
 
 void MDXX_Manager::immediate_substitution(std::string& line) {
@@ -112,7 +120,7 @@ void MDXX_Manager::immediate_substitution(std::string& line) {
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\""));
 	std::string expanded_value = expand_line(value);
-	cur_context_vars().insert({variable, MAKE_EXPANSION(std::string, value)});
+	cur_context_vars()[variable] = std::make_unique<Expansion<std::string>>(value);
 }
 
 void MDXX_Manager::open_context(std::string& line, HTML_Manager& html) {
@@ -164,7 +172,7 @@ void MDXX_Manager::close_context(std::string& line, HTML_Manager& html) {
 
 void MDXX_Manager::find_next_content_line() {
 	size_t count = 0;
-	std::string line = "    ";
+	std::string current_line = "    ";
 	if (line_stack != "") {
 		count = line_stack.find_first_not_of("\n");
 		line_stack = line_stack.substr(count);
@@ -178,14 +186,14 @@ void MDXX_Manager::find_next_content_line() {
 		return;
 	}
 	static const re2::RE2 empty_line_regex("^\\s*$");
-	while (re2::RE2::FullMatch(line, empty_line_regex)) {
+	while (!at_end_of_file() && re2::RE2::FullMatch(current_line, empty_line_regex)) {
 		count += 1;
-		line = next_line();
+		current_line = next_line();
 	}
-	while (line.back() == '\n') {
-		line.pop_back();
+	while (current_line.back() == '\n') {
+		current_line.pop_back();
 	}
-	line_data = Line_Data{ line, count };
+	line_data = Line_Data{ current_line, count };
 }
 
 std::string MDXX_Manager::find_and_return_next_content_line() {
@@ -195,11 +203,10 @@ std::string MDXX_Manager::find_and_return_next_content_line() {
 
 std::string MDXX_Manager::expand_line(std::string & line) {
 	std::string complete_line = line + "\n-->\n";
-	variable_map& context_vars = cur_context_vars();
-	static const RE2 variable_regex("\\{\\{([^{]+?)\\}\\}");
+	static const RE2 variable_regex("\\{\\{([^{}]+)\\}\\}");
 	re2::StringPiece current_sub;
 	re2::StringPiece re_line = line;
-	while (RE2::FindAndConsume(&re_line, variable_regex, &current_sub)) {
+	while (RE2::PartialMatch(re_line, variable_regex, &current_sub)) {
 		if (print_expansion) {
 			std::cout << complete_line << line << "\n";
 		}
@@ -209,22 +216,18 @@ std::string MDXX_Manager::expand_line(std::string & line) {
 		args.reserve(var_args.size());
 		for (auto i = var_args.begin() + 1; i != var_args.end(); i++) {
 			if (i->front() == '(' && i->back() == ')') {
-				std::string current_arg = i->substr(0, i->length() - 1);
+				std::string current_arg = i->substr(1, i->length() - 2);
 				args.push_back(get_var(current_arg)->make_deep_copy());
 			} else {
-				args.push_back(MAKE_EXPANSION(std::string, *i));
+				args.push_back(std::make_unique<Expansion<std::string>>(*i));
 			}
 		}
 		std::unique_ptr<Expansion_Base>& expanded_var = get_var(var);
 		Expansion<gen_func>* func_holder = dynamic_cast<Expansion<gen_func>*>(expanded_var.get());
 		if (func_holder == nullptr) {
-			size_t replace_start = current_sub.begin() - re_line.begin();
-			size_t replace_end = current_sub.end() - re_line.begin();
-			line = line.replace(replace_start, replace_end, *(std::string*)expanded_var->get_data());
+			RE2::Replace(&line, variable_regex, *static_cast<std::string*>(expanded_var->get_data()));
 		} else {
-			size_t replace_start = current_sub.begin() - re_line.begin();
-			size_t replace_end = current_sub.end() - re_line.begin();
-			line = line.replace(replace_start, replace_end, func_holder->func(args));
+			RE2::Replace(&line, variable_regex, func_holder->func(args));
 		}
 		re_line = line;
 	}
@@ -233,14 +236,14 @@ std::string MDXX_Manager::expand_line(std::string & line) {
 		std::string temp_line = line.substr(0, line_split);
 		line_stack = line.substr(line_split + 1) + line_stack;
 	}
-	static const RE2 left_bracket("(?<!\\\\){");
-	RE2::Replace(&line, left_bracket, *(std::string*)context_vars["{"]->get_data());
-	static const RE2 right_bracket("(?<!\\\\)}");
-	RE2::Replace(&line, right_bracket, *(std::string*)context_vars["}"]->get_data());
-	static const RE2 escaped_left_bracket("\\{");
-	RE2::Replace(&line, escaped_left_bracket, *(std::string*)context_vars["\\{"]->get_data());
-	static const RE2 escaped_right_bracket("\\}");
-	RE2::Replace(&line, escaped_right_bracket, *(std::string*)context_vars["\\}"]->get_data());
+	static const RE2 left_bracket("(?:[\\\\][\\\\]){");
+	RE2::Replace(&line, left_bracket, *static_cast<std::string*>(get_var("{")->get_data()));
+	static const RE2 right_bracket("(?:[\\\\][\\\\])}");
+	RE2::Replace(&line, right_bracket, *static_cast<std::string*>(get_var("}")->get_data()));
+	static const RE2 escaped_left_bracket("\\\\{");
+	RE2::Replace(&line, escaped_left_bracket, *static_cast<std::string*>(get_var("\\{")->get_data()));
+	static const RE2 escaped_right_bracket("\\\\}");
+	RE2::Replace(&line, escaped_right_bracket, *static_cast<std::string*>(get_var("\\}")->get_data()));
 	if (print_expansion) {
 		std::cout << complete_line << line << "\n";
 	}
@@ -251,8 +254,9 @@ void MDXX_Manager::set_context(std::vector<std::string> new_context) {
 	context = new_context;
 }
 
-std::string MDXX_Manager::throw_exception_if_variable_not_found(const std::string& var) {
+std::string MDXX_Manager::find_context_with_variable(const std::string& var) {
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
+		throw_exception_if_context_not_found(*cur_context);
 		variable_map& context_vars = context_dict.at(*cur_context)->get_variables();
 		if (context_vars.count(var) != 0) {
 			return *cur_context;
@@ -269,6 +273,7 @@ std::string MDXX_Manager::throw_exception_if_variable_not_found(const std::strin
 	}
 	error_message += "}\n\n";
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
+		throw_exception_if_context_not_found(*cur_context);
 		variable_map& context_vars = context_dict.at(*cur_context)->get_variables();
 		error_message += *cur_context;
 		error_message += "\n";
@@ -300,6 +305,31 @@ void MDXX_Manager::throw_exception_if_context_not_found(const std::string& con) 
 		error_message += print_line();
 		throw std::runtime_error(error_message);
 	}
+}
+
+void MDXX_Manager::check_if_imported_function_found(const std::string& function) {
+	if (imported_function_dict.count(function) == 0) {
+		std::string error_message = "ERROR: ";
+		error_message.reserve(2048);
+		error_message += function;
+		error_message += " Has not been imported.\n\nImported Functions:\n";
+		for (auto& imported_function : imported_function_dict) {
+			error_message += "\t";
+			error_message += imported_function.first;
+			error_message += "\n";
+		}
+		error_message += "\nLine that caused the problem:\n";
+		error_message += print_line();
+		throw std::runtime_error(error_message);
+	}
+}
+
+bool MDXX_Manager::at_end_of_file() {
+	return finished_reading;
+}
+
+MDXX_Manager::~MDXX_Manager() {
+	delete in_if_need_to_allocate;
 }
 
 }

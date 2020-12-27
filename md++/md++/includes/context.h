@@ -24,7 +24,7 @@ public:
 	variable_map& get_variables();
 	template<typename T>
 	void add_variable(std::string variable_name, T variable_value) {
-		variables.insert({variable_name, MAKE_EXPANSION(T, variable_value)});
+		variables[variable_name] = std::make_unique<Expansion<T>>(variable_value);
 	}
 	std::string get_name();
 protected:

@@ -11,7 +11,7 @@ namespace mdxx {
 
 class Template_Manager {
 public:
-	Template_Manager(HTML_Manager& html, std::shared_ptr<Content_Manager> content, std::string template_path);
+	Template_Manager(HTML_Manager& html, std::shared_ptr<Content_Manager> content, std::string template_file);
 	void process_template();
 private:
 	HTML_Manager& html;

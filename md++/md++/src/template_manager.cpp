@@ -1,32 +1,36 @@
 #include "template_manager.h"
+#include "raw_html.h"
+#include "default.h"
 #include <sstream>
 #include <memory>
+#include <iostream>
 
 namespace mdxx {
 
-std::string process_content(std::vector<std::unique_ptr<Expansion_Base>> args);
+std::string process_content(std::vector<std::unique_ptr<Expansion_Base>>& args);
 
-Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Manager> c, std::string template_path) :
+Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Manager> c, std::string template_file) :
 	html(h),
 	content(c),
 	mdxx(content->get_mdxx()),
-	template_name(template_path + mdxx.next_line_no_nl()),
+	template_name(template_file),
 	template_mdxx(
-		std::ifstream(
-			template_name
-		)
+		template_name
 	)
 {
 	template_mdxx.add_new_context<Template_Context>("template");
+	template_mdxx.add_new_context<Raw_HTML>("raw-html");
+	template_mdxx.add_new_context<Default>("default");
 	template_mdxx.add_variable_to_context("template", "template", this);
 	template_mdxx.add_variable_to_context("template", "content", this->content);
 	template_mdxx.add_variable_to_context("template", "self", this->content);
-	template_mdxx.add_variable_to_context("template", "html", html);
-	template_mdxx.add_variable_to_context("template", "path", "");
+	//template_mdxx.add_variable_to_context("template", "html", html);
+	template_mdxx.add_variable_to_context<std::string>("template", "path", "");
 	template_mdxx.add_variable_to_context("template", "plugin", load_plugins);
 	template_mdxx.add_variable_to_context("template", "process_content", process_content);
-	template_mdxx.add_variable_to_context("template", "switch_to_content", "{{process_content (content)}}");
-	template_mdxx.add_variable_to_context("raw-html", "html", html);
+	template_mdxx.add_variable_to_context<std::string>("template", "switch_to_content", "{{process_content (content)}}");
+	//template_mdxx.add_variable_to_context("raw-html", "html", html);
+	template_mdxx.add_variable_to_context("default", "html", &html);
 	template_mdxx.set_context({"default", "template"});
 }
 
@@ -41,22 +45,24 @@ std::string Template_Manager::load_plugins(std::vector<std::unique_ptr<Expansion
 void Template_Manager::process_template() {
 	while (true) {
 		std::string line = template_mdxx.find_and_return_next_content_line();
-		if (line == "") {
+		if (template_mdxx.at_end_of_file()) {
 			break;
 		}
 		template_mdxx.handle_context(html);
 	}
+	std::cout << "Finished processing template" << std::endl;
 }
 
-std::string process_content(std::vector<std::unique_ptr<Expansion_Base>> args) {
-	static_cast<Content_Manager*>(args.at(0)->get_data())->process_content();
+std::string process_content(std::vector<std::unique_ptr<Expansion_Base>>& args) {
+	(*static_cast<std::shared_ptr<Content_Manager>*>(args.at(0)->get_data()))->process_content();
+	std::cout << "Finished processing content" << std::endl;
 	return "";
 }
 
 template<>
 std::string Expansion<Template_Manager*>::to_string() {
 	std::stringstream strstr;
-	strstr << "<Template_Manager object @ " << (void*)this << ">";
+	strstr << "<Template_Manager object @ " << this->get_data() << ">";
 	return strstr.str();
 }
 

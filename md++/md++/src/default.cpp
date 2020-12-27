@@ -1,5 +1,6 @@
 #include "default.h"
 #include "mdxx_manager.h"
+#include "html_manager.h"
 #include <memory>
 #include <unordered_map>
 #include <iostream>
@@ -36,25 +37,60 @@ std::string print_context(std::vector<std::unique_ptr<Expansion_Base>>& args) {
 	return "";
 }
 
-std::unordered_map<std::string, std::unique_ptr<Expansion_Base>> default_dict;
+Default::Default(std::string name) : Context(name) {
+	add_variable<std::string>("empty", std::string(empty_str) );
+	add_variable<std::string>("zs", "&#8203;");
+	add_variable<std::string>("{", "<code>");
+	add_variable<std::string>("}", "</code>");
+	add_variable<std::string>("\\{", "{" );
+	add_variable<std::string>("\\}", "}");
+	add_variable<std::string>("ldb", "\\{{{empty}}\\{");
+	add_variable<std::string>("lt", "&lt;");
+	add_variable<std::string>("gt", "&gt;");
+	add_variable<std::string>("nl", "\n");
+	add_variable<gen_func>("print-expansion", print_expansion);
+	add_variable<gen_func>("print-variables", print_variables);
+	add_variable<gen_func>("print-context", print_context);
+	add_variable<std::string>("print", "{{print_expansion (self)}}");
+	add_variable<std::string>("print-vars", "{{print_variables (self)}}");
+	add_variable<std::string>("print-con", "{{print_context (self)}}");
+	add_variable<gen_func>("pop", HTML_Manager::pop);
+	add_variable<gen_func>("push", HTML_Manager::push);
+	add_variable<std::string>("mdpu", "{{push (html)}}");
+	add_variable<std::string>("mdpo", "{{pop (html)}}");
+}
 
-void fill_default_dict() {
-	default_dict.insert({ "empty",				MAKE_EXPANSION(std::string, std::string(empty_str)) });
-	default_dict.insert({ "zs",					MAKE_EXPANSION(std::string, "&#8203;") });
-	default_dict.insert({ "{",					MAKE_EXPANSION(std::string, "<code>") });
-	default_dict.insert({ "}",					MAKE_EXPANSION(std::string, "</code>") });
-	default_dict.insert({ "\\{",				MAKE_EXPANSION(std::string, "{") });
-	default_dict.insert({ "\\}",				MAKE_EXPANSION(std::string, "}") });
-	default_dict.insert({ "ldb",				MAKE_EXPANSION(std::string, "\\{{{empty}}\\{") });
-	default_dict.insert({ "lt",					MAKE_EXPANSION(std::string, "&lt;") });
-	default_dict.insert({ "gt",					MAKE_EXPANSION(std::string, "&gt;") });
-	default_dict.insert({ "nl",					MAKE_EXPANSION(std::string, "\n") });
-	default_dict.insert({ "print-expansion",	MAKE_GEN_FUNC_EXPANSION(print_expansion) });
-	default_dict.insert({ "print",				MAKE_EXPANSION(std::string, "{{print_expansion (self)}}") });
-	default_dict.insert({ "print-variables",	MAKE_GEN_FUNC_EXPANSION(print_variables) });
-	default_dict.insert({ "print-vars",			MAKE_EXPANSION(std::string, "{{print_variables (self)}}") });
-	default_dict.insert({ "print-context",		MAKE_GEN_FUNC_EXPANSION(print_context) });
-	default_dict.insert({ "print-con",			MAKE_EXPANSION(std::string, "{{print_context (self)}}") });
+void throw_default_context_exception() {
+	std::string error_message =
+"You can neither open nor close the default context manually. You must create\n"
+"your own or use one that already exists.";
+}
+
+void Default::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
+	(void)html;
+	(void)args;
+	(void)mdxx;
+	throw_default_context_exception();
+}
+
+void Default::process(HTML_Manager& html, Line_Data& ls) {
+	bool blank_lines = ls.num_lines > 1;
+	if (blank_lines) {
+		html.check_and_close_paragraph();
+		std::string line = "<p>";
+		line += ls.line;
+		html.add(line);
+		html.push();
+		html.open_paragraph();
+	} else {
+		html.add(ls.line);
+	}
+	html.check_and_close_paragraph();
+}
+
+void Default::close(HTML_Manager& html) {
+	(void)html;
+	throw_default_context_exception();
 }
 
 }

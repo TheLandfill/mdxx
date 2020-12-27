@@ -13,6 +13,7 @@ class MDXX_Manager {
 public:
 	MDXX_Manager(std::ifstream& i);
 	MDXX_Manager(std::ifstream&& i);
+	MDXX_Manager(std::string filename);
 	void print_expansion_flip();
 	const std::vector<std::string>& context_stack() const;
 	std::unique_ptr<Context>& cur_context();
@@ -26,6 +27,7 @@ public:
 	std::string find_and_return_next_content_line();
 	std::string expand_line(std::string & line);
 	void set_context(std::vector<std::string> new_context);
+	bool at_end_of_file();
 	template<typename T>
 	void add_variable_to_context(const std::string& context, const std::string variable_name, T value);
 	template<typename T>
@@ -35,6 +37,7 @@ public:
 	template<typename T>
 	static void add_new_context(const std::string name);
 	static void add_function(const std::string name, gen_func function);
+	~MDXX_Manager();
 private:
 	void variable_definition(std::string& line);
 	void function_import(std::string& line);
@@ -43,9 +46,11 @@ private:
 	void close_context(std::string& line, HTML_Manager& html);
 	void check_variable_dependency(const Context& c);
 
-	std::string throw_exception_if_variable_not_found(const std::string& var);
+	std::string find_context_with_variable(const std::string& var);
 	void throw_exception_if_context_not_found(const std::string& context);
+	void check_if_imported_function_found(const std::string& function);
 private:
+	std::ifstream* in_if_need_to_allocate = nullptr;
 	std::ifstream& in;
 	std::vector<std::string> context = { "default" };
 	size_t line_number = 0;
@@ -54,6 +59,7 @@ private:
 	static std::unordered_map<std::string, gen_func> imported_function_dict;
 	std::string line_stack;
 	Line_Data line_data;
+	bool finished_reading = false;
 };
 
 template<typename T>

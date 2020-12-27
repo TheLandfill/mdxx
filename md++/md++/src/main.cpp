@@ -16,15 +16,18 @@ int main(int argc, char ** argv) {
 	}
 	std::string template_path(argv[1]);
 	std::string infile(argv[2]);
-	MDXX_Manager mdxx = MDXX_Manager(std::ifstream(infile));
+	std::ifstream in{infile};
+	MDXX_Manager mdxx = MDXX_Manager(in);
 	std::string outfile = infile.substr(0, infile.find_last_of(".")) + ".html";
-	HTML_Manager html{std::ofstream(outfile)};
-	std::shared_ptr<Content_Manager> content = get_content_manager(html, mdxx);
-	Template_Manager template_reader(html, content, template_path);
+	std::ofstream out{outfile};
+	HTML_Manager html{out};
+	std::shared_ptr<Content_Manager> content = std::make_shared<Content_Manager>(html, mdxx);
+	std::string template_file = template_path + mdxx.next_line_no_nl();
+	Template_Manager template_reader(html, content, template_file);
 	template_reader.process_template();
 	return 0;
 }
 
 void usage_message(char * program_name) {
-	std::cerr << program_name << "\ttemplate_location\ttumd_file[s]\n";
+	std::cerr << program_name << " template_location mdxx_file\n";
 }

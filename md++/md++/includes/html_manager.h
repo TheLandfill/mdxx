@@ -21,8 +21,13 @@ public:
 	void check_and_close_paragraph();
 	void push();
 	void pop();
+	void open_paragraph();
 	static std::string push(std::vector<std::unique_ptr<Expansion_Base>>& args);
 	static std::string pop(std::vector<std::unique_ptr<Expansion_Base>>& args);
+	HTML_Manager(const HTML_Manager& html) = delete;
+	HTML_Manager& operator=(const HTML_Manager& html) = delete;
+	HTML_Manager(const HTML_Manager&& html) = delete;
+	HTML_Manager& operator=(const HTML_Manager&& html) = delete;
 private:
 	std::string tab_level = "";
 	std::ofstream& out;

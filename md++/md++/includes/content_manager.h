@@ -10,7 +10,7 @@ namespace mdxx {
 class Content_Manager {
 public:
 	Content_Manager(HTML_Manager& html, MDXX_Manager& mdxx);
-	virtual void process_content() = 0;
+	void process_content();
 	MDXX_Manager& get_mdxx();
 private:
 	HTML_Manager& html;

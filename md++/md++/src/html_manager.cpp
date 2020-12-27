@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <sstream>
+#include <iostream>
 
 namespace mdxx {
 
@@ -31,12 +32,12 @@ void HTML_Manager::add_no_nl(std::string& line) {
 }
 
 void HTML_Manager::write(std::string str) {
-	out << str;
+	out << str << std::flush;
 }
 
 void HTML_Manager::write_empty(std::string str) {
 	remove_empty(str);
-	out << str;
+	write(str);
 }
 
 void HTML_Manager::remove_empty(std::string& str) {
@@ -54,27 +55,35 @@ void HTML_Manager::check_and_close_paragraph() {
 }
 
 void HTML_Manager::push() {
-	tab_level += '\t';
+	tab_level += "\t";
 }
 
 void HTML_Manager::pop() {
-	tab_level.pop_back();
+	if (tab_level.length() > 0) {
+		tab_level.pop_back();
+	} else {
+		std::cerr << "WARNING: You popped the tab_level when it was at zero!\n";
+	}
+}
+
+void HTML_Manager::open_paragraph() {
+	need_to_close_paragraph = true;
 }
 
 std::string HTML_Manager::push(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	static_cast<HTML_Manager*>(args.at(0)->get_data())->push();
+	(*static_cast<HTML_Manager**>(args.at(0)->get_data()))->push();
 	return "";
 }
 
 std::string HTML_Manager::pop(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	static_cast<HTML_Manager*>(args.at(0)->get_data())->pop();
+	(*static_cast<HTML_Manager**>(args.at(0)->get_data()))->pop();
 	return "";
 }
 
 template<>
-std::string Expansion<HTML_Manager>::to_string() {
+std::string Expansion<HTML_Manager*>::to_string() {
 	std::stringstream strstr;
-	strstr << "<HTML_Manager object @ " << (void*)this << ">";
+	strstr << "<HTML_Manager object @ " << this->get_data() << ">";
 	return strstr.str();
 }
 

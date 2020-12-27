@@ -48,14 +48,6 @@ struct Expansion<gen_func> : Expansion_Base {
 	std::unique_ptr<Expansion_Base> make_deep_copy() override;
 };
 
-//template<typename T>
-//std::unique_ptr<Expansion_Base>&& make_expansion(T data) {
-//	return std::move(std::make_unique<Expansion_Base>(new Expansion<T>{data}));
-//}
-
-#define MAKE_EXPANSION(T, data) std::make_unique<Expansion<T>>(data)
-#define MAKE_GEN_FUNC_EXPANSION(func) std::make_unique<Expansion<gen_func>>( func, #func )
-
 template<typename T>
 std::string Expansion<T>::to_string() {
 	return static_cast<std::string>(data);
@@ -63,12 +55,12 @@ std::string Expansion<T>::to_string() {
 
 template<typename T>
 std::unique_ptr<Expansion_Base> Expansion<T>::make_deep_copy() {
-	return MAKE_EXPANSION(T, data);
+	return std::make_unique<Expansion<T>>(data);
 }
 
 template<typename T>
 std::unique_ptr<Expansion_Base> Expansion<T *>::make_deep_copy() {
-	return MAKE_EXPANSION(T*, data);
+	return std::make_unique<Expansion<T*>>(data);
 }
 
 }
