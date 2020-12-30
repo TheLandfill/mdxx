@@ -18,6 +18,7 @@ void Content_Manager::process_content() {
 		}
 		mdxx.handle_context(html);
 	}
+	html.check_and_close_paragraph();
 }
 
 MDXX_Manager& Content_Manager::get_mdxx() {
@@ -26,6 +27,13 @@ MDXX_Manager& Content_Manager::get_mdxx() {
 
 template<>
 std::string Expansion<std::shared_ptr<Content_Manager>>::to_string() {
+	std::stringstream output;
+	output << "<Content_Manager @ " << this->get_data() << ">";
+	return output.str();
+}
+
+template<>
+std::string Expansion<Content_Manager*>::to_string() {
 	std::stringstream output;
 	output << "<Content_Manager @ " << this->get_data() << ">";
 	return output.str();

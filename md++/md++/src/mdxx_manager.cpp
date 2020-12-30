@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 namespace mdxx {
@@ -72,11 +73,11 @@ std::string MDXX_Manager::print_line() {
 void MDXX_Manager::handle_context(HTML_Manager& html) {
 	using namespace re2;
 	std::string line = line_data.line;
-	static const RE2 variable_definition_regex("^\\{\\{.+\\}\\}:=\".+\"$");
-	static const RE2 function_import_regex("^\\{\\{.+?\\}\\}:=\\{\\{import\\s+.+\\}\\}");
-	static const RE2 immediate_substitution_regex("^\\{\\{.+\\}\\}=\".+\"$");
-	static const RE2 open_context_regex("^o\\{\\{.+\\}\\}$");
-	static const RE2 close_context_regex("^c\\{\\{.+\\}\\}$");
+	static const RE2 variable_definition_regex("^\\{\\{[^{}]+\\}\\}:=\".+\"$");
+	static const RE2 function_import_regex("^\\{\\{[^{}]+?\\}\\}:=\\{\\{import\\s+[^{}]+\\}\\}");
+	static const RE2 immediate_substitution_regex("^\\{\\{[^{}]+\\}\\}=\".+\"$");
+	static const RE2 open_context_regex("^o\\{\\{[^{}]+\\}\\}$");
+	static const RE2 close_context_regex("^c\\{\\{[^{}]+\\}\\}$");
 	if (RE2::FullMatch(line, variable_definition_regex)) {
 		variable_definition(line);
 	} else if (RE2::FullMatch(line, function_import_regex)) {
@@ -95,19 +96,19 @@ void MDXX_Manager::handle_context(HTML_Manager& html) {
 
 void MDXX_Manager::variable_definition(std::string& line) {
 	size_t variable_end = line.find("}}:=\"");
-	size_t variable_start = sizeof("{{");
-	size_t value_start = variable_end + sizeof("}}:=\"");
+	size_t variable_start = sizeof("{{") - 1;
+	size_t value_start = variable_end + sizeof("}}:=\"") - 1;
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
-	std::string value = line.substr(value_start, line.length() - value_start - sizeof("}}"));
+	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
 	cur_context_vars()[variable] = std::make_unique<Expansion<std::string>>(value);
 }
 
 void MDXX_Manager::function_import(std::string& line) {
 	size_t variable_end = line.find("}}:={{import ");
-	size_t variable_start = sizeof("{{");
-	size_t value_start = line.find_first_not_of(" \t", variable_end + sizeof("}}:={{import "));
+	size_t variable_start = sizeof("{{") - 1;
+	size_t value_start = line.find_first_not_of(" \t", variable_end + sizeof("}}:={{import ")) - 1;
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
-	std::string value_id = line.substr(value_start, line.length() - value_start - sizeof("}}"));
+	std::string value_id = line.substr(value_start, line.length() - value_start - sizeof("}}") + 1);
 	check_if_imported_function_found(value_id);
 	gen_func value = imported_function_dict.at(value_id);
 	cur_context_vars()[variable] = std::make_unique<Expansion<gen_func>>(value, value_id);
@@ -115,10 +116,10 @@ void MDXX_Manager::function_import(std::string& line) {
 
 void MDXX_Manager::immediate_substitution(std::string& line) {
 	size_t variable_end = line.find("}}=\"");
-	size_t variable_start = sizeof("{{");
-	size_t value_start = variable_end + sizeof("}}=\"");
+	size_t variable_start = sizeof("{{") - 1;
+	size_t value_start = variable_end + sizeof("}}=\"") - 1;
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
-	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\""));
+	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
 	std::string expanded_value = expand_line(value);
 	cur_context_vars()[variable] = std::make_unique<Expansion<std::string>>(value);
 }
@@ -236,10 +237,12 @@ std::string MDXX_Manager::expand_line(std::string & line) {
 		std::string temp_line = line.substr(0, line_split);
 		line_stack = line.substr(line_split + 1) + line_stack;
 	}
-	static const RE2 left_bracket("(?:[\\\\][\\\\]){");
-	RE2::Replace(&line, left_bracket, *static_cast<std::string*>(get_var("{")->get_data()));
-	static const RE2 right_bracket("(?:[\\\\][\\\\])}");
-	RE2::Replace(&line, right_bracket, *static_cast<std::string*>(get_var("}")->get_data()));
+	static const RE2 left_bracket_at_start_of_line("^{");
+	RE2::Replace(&line, left_bracket_at_start_of_line, *static_cast<std::string*>(get_var("{")->get_data()));
+	static const RE2 left_bracket("([^\\\\]){");
+	RE2::Replace(&line, left_bracket, std::string("\\1") + *static_cast<std::string*>(get_var("{")->get_data()));
+	static const RE2 right_bracket("([^\\\\])}");
+	RE2::Replace(&line, right_bracket, std::string("\\1") + *static_cast<std::string*>(get_var("}")->get_data()));
 	static const RE2 escaped_left_bracket("\\\\{");
 	RE2::Replace(&line, escaped_left_bracket, *static_cast<std::string*>(get_var("\\{")->get_data()));
 	static const RE2 escaped_right_bracket("\\\\}");
@@ -266,25 +269,9 @@ std::string MDXX_Manager::find_context_with_variable(const std::string& var) {
 	error_message.reserve(2048);
 	error_message += var;
 	error_message += " is not a variable in the current context stack.\n";
-	error_message += "Current context: { ";
-	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
-		error_message += *cur_context;
-		error_message += " ";
-	}
-	error_message += "}\n\n";
-	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
-		throw_exception_if_context_not_found(*cur_context);
-		variable_map& context_vars = context_dict.at(*cur_context)->get_variables();
-		error_message += *cur_context;
-		error_message += "\n";
-		for (auto& vars_in_context : context_vars) {
-			error_message += "\t";
-			error_message += vars_in_context.first;
-			error_message += "  -->  ";
-			error_message += vars_in_context.second->to_string();
-			error_message += "\n";
-		}
-	}
+	error_message += list_context_stack();
+	error_message += "\n\n";
+	error_message += list_all_vars();
 	error_message += "\nLine that caused the problem:\n";
 	error_message += print_line();
 	throw std::runtime_error(error_message);
@@ -295,14 +282,10 @@ void MDXX_Manager::throw_exception_if_context_not_found(const std::string& con) 
 		std::string error_message = "ERROR: ";
 		error_message.reserve(2048);
 		error_message += con;
-		error_message += " is not a defined context.\n\nValid Contexts:\n";
-		for (auto& vars_in_context : context_dict) {
-			error_message += "\t";
-			error_message += vars_in_context.first;
-			error_message += "\n";
-		}
-		error_message += "\nLine that caused the problem:\n";
-		error_message += print_line();
+		error_message += " is not a defined context.\n\n";
+		error_message += list_valid_contexts();
+		//error_message += "\nLine that caused the problem:\n";
+		//error_message += print_line();
 		throw std::runtime_error(error_message);
 	}
 }
@@ -312,12 +295,8 @@ void MDXX_Manager::check_if_imported_function_found(const std::string& function)
 		std::string error_message = "ERROR: ";
 		error_message.reserve(2048);
 		error_message += function;
-		error_message += " Has not been imported.\n\nImported Functions:\n";
-		for (auto& imported_function : imported_function_dict) {
-			error_message += "\t";
-			error_message += imported_function.first;
-			error_message += "\n";
-		}
+		error_message += " Has not been imported.\n\n";
+		error_message += list_imported_functions();
 		error_message += "\nLine that caused the problem:\n";
 		error_message += print_line();
 		throw std::runtime_error(error_message);
@@ -326,6 +305,58 @@ void MDXX_Manager::check_if_imported_function_found(const std::string& function)
 
 bool MDXX_Manager::at_end_of_file() {
 	return finished_reading;
+}
+
+std::string MDXX_Manager::list_all_vars() {
+	std::string output;
+	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
+		throw_exception_if_context_not_found(*cur_context);
+		variable_map& context_vars = context_dict.at(*cur_context)->get_variables();
+		output += *cur_context;
+		output += "\n";
+		for (auto& vars_in_context : context_vars) {
+			output += "\t";
+			output += vars_in_context.first;
+			output += "  -->  ";
+			output += vars_in_context.second->to_string();
+			output += "\n";
+		}
+	}
+	return output;
+}
+
+std::string MDXX_Manager::list_context_stack() {
+	std::string output = "Current context: { ";
+	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
+		output += *cur_context;
+		output += " ";
+	}
+	output += "}";
+	return output;
+}
+
+template<typename T>
+std::string list_elements_in_dict(const std::unordered_map<std::string, T>& dict) {
+	std::string output;
+	output.reserve(2048);
+	for (auto& element : dict) {
+		output += "\t";
+		output += element.first;
+		output += "\n";
+	}
+	return output;
+}
+
+std::string MDXX_Manager::list_valid_contexts() {
+	std::string output = "Valid Contexts:\n";
+	output += list_elements_in_dict(context_dict);
+	return output;
+}
+
+std::string MDXX_Manager::list_imported_functions() {
+	std::string output = "Imported Functions:\n";
+	output += list_elements_in_dict(imported_function_dict);
+	return output;
 }
 
 MDXX_Manager::~MDXX_Manager() {

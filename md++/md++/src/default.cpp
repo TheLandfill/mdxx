@@ -1,6 +1,8 @@
 #include "default.h"
 #include "mdxx_manager.h"
+#include "content_manager.h"
 #include "html_manager.h"
+#include <algorithm>
 #include <memory>
 #include <unordered_map>
 #include <iostream>
@@ -10,30 +12,27 @@ namespace mdxx {
 std::string empty_str = "\u0007";
 
 std::string print_expansion(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	MDXX_Manager* mdxx = static_cast<MDXX_Manager*>(args.at(0)->get_data());
-	mdxx->print_expansion_flip();
+	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args.at(0)->get_data()))->get_mdxx();
+	mdxx.print_expansion_flip();
 	return "";
 }
 
 std::string print_variables(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	MDXX_Manager* mdxx = static_cast<MDXX_Manager*>(args.at(0)->get_data());
-	const std::unordered_map<std::string, std::unique_ptr<Expansion_Base>>& cur_context_vars = mdxx->cur_context_vars();
-	std::cout << "Context Variables: {\n";
-	for (auto& item : cur_context_vars) {
-		std::cout << "\t\"" << item.first << "\", " << item.second->to_string() << "\n";
-	}
-	std::cout << "}";
+	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args.at(0)->get_data()))->get_mdxx();
+	std::cout << mdxx.list_all_vars() << "\n";
 	return "";
 }
 
 std::string print_context(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	MDXX_Manager* mdxx = static_cast<MDXX_Manager*>(args.at(0)->get_data());
-	std::cout << "Context Stack: [ ";
-	auto& context_stack = mdxx->context_stack();
-	for (auto c : context_stack) {
-		std::cout << "\"" << c << "\" ";
-	}
-	std::cout << "]";
+	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args.at(0)->get_data()))->get_mdxx();
+	std::cout << mdxx.list_context_stack() << "\n";
+	std::cout << mdxx.list_valid_contexts() << "\n";
+	return "";
+}
+
+std::string print_imported_functions(std::vector<std::unique_ptr<Expansion_Base>>& args) {
+	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args.at(0)->get_data()))->get_mdxx();
+	std::cout << mdxx.list_imported_functions() << "\n";
 	return "";
 }
 
@@ -51,9 +50,11 @@ Default::Default(std::string name) : Context(name) {
 	add_variable<gen_func>("print-expansion", print_expansion);
 	add_variable<gen_func>("print-variables", print_variables);
 	add_variable<gen_func>("print-context", print_context);
-	add_variable<std::string>("print", "{{print_expansion (self)}}");
-	add_variable<std::string>("print-vars", "{{print_variables (self)}}");
-	add_variable<std::string>("print-con", "{{print_context (self)}}");
+	add_variable<gen_func>("print-imported-functions", print_imported_functions);
+	add_variable<std::string>("print", "{{print_expansion (content)}}");
+	add_variable<std::string>("print-vars", "{{print-variables (content)}}");
+	add_variable<std::string>("print-con", "{{print-context (content)}}");
+	add_variable<std::string>("print-func", "{{print-imported-functions (content)}}");
 	add_variable<gen_func>("pop", HTML_Manager::pop);
 	add_variable<gen_func>("push", HTML_Manager::push);
 	add_variable<std::string>("mdpu", "{{push (html)}}");
@@ -75,6 +76,7 @@ void Default::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
 
 void Default::process(HTML_Manager& html, Line_Data& ls) {
 	bool blank_lines = ls.num_lines > 1;
+	std::cout << "{ " << ls.line << ", " << ls.num_lines << " }\n";
 	if (blank_lines) {
 		html.check_and_close_paragraph();
 		std::string line = "<p>";
@@ -85,7 +87,6 @@ void Default::process(HTML_Manager& html, Line_Data& ls) {
 	} else {
 		html.add(ls.line);
 	}
-	html.check_and_close_paragraph();
 }
 
 void Default::close(HTML_Manager& html) {

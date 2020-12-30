@@ -29,14 +29,18 @@ public:
 	void set_context(std::vector<std::string> new_context);
 	bool at_end_of_file();
 	template<typename T>
-	void add_variable_to_context(const std::string& context, const std::string variable_name, T value);
+	static void add_variable_to_context(const std::string& context, const std::string variable_name, T value);
 	template<typename T>
-	void add_variable_to_context(const std::string& context, const std::string variable_name, T* value);
+	static void add_variable_to_context(const std::string& context, const std::string variable_name, T* value);
 	template<typename T>
 	static void add_new_context(const std::string name, variable_map variables);
 	template<typename T>
 	static void add_new_context(const std::string name);
 	static void add_function(const std::string name, gen_func function);
+	std::string list_all_vars();
+	std::string list_context_stack();
+	static std::string list_valid_contexts();
+	static std::string list_imported_functions();
 	~MDXX_Manager();
 private:
 	void variable_definition(std::string& line);
@@ -47,7 +51,7 @@ private:
 	void check_variable_dependency(const Context& c);
 
 	std::string find_context_with_variable(const std::string& var);
-	void throw_exception_if_context_not_found(const std::string& context);
+	static void throw_exception_if_context_not_found(const std::string& context);
 	void check_if_imported_function_found(const std::string& function);
 private:
 	std::ifstream* in_if_need_to_allocate = nullptr;

@@ -18,25 +18,23 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 		template_name
 	)
 {
-	template_mdxx.add_new_context<Template_Context>("template");
-	template_mdxx.add_new_context<Raw_HTML>("raw-html");
-	template_mdxx.add_new_context<Default>("default");
-	template_mdxx.add_variable_to_context("template", "template", this);
-	template_mdxx.add_variable_to_context("template", "content", this->content);
-	template_mdxx.add_variable_to_context("template", "self", this->content);
-	//template_mdxx.add_variable_to_context("template", "html", html);
-	template_mdxx.add_variable_to_context<std::string>("template", "path", "");
-	template_mdxx.add_variable_to_context("template", "plugin", load_plugins);
-	template_mdxx.add_variable_to_context("template", "process_content", process_content);
-	template_mdxx.add_variable_to_context<std::string>("template", "switch_to_content", "{{process_content (content)}}");
-	//template_mdxx.add_variable_to_context("raw-html", "html", html);
-	template_mdxx.add_variable_to_context("default", "html", &html);
+	MDXX_Manager::add_new_context<Template_Context>("template");
+	MDXX_Manager::add_new_context<Raw_HTML>("raw-html");
+	MDXX_Manager::add_new_context<Default>("default");
+	MDXX_Manager::add_variable_to_context("template", "template", this);
+	MDXX_Manager::add_variable_to_context("default", "content", this->content.get());
+	MDXX_Manager::add_variable_to_context("default", "self", this->content.get());
+	MDXX_Manager::add_variable_to_context<std::string>("template", "path", "");
+	MDXX_Manager::add_variable_to_context("default", "plugin", load_plugins);
+	MDXX_Manager::add_variable_to_context("template", "process_content", process_content);
+	MDXX_Manager::add_variable_to_context<std::string>("template", "switch_to_content", "{{process_content (content)}}");
+	MDXX_Manager::add_variable_to_context("default", "html", &html);
 	template_mdxx.set_context({"default", "template"});
 }
 
 std::string Template_Manager::load_plugins(std::vector<std::unique_ptr<Expansion_Base>> & args) {
 	for (auto& arg : args) {
-		std::string plugin_name = *static_cast<std::string*>(arg->get_data());
+		std::string plugin_name = plugin_loader.get_plugin_dir() + *static_cast<std::string*>(arg->get_data());
 		plugin_loader.load_plugin(plugin_name.c_str());
 	}
 	return "";
