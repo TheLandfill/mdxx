@@ -26,7 +26,24 @@ void HTML_Manager::add_pre(std::string& line) {
 	write_empty(line);
 	write("\n");
 }
+
 void HTML_Manager::add_no_nl(std::string& line) {
+	write(tab_level);
+	write_empty(line);
+}
+
+void HTML_Manager::add(const char * line) {
+	write(tab_level);
+	write_empty(line);
+	write("\n");
+}
+
+void HTML_Manager::add_pre(const char * line) {
+	write_empty(line);
+	write("\n");
+}
+
+void HTML_Manager::add_no_nl(const char * line) {
 	write(tab_level);
 	write_empty(line);
 }

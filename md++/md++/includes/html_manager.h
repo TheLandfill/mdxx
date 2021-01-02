@@ -15,6 +15,9 @@ public:
 	void add(std::string& line);
 	void add_pre(std::string& line);
 	void add_no_nl(std::string& line);
+	void add(const char * line);
+	void add_pre(const char * line);
+	void add_no_nl(const char * line);
 	void write(const std::string line);
 	void write_empty(std::string str);
 	void remove_empty(std::string& line);

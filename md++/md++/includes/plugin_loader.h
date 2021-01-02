@@ -1,5 +1,7 @@
 #ifndef MDXX_PLUGIN_LOADER_H
 #define MDXX_PLUGIN_LOADER_H
+#include "expansion.h"
+#include <memory>
 #include <vector>
 #include <string>
 
@@ -28,11 +30,12 @@ public:
 	// empty context and add variables later or the second one if you already
 	// have the variables ready to use.
 	void load_plugin(const char * shared_libary_name);
-	void set_plugin_dir(std::string plugin_dir);
+	static std::string set_plugin_dir(std::vector<std::unique_ptr<Expansion_Base>>& arg);
+	static void set_plugin_dir(const std::string& pd);
 	std::string get_plugin_dir();
 	~Plugin_Loader();
 private:
-	std::string plugin_dir = "";
+	static std::string plugin_dir;
 	std::vector<MDXX_SHARED_HANDLE_TYPE> plugins;
 };
 
