@@ -29,9 +29,9 @@ public:
 	void set_context(std::vector<std::string> new_context);
 	bool at_end_of_file();
 	template<typename T>
-	static void add_variable_to_context(const std::string& context, const std::string variable_name, T value);
+	static void add_variable_to_context(const std::string& context, const std::string variable_name, T value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
-	static void add_variable_to_context(const std::string& context, const std::string variable_name, T* value);
+	static void add_variable_to_context(const std::string& context, const std::string variable_name, T* value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
 	static void add_new_context(const std::string name, variable_map variables);
 	template<typename T>
@@ -42,16 +42,16 @@ public:
 	static std::string list_valid_contexts();
 	static std::string list_imported_functions();
 	~MDXX_Manager();
+	static std::string open_context(std::vector<std::unique_ptr<Expansion_Base>>& args);
+	static std::string close_context(std::vector<std::unique_ptr<Expansion_Base>>& args);
 private:
 	void variable_definition(std::string& line);
-	void function_import(std::string& line);
+	//void function_import(std::string& line);
 	void immediate_substitution(std::string& line);
-	void open_context(std::string& line, HTML_Manager& html);
-	void close_context(std::string& line, HTML_Manager& html);
 	void check_variable_dependency(const Context& c);
 
 	std::string find_context_with_variable(const std::string& var);
-	static void throw_exception_if_context_not_found(const std::string& context);
+	static void throw_exception_if_context_not_found(const std::string& context, MDXX_Manager* mdxx = nullptr);
 	void check_if_imported_function_found(const std::string& function);
 private:
 	std::ifstream* in_if_need_to_allocate = nullptr;
@@ -67,14 +67,14 @@ private:
 };
 
 template<typename T>
-void MDXX_Manager::add_variable_to_context(const std::string& context, const std::string variable_name, T value) {
-	throw_exception_if_context_not_found(context);
+void MDXX_Manager::add_variable_to_context(const std::string& context, const std::string variable_name, T value, MDXX_Manager* mdxx) {
+	throw_exception_if_context_not_found(context, mdxx);
 	context_dict[context]->add_variable(variable_name, value);
 }
 
 template<typename T>
-void MDXX_Manager::add_variable_to_context(const std::string& context, const std::string variable_name, T* value) {
-	throw_exception_if_context_not_found(context);
+void MDXX_Manager::add_variable_to_context(const std::string& context, const std::string variable_name, T* value, MDXX_Manager* mdxx) {
+	throw_exception_if_context_not_found(context, mdxx);
 	context_dict[context]->add_variable(variable_name, value);
 }
 

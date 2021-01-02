@@ -43,7 +43,8 @@ Default::Default(std::string name) : Context(name) {
 	add_variable<std::string>("}", "</code>");
 	add_variable<std::string>("\\{", "{" );
 	add_variable<std::string>("\\}", "}");
-	add_variable<std::string>("ldb", "\\{{{empty}}\\{");
+	add_variable<std::string>("ldb", "\\\\{{{empty}}\\\\{");
+	add_variable<std::string>("rdb", "\\\\}{{empty}}\\\\}");
 	add_variable<std::string>("lt", "&lt;");
 	add_variable<std::string>("gt", "&gt;");
 	add_variable<std::string>("nl", "\n");
@@ -76,7 +77,6 @@ void Default::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
 
 void Default::process(HTML_Manager& html, Line_Data& ls) {
 	bool blank_lines = ls.num_lines > 1;
-	std::cout << "{ " << ls.line << ", " << ls.num_lines << " }\n";
 	if (blank_lines) {
 		html.check_and_close_paragraph();
 		std::string line = "<p>";

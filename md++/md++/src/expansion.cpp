@@ -17,7 +17,13 @@ std::unique_ptr<Expansion_Base> Expansion_Base::make_deep_copy() {
 }
 
 std::string Expansion<gen_func>::to_string() {
-	return name;
+	return name + " (function)";
+}
+
+Expansion<gen_func>::Expansion(gen_func function, std::string n) : func(function), name(n) {}
+
+void * Expansion<gen_func>::get_data() {
+	return &name;
 }
 
 template<>

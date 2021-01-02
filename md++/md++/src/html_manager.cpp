@@ -42,7 +42,7 @@ void HTML_Manager::write_empty(std::string str) {
 
 void HTML_Manager::remove_empty(std::string& str) {
 	static const re2::RE2 empty_regex(empty_str);
-	re2::RE2::Replace(&str, empty_regex, "");
+	re2::RE2::GlobalReplace(&str, empty_regex, "");
 }
 
 void HTML_Manager::check_and_close_paragraph() {

@@ -40,10 +40,8 @@ template<>
 struct Expansion<gen_func> : Expansion_Base {
 	gen_func func;
 	std::string name;
-	Expansion<gen_func>(gen_func function, std::string n) : func(function), name(n) {}
-	void * get_data() override {
-		return &name;
-	}
+	Expansion(gen_func function, std::string n);
+	void * get_data() override;
 	std::string to_string() override;
 	std::unique_ptr<Expansion_Base> make_deep_copy() override;
 };
