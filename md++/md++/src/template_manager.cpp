@@ -4,6 +4,7 @@
 #include <sstream>
 #include <memory>
 #include <iostream>
+#include "html_lists.h"
 
 namespace mdxx {
 
@@ -21,6 +22,8 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 	MDXX_Manager::add_new_context<Template_Context>("template");
 	MDXX_Manager::add_new_context<Raw_HTML>("raw-html");
 	MDXX_Manager::add_new_context<Default>("default");
+	MDXX_Manager::add_new_context<HTML_List>("ol");
+	MDXX_Manager::add_new_context<HTML_List>("ul");
 	MDXX_Manager::add_variable_to_context("template", "template", this);
 	MDXX_Manager::add_variable_to_context("default", "content", content.get());
 	MDXX_Manager::add_variable_to_context("default", "self", content.get());
@@ -33,9 +36,10 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 	MDXX_Manager::add_variable_to_context("default", "mdxx", &mdxx);
 	MDXX_Manager::add_variable_to_context("default", "open_func", MDXX_Manager::open_context);
 	MDXX_Manager::add_variable_to_context("default", "close_func", MDXX_Manager::close_context);
+	MDXX_Manager::add_variable_to_context("default", "set", MDXX_Manager::set_var);
 	MDXX_Manager::add_variable_to_context<std::string>("default", "new-context", "INVALID");
-	MDXX_Manager::add_variable_to_context<std::string>("default", "open", "{{open_func (new-context) (mdxx) (html)}}");
-	MDXX_Manager::add_variable_to_context<std::string>("default", "close", "{{close_func (new-context) (mdxx) (html)}}");
+	MDXX_Manager::add_variable_to_context("default", "open", MDXX_Manager::implicit_open_context);
+	MDXX_Manager::add_variable_to_context("default", "close", MDXX_Manager::implicit_close_context);
 	template_mdxx.set_context({"default", "template"});
 }
 

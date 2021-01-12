@@ -3,9 +3,15 @@
 
 namespace mdxx {
 
-Context::Context(std::string n, variable_map& v) : name(n), variables(std::move(v)) {}
+Context::Context(std::string n, variable_map& v) :
+	name(n),
+	variables(std::move(v))
+{}
 
-Context::Context(std::string n) : name(n), variables() {}
+Context::Context(std::string n) :
+	name(n),
+	variables()
+{}
 
 variable_map& Context::get_variables() {
 	return variables;

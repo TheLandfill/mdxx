@@ -77,12 +77,9 @@ void MDXX_Manager::handle_context(HTML_Manager& html) {
 	using namespace re2;
 	std::string line = line_data.line;
 	static const RE2 variable_definition_regex("^\\{\\{[^{}]+\\}\\}:=\".+\"$");
-	//static const RE2 function_import_regex("^\\{\\{[^{}]+?\\}\\}:=\\{\\{import\\s+[^{}]+\\}\\}");
 	static const RE2 immediate_substitution_regex("^\\{\\{[^{}]+\\}\\}=\".+\"$");
 	if (RE2::FullMatch(line, variable_definition_regex)) {
 		variable_definition(line);
-	//} else if (RE2::FullMatch(line, function_import_regex)) {
-	//	function_import(line);
 	} else if (RE2::FullMatch(line, immediate_substitution_regex)) {
 		immediate_substitution(line);
 	} else {
@@ -100,17 +97,6 @@ void MDXX_Manager::variable_definition(std::string& line) {
 	cur_context_vars()[variable] = std::make_unique<Expansion<std::string>>(value);
 }
 
-//void MDXX_Manager::function_import(std::string& line) {
-//	size_t variable_end = line.find("}}:={{import ");
-//	size_t variable_start = sizeof("{{") - 1;
-//	size_t value_start = line.find_first_not_of(" \t", variable_end + sizeof("}}:={{import ")) - 1;
-//	std::string variable = line.substr(variable_start, variable_end - variable_start);
-//	std::string value_id = line.substr(value_start, line.length() - value_start - sizeof("}}") + 1);
-//	check_if_imported_function_found(value_id);
-//	gen_func value = imported_function_dict.at(value_id);
-//	cur_context_vars()[variable] = std::make_unique<Expansion<gen_func>>(value, value_id);
-//}
-
 void MDXX_Manager::immediate_substitution(std::string& line) {
 	size_t variable_end = line.find("}}=\"");
 	size_t variable_start = sizeof("{{") - 1;
@@ -126,8 +112,6 @@ std::string MDXX_Manager::open_context(std::vector<std::unique_ptr<Expansion_Bas
 	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args.at(1)->get_data());
 	HTML_Manager& html = **static_cast<HTML_Manager**>(args.at(2)->get_data());
 	using namespace re2;
-	static const RE2 open_context_regex("[\\\\{}/]");
-	RE2::Replace(&line, open_context_regex, "");
 	std::string open_args = "";
 	size_t args_split = line.find_first_of("\t ");
 	if (args_split != std::string::npos) {
@@ -145,8 +129,6 @@ std::string MDXX_Manager::close_context(std::vector<std::unique_ptr<Expansion_Ba
 	std::string line = *static_cast<std::string*>(args.at(0)->get_data());
 	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args.at(1)->get_data());
 	HTML_Manager& html = **static_cast<HTML_Manager**>(args.at(2)->get_data());
-	static const RE2 close_context_regex("[\\\\{}/]");
-	RE2::Replace(&line, close_context_regex, "");
 	if (line == mdxx.context.back()) {
 		mdxx.cur_context()->close(html);
 		mdxx.context.pop_back();
@@ -160,6 +142,25 @@ std::string MDXX_Manager::close_context(std::vector<std::unique_ptr<Expansion_Ba
 		throw std::runtime_error(error_message);
 	}
 	return "";
+}
+
+std::string MDXX_Manager::implicit_open_context(std::vector<std::unique_ptr<Expansion_Base>>& args) {
+	add_variable_to_context<std::string>("default", "new-context", *static_cast<std::string*>(args.at(0)->get_data()));
+	return "{{open_func (new-context) (mdxx) (html)}}";
+}
+
+std::string MDXX_Manager::implicit_close_context(std::vector<std::unique_ptr<Expansion_Base>>& args) {
+	add_variable_to_context<std::string>("default", "new-context", *static_cast<std::string*>(args.at(0)->get_data()));
+	return "{{close_func (new-context) (mdxx) (html)}}";
+}
+
+std::string MDXX_Manager::set_var(std::vector<std::unique_ptr<Expansion_Base>>& args) {
+	std::string output = "{{nl}}{{";
+	output += *static_cast<std::string*>(args.at(0)->get_data());
+	output += "}}=\"";
+	output += *static_cast<std::string*>(args.at(1)->get_data());
+	output += "\"{{nl}}";
+	return output;
 }
 
 void MDXX_Manager::find_next_content_line() {
@@ -221,12 +222,12 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		} else {
 			RE2::Replace(&line, variable_regex, func_holder->func(args));
 		}
+		size_t line_split = line.find("\n");
+		if (line_split != std::string::npos) {
+			line_stack = line.substr(line_split + 1) + line_stack;
+			line = line.substr(0, line_split);
+		}
 		re_line = line;
-	}
-	size_t line_split = line.find("\n");
-	if (line_split != std::string::npos) {
-		std::string temp_line = line.substr(0, line_split);
-		line_stack = line.substr(line_split + 1) + line_stack;
 	}
 	static const RE2 left_bracket_at_start_of_line("^{");
 	RE2::Replace(&line, left_bracket_at_start_of_line, *static_cast<std::string*>(get_var("{")->get_data()));

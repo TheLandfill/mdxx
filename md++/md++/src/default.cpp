@@ -77,6 +77,9 @@ void Default::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
 
 void Default::process(HTML_Manager& html, Line_Data& ls) {
 	bool blank_lines = ls.num_lines > 1;
+	if (ls.line == "") {
+		return;
+	}
 	if (blank_lines) {
 		html.check_and_close_paragraph();
 		std::string line = "<p>";
