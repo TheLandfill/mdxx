@@ -2,6 +2,7 @@
 #include "context.h"
 #include "html_manager.h"
 #include "mdxx_manager.h"
+#include "compilation_info.h"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -61,9 +62,13 @@ public:
 		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args));
 		return "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
 	}
+	~Terminal() {}
 };
 
 extern "C" void import_plugin() {
 	mdxx::MDXX_Manager::add_new_context<Terminal>("terminal");
-	std::cout << "Terminal imported.\n";
+}
+
+extern "C" void print_compilation_info() {
+	std::cout << "\r\033[Kterminal:\t" << MDXX_COMPILATION_INFO << ".\n";
 }
