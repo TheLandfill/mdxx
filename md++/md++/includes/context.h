@@ -27,6 +27,7 @@ public:
 		variables[variable_name] = std::make_unique<Expansion<T>>(variable_value);
 	}
 	std::string get_name();
+	virtual ~Context();
 protected:
 	std::string name;
 	variable_map variables;

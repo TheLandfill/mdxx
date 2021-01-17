@@ -9,6 +9,7 @@ public:
 	virtual void open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) override;
 	virtual void process(HTML_Manager& html, Line_Data& ls) override;
 	virtual void close(HTML_Manager& html) override;
+	~HTML_List();
 private:
 	bool list_first_element;
 };

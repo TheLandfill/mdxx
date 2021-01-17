@@ -22,4 +22,6 @@ void Context::add_variable<gen_func>(std::string variable_name, gen_func variabl
 	variables[variable_name] = std::make_unique<Expansion<gen_func>>(variable_value, variable_name);
 }
 
+Context::~Context() {}
+
 }

@@ -10,6 +10,7 @@ struct Expansion_Base {
 	virtual void * get_data();
 	virtual std::string to_string();
 	virtual std::unique_ptr<Expansion_Base> make_deep_copy();
+	virtual ~Expansion_Base();
 };
 
 typedef std::string (*gen_func)(std::vector<std::unique_ptr<Expansion_Base>>&);

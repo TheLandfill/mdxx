@@ -45,4 +45,6 @@ void HTML_List::close(HTML_Manager& html) {
 	html.add_pre(">");
 }
 
+HTML_List::~HTML_List() {}
+
 }

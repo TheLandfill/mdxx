@@ -33,4 +33,6 @@ void Raw_HTML::close(HTML_Manager& html) {
 	(void)html;
 }
 
+Raw_HTML::~Raw_HTML() {}
+
 }

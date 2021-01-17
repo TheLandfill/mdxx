@@ -9,6 +9,7 @@ public:
 	virtual void open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) override;
 	virtual void process(HTML_Manager& html, Line_Data& ls) override;
 	virtual void close(HTML_Manager& html) override;
+	~Raw_HTML();
 private:
 	bool in_pre_section = false;
 };

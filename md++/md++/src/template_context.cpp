@@ -23,4 +23,6 @@ void Template_Context::close(HTML_Manager& html) {
 	return;
 }
 
+Template_Context::~Template_Context() {}
+
 }

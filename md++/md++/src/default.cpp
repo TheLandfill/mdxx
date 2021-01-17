@@ -97,4 +97,6 @@ void Default::close(HTML_Manager& html) {
 	throw_default_context_exception();
 }
 
+Default::~Default() {}
+
 }

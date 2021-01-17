@@ -3,6 +3,8 @@
 
 namespace mdxx {
 
+Expansion_Base::~Expansion_Base() {}
+
 void * Expansion_Base::get_data() {
 	return nullptr;
 }
