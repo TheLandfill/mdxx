@@ -11,3 +11,4 @@ link_directories("${VENDOR_LIBRARY_DIRS}")
 
 add_subdirectory(md++)
 add_subdirectory(plugins)
+add_subdirectory(vendors)
