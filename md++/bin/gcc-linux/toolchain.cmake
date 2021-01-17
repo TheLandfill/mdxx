@@ -20,5 +20,5 @@ add_link_options(
 	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
 )
 add_link_options(
-	-lGLU -lOpenGL -ldl -lXrandr -lXext -lX11 -lpthread
+	-ldl -lpthread
 )
