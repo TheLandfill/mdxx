@@ -44,7 +44,7 @@ def add_li(html, line_data):
         html.add('<li>' + line)
         push([html])
     else:
-        html.add(line) 
+        html.add(line)
 
 list_dict = {
     'ol':   Context(open_ol, add_li, close_ol, paragraph_dict['paragraph'].variables),

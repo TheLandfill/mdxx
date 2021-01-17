@@ -1,4 +1,4 @@
-article
+templates/article
 Title:		How to Write a Tutorial
 Author:		Nikita Zdvijkov
 Tagline:	This is just a test to see what it looks like. Since most of these are going to be shorter, I'm going to try a much longer one.
@@ -65,7 +65,7 @@ I defined {{PATH}} earlier to be rendered as code, so let's see if that works.
 \{{aside}}
 #### How to Write an Aside<hr>
 This should render as an aside box.
-I should also be able to use {{PATH}} inside the aside.
+I should also be able to use {{PATH}} inside the aside.{{print-con}}
 \{{\aside}}
 
 \{{comment}}
@@ -161,7 +161,8 @@ If it doesn't, I'll be mad.
 \{{\aside}}
 
 \{{raw-html}}
-<div><img src="../../resources/sm_5b321ca7a1ca4.png" alt="Heart icon."></div>
+<div><img src="../../resources/sm_5b321ca7a1ca4.png" alt="Heart
+icon."></div>{{print-con}}
 
 <p>Just testing if raw-html expands variables like {{ldb}}lt\}\}: {{lt}}.
 </p>
