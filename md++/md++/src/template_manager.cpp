@@ -44,7 +44,6 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 }
 
 std::string Template_Manager::load_plugins(std::vector<std::unique_ptr<Expansion_Base>> & args) {
-	std::cout << "Loading plugins\n";
 	for (auto& arg : args) {
 		std::string plugin_name = *static_cast<std::string*>(arg->get_data());
 		plugin_loader.load_plugin(plugin_name.c_str());
@@ -60,12 +59,11 @@ void Template_Manager::process_template() {
 		}
 		template_mdxx.handle_context(html);
 	}
-	std::cout << "Finished processing template" << std::endl;
+	MDXX_Manager::destroy_contexts();
 }
 
 std::string process_content(std::vector<std::unique_ptr<Expansion_Base>>& args) {
 	(*static_cast<std::shared_ptr<Content_Manager>*>(args.at(0)->get_data()))->process_content();
-	std::cout << "Finished processing content" << std::endl;
 	return "";
 }
 

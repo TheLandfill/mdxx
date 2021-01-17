@@ -163,6 +163,10 @@ std::string MDXX_Manager::set_var(std::vector<std::unique_ptr<Expansion_Base>>& 
 	return output;
 }
 
+void MDXX_Manager::destroy_contexts() {
+	context_dict.clear();
+}
+
 void MDXX_Manager::find_next_content_line() {
 	size_t count = 0;
 	std::string current_line = "    ";

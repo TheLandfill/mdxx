@@ -11,7 +11,6 @@ void usage_message(char * program_name);
 
 int main(int argc, char ** argv) {
 	using namespace mdxx;
-	std::cout << argv[0] << "\n";
 	if (argc < 3) {
 		usage_message(argv[0]);
 		return 1;
