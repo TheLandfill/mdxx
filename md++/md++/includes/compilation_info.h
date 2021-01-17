@@ -16,6 +16,8 @@
 #elif defined(__MINGW64_MAJOR_VERSION)
 #define MDXX_ABI_COMPILER "mingw-64"
 #define MDXX_ABI_VERSION __MINGW64_MAJOR_VERSION << "." << __MINGW64_MINOR_VERSION
+#else
+#error "Please add ABI info for your compiler in the header file\nmd++/includes/compilation_info.h and submit a pull request."
 #endif
 
 #define MDXX_COMPILATION_INFO MDXX_ABI_COMPILER << " version " << MDXX_ABI_VERSION
