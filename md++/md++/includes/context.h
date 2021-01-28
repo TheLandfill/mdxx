@@ -34,6 +34,9 @@ protected:
 };
 
 template<>
+void Context::add_variable(std::string name, const char * variable_value);
+
+template<>
 void Context::add_variable<gen_func>(std::string variable_name, gen_func variable_value);
 
 }

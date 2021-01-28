@@ -44,8 +44,6 @@ public:
 	~MDXX_Manager();
 	static std::string open_context(std::vector<std::unique_ptr<Expansion_Base>>& args);
 	static std::string close_context(std::vector<std::unique_ptr<Expansion_Base>>& args);
-	static std::string implicit_open_context(std::vector<std::unique_ptr<Expansion_Base>>& args);
-	static std::string implicit_close_context(std::vector<std::unique_ptr<Expansion_Base>>& args);
 	static std::string set_var(std::vector<std::unique_ptr<Expansion_Base>>& args);
 	static void destroy_contexts();
 private:

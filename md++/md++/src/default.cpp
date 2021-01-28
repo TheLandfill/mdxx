@@ -37,29 +37,29 @@ std::string print_imported_functions(std::vector<std::unique_ptr<Expansion_Base>
 }
 
 Default::Default(std::string name) : Context(name) {
-	add_variable<std::string>("empty", std::string(empty_str) );
-	add_variable<std::string>("zs", "&#8203;");
-	add_variable<std::string>("{", "<code>");
-	add_variable<std::string>("}", "</code>");
-	add_variable<std::string>("\\{", "{" );
-	add_variable<std::string>("\\}", "}");
-	add_variable<std::string>("ldb", "\\\\{{{empty}}\\\\{");
-	add_variable<std::string>("rdb", "\\\\}{{empty}}\\\\}");
-	add_variable<std::string>("lt", "&lt;");
-	add_variable<std::string>("gt", "&gt;");
-	add_variable<std::string>("nl", "\n");
+	add_variable("empty", std::string(empty_str) );
+	add_variable("zs", "&#8203;");
+	add_variable("{", "<code>");
+	add_variable("}", "</code>");
+	add_variable("\\{", "{" );
+	add_variable("\\}", "}");
+	add_variable("ldb", "\\\\{{{empty}}\\\\{");
+	add_variable("rdb", "\\\\}{{empty}}\\\\}");
+	add_variable("lt", "&lt;");
+	add_variable("gt", "&gt;");
+	add_variable("nl", "\n");
 	add_variable<gen_func>("print-expansion", print_expansion);
 	add_variable<gen_func>("print-variables", print_variables);
 	add_variable<gen_func>("print-context", print_context);
 	add_variable<gen_func>("print-imported-functions", print_imported_functions);
-	add_variable<std::string>("print", "{{print_expansion (content)}}");
-	add_variable<std::string>("print-vars", "{{print-variables (content)}}");
-	add_variable<std::string>("print-con", "{{print-context (content)}}");
-	add_variable<std::string>("print-func", "{{print-imported-functions (content)}}");
+	add_variable("print", "{{print-expansion (content)}}");
+	add_variable("print-vars", "{{print-variables (content)}}");
+	add_variable("print-con", "{{print-context (content)}}");
+	add_variable("print-func", "{{print-imported-functions (content)}}");
 	add_variable<gen_func>("pop", HTML_Manager::pop);
 	add_variable<gen_func>("push", HTML_Manager::push);
-	add_variable<std::string>("mdpu", "{{push (html)}}");
-	add_variable<std::string>("mdpo", "{{pop (html)}}");
+	add_variable("mdpu", "{{push (html)}}");
+	add_variable("mdpo", "{{pop (html)}}");
 }
 
 void throw_default_context_exception() {

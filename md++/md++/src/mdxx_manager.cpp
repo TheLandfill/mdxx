@@ -144,16 +144,6 @@ std::string MDXX_Manager::close_context(std::vector<std::unique_ptr<Expansion_Ba
 	return "";
 }
 
-std::string MDXX_Manager::implicit_open_context(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	add_variable_to_context<std::string>("default", "new-context", *static_cast<std::string*>(args.at(0)->get_data()));
-	return "{{open_func (new-context) (mdxx) (html)}}";
-}
-
-std::string MDXX_Manager::implicit_close_context(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	add_variable_to_context<std::string>("default", "new-context", *static_cast<std::string*>(args.at(0)->get_data()));
-	return "{{close_func (new-context) (mdxx) (html)}}";
-}
-
 std::string MDXX_Manager::set_var(std::vector<std::unique_ptr<Expansion_Base>>& args) {
 	std::string output = "{{nl}}{{";
 	output += *static_cast<std::string*>(args.at(0)->get_data());
@@ -225,6 +215,10 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 			RE2::Replace(&line, variable_regex, *static_cast<std::string*>(expanded_var->get_data()));
 		} else {
 			RE2::Replace(&line, variable_regex, func_holder->func(args));
+		}
+		for (size_t i = 0; i < var_args.size(); i++) {
+			std::string positional_variable_reg = "\\[";
+			RE2::GlobalReplace(&line, positional_variable_reg + std::to_string(i) + "\\]", var_args[i]);
 		}
 		size_t line_split = line.find("\n");
 		if (line_split != std::string::npos) {
