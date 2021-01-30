@@ -80,11 +80,14 @@ void MDXX_Manager::handle_context(HTML_Manager& html) {
 	static const RE2 immediate_substitution_regex("^\\{\\{[^{}]+\\}\\}=\".+\"$");
 	if (RE2::FullMatch(line, variable_definition_regex)) {
 		variable_definition(line);
+		cur_line_count--;
 	} else if (RE2::FullMatch(line, immediate_substitution_regex)) {
 		immediate_substitution(line);
+		cur_line_count--;
 	} else {
 		line_data.line = expand_line(line);
 		cur_context()->process(html, line_data);
+		cur_line_count = 0;
 	}
 }
 
@@ -158,13 +161,12 @@ void MDXX_Manager::destroy_contexts() {
 }
 
 void MDXX_Manager::find_next_content_line() {
-	size_t count = 0;
 	std::string current_line = "    ";
 	if (line_stack != "") {
-		count = line_stack.find_first_not_of("\n");
-		line_stack = line_stack.substr(count);
+		cur_line_count = line_stack.find_first_not_of("\n");
+		line_stack = line_stack.substr(cur_line_count);
 		size_t next_line_in_stack = line_stack.find('\n');
-		line_data = { line_stack.substr(0, next_line_in_stack), count };
+		line_data = { line_stack.substr(0, next_line_in_stack), cur_line_count };
 		if (next_line_in_stack == std::string::npos) {
 			line_stack = "";
 		} else {
@@ -174,13 +176,13 @@ void MDXX_Manager::find_next_content_line() {
 	}
 	static const re2::RE2 empty_line_regex("^\\s*$");
 	while (!at_end_of_file() && re2::RE2::FullMatch(current_line, empty_line_regex)) {
-		count += 1;
+		cur_line_count += 1;
 		current_line = next_line();
 	}
 	while (current_line.back() == '\n') {
 		current_line.pop_back();
 	}
-	line_data = Line_Data{ current_line, count };
+	line_data = Line_Data{ current_line, cur_line_count };
 }
 
 std::string MDXX_Manager::find_and_return_next_content_line() {

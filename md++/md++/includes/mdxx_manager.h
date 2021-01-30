@@ -60,6 +60,7 @@ private:
 	std::ifstream& in;
 	std::vector<std::string> context = { "default" };
 	size_t line_number = 0;
+	size_t cur_line_count = 0;
 	bool print_expansion = false;
 	static std::unordered_map<std::string, std::unique_ptr<Context>> context_dict;
 	static std::unordered_map<std::string, gen_func> imported_function_dict;
