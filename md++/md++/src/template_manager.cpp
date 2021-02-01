@@ -1,10 +1,11 @@
 #include "template_manager.h"
 #include "raw_html.h"
 #include "default.h"
+#include "html_lists.h"
+#include "metadata.h"
 #include <sstream>
 #include <memory>
 #include <iostream>
-#include "html_lists.h"
 
 namespace mdxx {
 
@@ -39,6 +40,7 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 	MDXX_Manager::add_variable_to_context("default", "set", MDXX_Manager::set_var);
 	MDXX_Manager::add_variable_to_context("default", "open", "{{open-func [1] (mdxx) (html)}}");
 	MDXX_Manager::add_variable_to_context("default", "close", "{{close-func [1] (mdxx) (html)}}");
+	MDXX_Manager::add_variable_to_context("default", "metadata", read_metadata_file);
 	template_mdxx.set_context({"default", "template"});
 }
 
