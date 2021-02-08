@@ -40,7 +40,7 @@ std::string read_metadata_file(std::vector<std::unique_ptr<Expansion_Base>>& arg
 	}
 	for (const auto& field : fields) {
 		if (j.contains(*field)) {
-			MDXX_Manager::add_variable_to_context<std::string>(context, *field, j[*field].get<std::string>());
+			MDXX_Manager::add_variable_to_context<std::string>(context.c_str(), field->c_str(), j[*field].get<std::string>());
 		} else {
 			std::cerr << "Warning: Field \"" << field << "\" is missing and will be filled with a default value in the output.\n";
 		}

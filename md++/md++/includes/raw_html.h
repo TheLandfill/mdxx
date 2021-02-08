@@ -5,9 +5,9 @@
 namespace mdxx {
 class Raw_HTML : public Context {
 public:
-	Raw_HTML(const std::string name);
-	virtual void open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) override;
-	virtual void process(HTML_Manager& html, Line_Data& ls) override;
+	Raw_HTML(const char * name);
+	virtual void open(HTML_Manager& html, const char * args) override;
+	virtual void process(HTML_Manager& html, const char * args, size_t num_lines) override;
 	virtual void close(HTML_Manager& html) override;
 	~Raw_HTML();
 private:

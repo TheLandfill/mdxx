@@ -29,14 +29,14 @@ public:
 	void set_context(std::vector<std::string> new_context);
 	bool at_end_of_file();
 	template<typename T>
-	static void add_variable_to_context(const std::string& context, const std::string variable_name, T value, MDXX_Manager* mdxx = nullptr);
+	static void add_variable_to_context(const char * context, const char * variable_name, T value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
-	static void add_variable_to_context(const std::string& context, const std::string variable_name, T* value, MDXX_Manager* mdxx = nullptr);
+	static void add_variable_to_context(const char * context, const char * variable_name, T* value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
 	static void add_new_context(const std::string name, variable_map variables);
 	template<typename T>
-	static void add_new_context(const std::string name);
-	static void add_function(const std::string name, gen_func function);
+	static void add_new_context(const char * name);
+	static void add_function(const char * name, gen_func function);
 	std::string list_all_vars();
 	std::string list_context_stack();
 	static std::string list_valid_contexts();
@@ -70,15 +70,15 @@ private:
 };
 
 template<typename T>
-void MDXX_Manager::add_variable_to_context(const std::string& context, const std::string variable_name, T value, MDXX_Manager* mdxx) {
+void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, T value, MDXX_Manager* mdxx) {
 	throw_exception_if_context_not_found(context, mdxx);
 	context_dict[context]->add_variable(variable_name, value);
 }
 
 template<typename T>
-void MDXX_Manager::add_variable_to_context(const std::string& context, const std::string variable_name, T* value, MDXX_Manager* mdxx) {
-	throw_exception_if_context_not_found(context, mdxx);
-	context_dict[context]->add_variable(variable_name, value);
+void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, T* value, MDXX_Manager* mdxx) {
+	throw_exception_if_context_not_found(std::string(context), mdxx);
+	context_dict[std::string(context)]->add_variable(variable_name, value);
 }
 
 template<typename T>
@@ -87,8 +87,8 @@ void MDXX_Manager::add_new_context(const std::string name, variable_map variable
 }
 
 template<typename T>
-void MDXX_Manager::add_new_context(const std::string name) {
-	context_dict[name] = std::make_unique<T>(name);
+void MDXX_Manager::add_new_context(const char * name) {
+	context_dict[std::string(name)] = std::make_unique<T>(name);
 }
 
 }

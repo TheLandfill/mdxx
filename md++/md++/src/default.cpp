@@ -36,7 +36,7 @@ std::string print_imported_functions(std::vector<std::unique_ptr<Expansion_Base>
 	return "";
 }
 
-Default::Default(std::string name) : Context(name) {
+Default::Default(const char * name) : Context(name) {
 	add_variable("empty", std::string(empty_str) );
 	add_variable("zs", "&#8203;");
 	add_variable("{", "<code>");
@@ -68,27 +68,27 @@ void throw_default_context_exception() {
 "your own or use one that already exists.";
 }
 
-void Default::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
+void Default::open(HTML_Manager& html, const char * args) {
 	(void)html;
 	(void)args;
-	(void)mdxx;
 	throw_default_context_exception();
 }
 
-void Default::process(HTML_Manager& html, Line_Data& ls) {
-	bool blank_lines = ls.num_lines > 1;
-	if (ls.line == "") {
+void Default::process(HTML_Manager& html, const char * line_ptr, size_t num_lines) {
+	std::string input_line(line_ptr);
+	bool blank_lines = num_lines > 1;
+	if (input_line == "") {
 		return;
 	}
 	if (blank_lines) {
 		html.check_and_close_paragraph();
 		std::string line = "<p>";
-		line += ls.line;
+		line += input_line;
 		html.add(line);
 		html.push();
 		html.open_paragraph();
 	} else {
-		html.add(ls.line);
+		html.add(input_line);
 	}
 }
 

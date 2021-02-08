@@ -86,7 +86,7 @@ void MDXX_Manager::handle_context(HTML_Manager& html) {
 		cur_line_count--;
 	} else {
 		line_data.line = expand_line(line);
-		cur_context()->process(html, line_data);
+		cur_context()->process(html, line_data.line.c_str(), line_data.num_lines);
 		cur_line_count = 0;
 	}
 }
@@ -124,7 +124,7 @@ std::string MDXX_Manager::open_context(std::vector<std::unique_ptr<Expansion_Bas
 	throw_exception_if_context_not_found(line, &mdxx);
 	mdxx.context.push_back(line);
 	html.check_and_close_paragraph();
-	context_dict[line]->open(html, open_args, mdxx);
+	context_dict[line]->open(html, open_args.c_str());
 	return "";
 }
 

@@ -41,6 +41,10 @@ private:
 template<>
 std::string Expansion<HTML_Manager>::to_string();
 
+
+template<>
+std::unique_ptr<Expansion_Base> Expansion<HTML_Manager>::make_deep_copy();
+
 }
 
 #endif

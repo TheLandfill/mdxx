@@ -8,9 +8,9 @@ namespace mdxx {
 
 class Default : public Context {
 public:
-	Default(const std::string name);
-	virtual void open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) override;
-	virtual void process(HTML_Manager& html, Line_Data& ls) override;
+	Default(const char * name);
+	virtual void open(HTML_Manager& html, const char * args) override;
+	virtual void process(HTML_Manager& html, const char * line, size_t num_lines) override;
 	virtual void close(HTML_Manager& html) override;
 	~Default();
 };

@@ -3,36 +3,35 @@
 
 namespace mdxx {
 
-HTML_List::HTML_List(const std::string name) :
+HTML_List::HTML_List(const char * name) :
 	Context(name),
 	list_first_element(true)
 {}
 
-void HTML_List::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
+void HTML_List::open(HTML_Manager& html, const char * args) {
 	(void)args;
-	(void)mdxx;
 	std::string opening = std::string("<") + name + ">";
 	html.add(opening);
 	html.push();
 	list_first_element = true;
 }
 
-void HTML_List::process(HTML_Manager& html, Line_Data& ls) {
+void HTML_List::process(HTML_Manager& html, const char * line_ptr, size_t num_lines) {
 	if (list_first_element) {
 		html.add_no_nl("<li>");
-		html.add_pre(ls.line);
+		html.add_pre(line_ptr);
 		html.push();
 		list_first_element = false;
 		return;
 	}
-	if (ls.num_lines > 1) {
+	if (num_lines > 1) {
 		html.pop();
 		html.add("</li>");
 		html.add_no_nl("<li>");
-		html.add_pre(ls.line);
+		html.add_pre(line_ptr);
 		html.push();
 	} else {
-		html.add(ls.line);
+		html.add(line_ptr);
 	}
 }
 

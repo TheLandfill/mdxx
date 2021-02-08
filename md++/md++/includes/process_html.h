@@ -5,7 +5,7 @@
 
 namespace mdxx {
 
-void process_html(HTML_Manager& html, const Line_Data& line_data, bool& in_pre_section);
+void process_html(HTML_Manager& html, const char * line_ptr, size_t num_lines, bool& in_pre_section);
 
 }
 

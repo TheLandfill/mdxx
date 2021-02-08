@@ -5,9 +5,9 @@
 namespace mdxx {
 class HTML_List : public Context {
 public:
-	HTML_List(const std::string name);
-	virtual void open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) override;
-	virtual void process(HTML_Manager& html, Line_Data& ls) override;
+	HTML_List(const char * name);
+	virtual void open(HTML_Manager& html, const char * args) override;
+	virtual void process(HTML_Manager& html, const char * line, size_t num_lines) override;
 	virtual void close(HTML_Manager& html) override;
 	~HTML_List();
 private:

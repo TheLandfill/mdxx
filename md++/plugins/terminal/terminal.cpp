@@ -1,3 +1,4 @@
+#define WINDOWS_PLUGIN
 #include "expansion.h"
 #include "context.h"
 #include "html_manager.h"
@@ -8,9 +9,9 @@
 #include <iostream>
 #include <vector>
 
-class Terminal : public mdxx::Context {
+class DLL_IMPORT_EXPORT Terminal : public mdxx::Context {
 public:
-	Terminal(const std::string name) : Context(name) {
+	Terminal(const char * name) : Context(name) {
 		add_variable<std::string>("user", "user");
 		add_variable<std::string>("computer-name", "computer");
 		add_variable<std::string>("mac-dir", "~");
@@ -24,8 +25,8 @@ public:
 		add_variable<mdxx::gen_func>("prompt", Terminal::prompt);
 		add_variable<mdxx::gen_func>("mac-prompt", Terminal::mac_prompt);
 	}
-	void open(mdxx::HTML_Manager& html, std::string& args, mdxx::MDXX_Manager& mdxx) override {
-		(void)mdxx;
+	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
+		std::string args(arg_ptr);
 		std::string opening;
 		if (args.length() >= 3 && args.substr(0, 3) == "mac") {
 			opening = std::string("<div class=\"mac-terminal\"") + args.substr(3) + "><pre>";
@@ -34,11 +35,11 @@ public:
 		}
 		html.add_no_nl(opening);
 	}
-	void process(mdxx::HTML_Manager& html, mdxx::Line_Data& ls) override {
-		for (size_t i = 1; i < ls.num_lines; i++) {
+	void process(mdxx::HTML_Manager& html, const char * line, size_t num_lines) override {
+		for (size_t i = 1; i < num_lines; i++) {
 			html.add_pre("");
 		}
-		html.add_pre(ls.line);
+		html.add_pre(line);
 	}
 	void close(mdxx::HTML_Manager& html) override {
 		html.add_pre("</pre>");

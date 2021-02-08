@@ -104,4 +104,9 @@ std::string Expansion<HTML_Manager*>::to_string() {
 	return strstr.str();
 }
 
+
+std::unique_ptr<Expansion_Base> Expansion<HTML_Manager>::make_deep_copy() {
+	throw std::logic_error("ERROR: HTML_Manager should not be copied!");
+}
+
 }

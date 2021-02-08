@@ -15,9 +15,48 @@ void plugin_load_error(std::string function) {
 }
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-	#define OPEN_SHARED_LIBRARY(X) LoadLibrary(TEXT(X))
-	#define LOAD_PLUGIN(X, Y) (MYPROC) import_plugin = (MYPROC) GetProcAddress(X, Y);\
-	(import_plugin)()
+	#include <Windows.h>
+	#include <libloaderapi.h>
+	typedef void (__cdecl *MYPROC)();
+	#define OPEN_SHARED_LIBRARY(X) open_dll(X)
+	HINSTANCE open_dll(const char * dll_name) {
+		size_t num_bytes = MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, dll_name, -1, nullptr, 0);
+		std::unique_ptr<LPWSTR[]> local_buffer = std::make_unique<LPWSTR[]>(num_bytes);
+		if (MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, dll_name, -1, *(local_buffer.get()), num_bytes) == 0) {
+			std::string error_message;
+			switch (GetLastError()) {
+			case ERROR_INSUFFICIENT_BUFFER:
+				error_message = "Provided buffer size for converting filenames is not large enough, which should not be possible because we query the size before allocating.\n";
+				break;
+			case ERROR_INVALID_FLAGS:
+				error_message = "Invalid flags in converting filenames, which should not be possible because we're using the default flags.\n";
+				break;
+			case ERROR_NO_UNICODE_TRANSLATION:
+				error_message = "Filename \"";
+				error_message += dll_name;
+				error_message += "\" has invalid unicode.\n";
+				break;
+			case ERROR_INVALID_PARAMETER:
+				error_message = "Invalid parameter in converting filenames, which shouldn't be possible because all parameters should be valid.\n";
+			}
+			throw std::runtime_error(error_message);
+		} else {
+			return LoadPackagedLibrary(*(local_buffer.get()), 0);
+		}
+	}
+	#define LOAD_PLUGIN(X, Y) MYPROC import_plugin = (MYPROC) GetProcAddress(X, Y);\
+	if (import_plugin != NULL) {\
+		(import_plugin)();\
+	} else {\
+		plugin_load_error(Y);\
+	}
+
+	#define PRINT_COMPILATION_INFO(X, Y) MYPROC print_compilation_info = (MYPROC) GetProcAddress(X, Y);\
+	if (print_compilation_info != NULL) {\
+		(print_compilation_info)();\
+	} else {\
+		plugin_load_error(Y);\
+	}
 
 	#define CLOSE_SHARED_LIBRARY(X) FreeLibrary(X)
 
@@ -62,7 +101,7 @@ void Plugin_Loader::load_plugin(const char * shared_library_name) {
 	std::cout << "Attempting to load " << full_library_name << "." << std::flush;
 	plugins.push_back(OPEN_SHARED_LIBRARY(full_library_name.c_str()));
 	if (plugins.back() != nullptr) {
-		LOAD_PLUGIN(plugins.back(), "import_plugin")
+		LOAD_PLUGIN(plugins.back(), "import_plugin");
 		PRINT_COMPILATION_INFO(plugins.back(), "print_compilation_info");
 	} else {
 		std::cerr << "\n";

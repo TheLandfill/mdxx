@@ -2,6 +2,7 @@
 #define MDXX_CONTEXT_H
 #include "expansion.h"
 #include "line_data.h"
+#include "dll_info.h"
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -11,20 +12,18 @@ namespace mdxx {
 
 typedef std::unordered_map<std::string, std::unique_ptr<Expansion_Base>> variable_map;
 
-class MDXX_Manager;
 class HTML_Manager;
 
-class Context {
+class DLL_IMPORT_EXPORT Context {
 public:
-	Context(std::string name, variable_map& v);
-	Context(std::string name);
-	virtual void open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) = 0;
-	virtual void process(HTML_Manager& html, Line_Data& ls) = 0;
+	Context(const char * name);
+	virtual void open(HTML_Manager& html, const char * args) = 0;
+	virtual void process(HTML_Manager& html, const char * line, size_t num_lines) = 0;
 	virtual void close(HTML_Manager& html) = 0;
 	variable_map& get_variables();
 	template<typename T>
-	void add_variable(std::string variable_name, T variable_value) {
-		variables[variable_name] = std::make_unique<Expansion<T>>(variable_value);
+	void add_variable(const char * variable_name, T variable_value) {
+		variables[std::string(variable_name)] = std::make_unique<Expansion<T>>(variable_value);
 	}
 	std::string get_name();
 	virtual ~Context();
@@ -34,10 +33,10 @@ protected:
 };
 
 template<>
-void Context::add_variable(std::string name, const char * variable_value);
+void Context::add_variable(const char * name, const char * variable_value);
 
 template<>
-void Context::add_variable<gen_func>(std::string variable_name, gen_func variable_value);
+void Context::add_variable<gen_func>(const char * variable_name, gen_func variable_value);
 
 }
 

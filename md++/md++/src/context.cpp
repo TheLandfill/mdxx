@@ -3,12 +3,7 @@
 
 namespace mdxx {
 
-Context::Context(std::string n, variable_map& v) :
-	name(n),
-	variables(std::move(v))
-{}
-
-Context::Context(std::string n) :
+Context::Context(const char * n) :
 	name(n),
 	variables()
 {}
@@ -18,13 +13,13 @@ variable_map& Context::get_variables() {
 }
 
 template<>
-void Context::add_variable(std::string variable_name, const char * variable_value) {
-	variables[variable_name] = std::make_unique<Expansion<std::string>>(variable_value);
+void Context::add_variable(const char * variable_name, const char * variable_value) {
+	variables[std::string(variable_name)] = std::make_unique<Expansion<std::string>>(variable_value);
 }
 
 template<>
-void Context::add_variable<gen_func>(std::string variable_name, gen_func variable_value) {
-	variables[variable_name] = std::make_unique<Expansion<gen_func>>(variable_value, variable_name);
+void Context::add_variable<gen_func>(const char * variable_name, gen_func variable_value) {
+	variables[std::string(variable_name)] = std::make_unique<Expansion<gen_func>>(variable_value, variable_name);
 }
 
 Context::~Context() {}

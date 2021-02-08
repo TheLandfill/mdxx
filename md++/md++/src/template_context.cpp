@@ -5,17 +5,16 @@
 
 namespace mdxx {
 
-Template_Context::Template_Context(const std::string name) : Context(name) {}
+Template_Context::Template_Context(const char * name) : Context(name) {}
 
-void Template_Context::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
+void Template_Context::open(HTML_Manager& html, const char * args) {
 	(void)html;
 	(void)args;
-	(void)mdxx;
 	return;
 }
 
-void Template_Context::process(HTML_Manager& html, Line_Data& line_data) {
-	process_html(html, line_data, in_pre_section);
+void Template_Context::process(HTML_Manager& html, const char * line_ptr, size_t num_lines) {
+	process_html(html, line_ptr, num_lines, in_pre_section);
 }
 
 void Template_Context::close(HTML_Manager& html) {

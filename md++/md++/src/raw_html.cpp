@@ -3,28 +3,28 @@
 
 namespace mdxx {
 
-Raw_HTML::Raw_HTML(const std::string name) : Context(name) {}
+Raw_HTML::Raw_HTML(const char * name) : Context(name) {}
 
-void Raw_HTML::open(HTML_Manager& html, std::string& args, MDXX_Manager& mdxx) {
+void Raw_HTML::open(HTML_Manager& html, const char * args) {
 	(void)html;
 	(void)args;
-	(void)mdxx;
 }
 
-void Raw_HTML::process(HTML_Manager& html, Line_Data& ls) {
+void Raw_HTML::process(HTML_Manager& html, const char * line_ptr, size_t num_lines) {
+	std::string line(line_ptr);
 	if (in_pre_section) {
 		std::string empty_line{""};
-		for (size_t i = 0; i < ls.num_lines; i++) {
+		for (size_t i = 0; i < num_lines; i++) {
 			html.add_pre(empty_line);
 		}
-		html.add_pre(ls.line);
+		html.add_pre(line);
 	} else {
-		html.add(ls.line);
+		html.add(line);
 	}
-	if (ls.line.find("<pre>") != std::string::npos) {
+	if (line.find("<pre>") != std::string::npos) {
 		in_pre_section = true;
 	}
-	if (ls.line.find("</pre>") != std::string::npos) {
+	if (line.find("</pre>") != std::string::npos) {
 		in_pre_section = false;
 	}
 }
