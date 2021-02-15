@@ -10,3 +10,4 @@ commit-file
 .DS_Store*
 *.zip
 __pycache__/
+.vs/
