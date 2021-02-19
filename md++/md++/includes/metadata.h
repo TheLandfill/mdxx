@@ -6,7 +6,7 @@
 
 namespace mdxx {
 
-std::string read_metadata_file(std::vector<std::unique_ptr<Expansion_Base>>& args);
+extern "C" char * MDXX_read_metadata_file(Expansion_Base** args, size_t argc);
 
 }
 

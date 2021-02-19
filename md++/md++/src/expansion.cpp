@@ -1,45 +1,60 @@
 #include "expansion.h"
+#include <cstring>
 #include <memory>
 
 namespace mdxx {
 
 Expansion_Base::~Expansion_Base() {}
 
-void * Expansion_Base::get_data() {
-	return nullptr;
+const char * Expansion<gen_func>::to_string() {
+	return full_name.c_str();
 }
 
-std::string Expansion_Base::to_string() {
-	return R"lol(This is an empty expansion base that only exists because I
-	need a default constructor to fill up the empty parts of the table.)lol";
+Expansion<std::string>::Expansion(std::string d) : data(d) {}
+
+void * Expansion<std::string>::get_data() {
+	return &data;
 }
 
-std::unique_ptr<Expansion_Base> Expansion_Base::make_deep_copy() {
-	return nullptr;
+const char * Expansion<std::string>::to_string() {
+	return data.c_str();
 }
 
-std::string Expansion<gen_func>::to_string() {
-	return name + " (function)";
+Expansion_Base* Expansion<std::string>::make_deep_copy() {
+	char * copy = new char[data.length() + 1];
+	strcpy(copy, data.c_str());
+	return new Expansion<char *>(copy);
 }
 
-Expansion<gen_func>::Expansion(gen_func function, std::string n) : func(function), name(n) {}
+Expansion<gen_func>::Expansion(gen_func function, std::string n) : func(function),
+	name(n),
+	full_name(name + " (function)")
+{}
+
+Expansion_Base* Expansion<gen_func>::make_deep_copy() {
+	return new Expansion<gen_func>( func, name );
+}
 
 void * Expansion<gen_func>::get_data() {
 	return &name;
 }
 
 template<>
-std::string Expansion<const char *>::to_string() {
-	return std::string((const char *)data);
+const char * Expansion<const char *>::to_string() {
+	return data;
 }
 
 template<>
-std::string Expansion<char *>::to_string() {
-	return std::string((char *)data);
+const char * Expansion<char *>::to_string() {
+	std::stringstream strstr;
+	strstr << data << " (char *)";
+	to_str = strstr.str();
+	return to_str.c_str();
 }
 
-std::unique_ptr<Expansion_Base> Expansion<gen_func>::make_deep_copy() {
-	return std::make_unique<Expansion<gen_func>>( func, name );
+template<>
+Expansion<char *>::~Expansion() {
+	delete[] data;
 }
 
 }

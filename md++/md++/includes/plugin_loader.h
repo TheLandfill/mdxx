@@ -30,7 +30,6 @@ public:
 	// empty context and add variables later or the second one if you already
 	// have the variables ready to use.
 	void load_plugin(const char * shared_libary_name);
-	static std::string set_plugin_dir(std::vector<std::unique_ptr<Expansion_Base>>& arg);
 	static void set_plugin_dir(const std::string& pd);
 	std::string get_plugin_dir();
 	~Plugin_Loader();
@@ -38,6 +37,8 @@ private:
 	static std::string plugin_dir;
 	std::vector<MDXX_SHARED_HANDLE_TYPE> plugins;
 };
+
+extern "C" char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc);
 
 }
 #endif

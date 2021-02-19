@@ -112,10 +112,15 @@ void Plugin_Loader::load_plugin(const char * shared_library_name) {
 	}
 }
 
-std::string Plugin_Loader::set_plugin_dir(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	std::string pd = *static_cast<std::string*>(args.at(0)->get_data());
-	plugin_dir = pd + "/";
-	return "";
+char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc) {
+	if (argc < 1) {
+		throw std::runtime_error(
+"set_plugin_dir expects one argument, the directory where the plugins are located."
+		);
+	}
+	std::string pd = static_cast<const char*>(args[0]->get_data());
+	Plugin_Loader::set_plugin_dir(pd + "/");
+	return nullptr;
 }
 
 void Plugin_Loader::set_plugin_dir(const std::string& pd) {

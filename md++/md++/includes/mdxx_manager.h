@@ -42,10 +42,11 @@ public:
 	static std::string list_valid_contexts();
 	static std::string list_imported_functions();
 	~MDXX_Manager();
-	static std::string open_context(std::vector<std::unique_ptr<Expansion_Base>>& args);
-	static std::string close_context(std::vector<std::unique_ptr<Expansion_Base>>& args);
-	static std::string set_var(std::vector<std::unique_ptr<Expansion_Base>>& args);
+	static char * open_context(Expansion_Base** args, size_t argc);
+	static char * close_context(Expansion_Base** args, size_t argc);
 	static void destroy_contexts();
+public:
+	std::string mdxx_object_id;
 private:
 	void variable_definition(std::string& line);
 	//void function_import(std::string& line);
@@ -90,6 +91,8 @@ template<typename T>
 void MDXX_Manager::add_new_context(const char * name) {
 	context_dict[std::string(name)] = std::make_unique<T>(name);
 }
+template<>
+const char * Expansion<MDXX_Manager*>::to_string();
 
 }
 #endif

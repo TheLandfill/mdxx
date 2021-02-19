@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cstring>
 
 class DLL_IMPORT_EXPORT Terminal : public mdxx::Context {
 public:
@@ -45,23 +46,29 @@ public:
 		html.add_pre("</pre>");
 		html.add("</div>");
 	}
-	static std::string collect_args(std::vector<std::unique_ptr<mdxx::Expansion_Base>>& args) {
+	static std::string collect_args(mdxx::Expansion_Base** args, size_t argc) {
 		std::string command;
 		command.reserve(128);
-		for (auto& arg : args) {
-			command += *static_cast<std::string*>(arg->get_data());
+		for (size_t i = 0; i < argc; i++) {
+			command += *static_cast<const char **>(args[i]->get_data());
 			command += " ";
 		}
 		command.pop_back();
 		return command;
 	}
-	static std::string prompt(std::vector<std::unique_ptr<mdxx::Expansion_Base>>& args) {
-		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args));
-		return "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
+	static char * prompt(mdxx::Expansion_Base** args, size_t argc) {
+		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args, argc));
+		const char * temp = "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
+		char * output = new char[strlen(temp) + 1];
+		strcpy(output, temp);
+		return output;
 	}
-	static std::string mac_prompt(std::vector<std::unique_ptr<mdxx::Expansion_Base>>& args) {
-		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args));
-		return "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
+	static char * mac_prompt(mdxx::Expansion_Base** args, size_t argc) {
+		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args, argc));
+		const char * temp = "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
+		char * output = new char[strlen(temp) + 1];
+		strcpy(output, temp);
+		return output;
 	}
 	~Terminal() {}
 };

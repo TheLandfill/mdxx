@@ -2,6 +2,7 @@
 #include "default.h"
 #include "re2/re2.h"
 #include <memory>
+#include <stdexcept>
 #include <vector>
 #include <sstream>
 #include <iostream>
@@ -87,25 +88,49 @@ void HTML_Manager::open_paragraph() {
 	need_to_close_paragraph = true;
 }
 
-std::string HTML_Manager::push(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	(*static_cast<HTML_Manager**>(args.at(0)->get_data()))->push();
-	return "";
+char * MDXX_html_push(Expansion_Base** args, size_t argc) {
+	if (argc < 1) {
+		throw std::runtime_error(
+"push needs an Expansion<HTML_Manager**> as its argument."
+		);
+	}
+	(*static_cast<HTML_Manager**>(args[0]->get_data()))->push();
+	return nullptr;
 }
 
-std::string HTML_Manager::pop(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	(*static_cast<HTML_Manager**>(args.at(0)->get_data()))->pop();
-	return "";
+void MDXX_html_add(HTML_Manager* html, const char * line) {
+	html->add(line);
+}
+
+void MDXX_html_add_pre(HTML_Manager* html, const char * line) {
+	html->add_pre(line);
+}
+
+void MDXX_html_add_no_nl(HTML_Manager* html, const char * line) {
+	html->add_no_nl(line);
+}
+
+char * MDXX_html_pop(Expansion_Base** args, size_t argc) {
+	if (argc < 1) {
+		throw std::runtime_error(
+"pop needs an Expansion<HTML_Manager**> as its argument."
+		);
+	}
+	(*static_cast<HTML_Manager**>(args[0]->get_data()))->pop();
+	return nullptr;
 }
 
 template<>
-std::string Expansion<HTML_Manager*>::to_string() {
+const char * Expansion<HTML_Manager*>::to_string() {
 	std::stringstream strstr;
 	strstr << "<HTML_Manager object @ " << this->get_data() << ">";
-	return strstr.str();
+	data->html_object_id = strstr.str();
+	return data->html_object_id.c_str();
 }
 
 
-std::unique_ptr<Expansion_Base> Expansion<HTML_Manager>::make_deep_copy() {
+template<>
+Expansion_Base* Expansion<HTML_Manager>::make_deep_copy() {
 	throw std::logic_error("ERROR: HTML_Manager should not be copied!");
 }
 

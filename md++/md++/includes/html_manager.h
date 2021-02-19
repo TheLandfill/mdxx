@@ -25,12 +25,12 @@ public:
 	void push();
 	void pop();
 	void open_paragraph();
-	static std::string push(std::vector<std::unique_ptr<Expansion_Base>>& args);
-	static std::string pop(std::vector<std::unique_ptr<Expansion_Base>>& args);
 	HTML_Manager(const HTML_Manager& html) = delete;
 	HTML_Manager& operator=(const HTML_Manager& html) = delete;
 	HTML_Manager(const HTML_Manager&& html) = delete;
 	HTML_Manager& operator=(const HTML_Manager&& html) = delete;
+public:
+	std::string html_object_id;
 private:
 	std::string tab_level = "";
 	std::ofstream& out;
@@ -38,12 +38,22 @@ private:
 	std::string code_style = "trac";
 };
 
+extern "C" char * MDXX_html_push(Expansion_Base** args, size_t argc);
+extern "C" char * MDXX_html_pop(Expansion_Base** args, size_t argc);
+
+extern "C" void MDXX_html_add(HTML_Manager* html, const char * line);
+extern "C" void MDXX_html_add_pre(HTML_Manager* html, const char * line);
+extern "C" void MDXX_html_add_no_nl(HTML_Manager* html, const char * line);
+
 template<>
-std::string Expansion<HTML_Manager>::to_string();
+const char * Expansion<HTML_Manager>::to_string();
 
 
 template<>
-std::unique_ptr<Expansion_Base> Expansion<HTML_Manager>::make_deep_copy();
+Expansion_Base* Expansion<HTML_Manager>::make_deep_copy();
+
+template<>
+const char * Expansion<HTML_Manager*>::to_string();
 
 }
 

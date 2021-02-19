@@ -13,18 +13,20 @@ class Template_Manager {
 public:
 	Template_Manager(HTML_Manager& html, std::shared_ptr<Content_Manager> content, std::string template_file);
 	void process_template();
+public:
+	std::string template_object_id;
 private:
 	HTML_Manager& html;
 	std::shared_ptr<Content_Manager> content;
 	MDXX_Manager& mdxx;
 	std::string template_name;
 	MDXX_Manager template_mdxx;
-	static std::string load_plugins(std::vector<std::unique_ptr<Expansion_Base>> & args);
+	static char * load_plugins(Expansion_Base** args, size_t argc);
 	static Plugin_Loader plugin_loader;
 };
 
 template<>
-std::string Expansion<Template_Manager*>::to_string();
+const char * Expansion<Template_Manager*>::to_string();
 
 }
 

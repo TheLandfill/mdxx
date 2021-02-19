@@ -110,10 +110,19 @@ void MDXX_Manager::immediate_substitution(std::string& line) {
 	cur_context_vars()[variable] = std::make_unique<Expansion<std::string>>(value);
 }
 
-std::string MDXX_Manager::open_context(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	std::string line = *static_cast<std::string*>(args.at(0)->get_data());
-	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args.at(1)->get_data());
-	HTML_Manager& html = **static_cast<HTML_Manager**>(args.at(2)->get_data());
+char * MDXX_Manager::open_context(Expansion_Base** args, size_t argc) {
+	if (argc < 3) {
+		throw std::runtime_error(
+"open_context (the implicit function) requires three arguments: the line as\n"
+"Expansion<char *>, the MDXX_Manager as Expansion<MDXX_Manager**>, and the\n"
+"HTML_Manager as Expansion<HTML_Manager**>. If you are not doing something weird\n"
+"with the code or changing the variables, you probably forgot the name of the\n"
+"context and you don't need to worry about the previous sentence."
+		);
+	}
+	std::string line = *static_cast<const char **>(args[0]->get_data());
+	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args[1]->get_data());
+	HTML_Manager& html = **static_cast<HTML_Manager**>(args[2]->get_data());
 	using namespace re2;
 	std::string open_args = "";
 	size_t args_split = line.find_first_of("\t ");
@@ -125,13 +134,22 @@ std::string MDXX_Manager::open_context(std::vector<std::unique_ptr<Expansion_Bas
 	mdxx.context.push_back(line);
 	html.check_and_close_paragraph();
 	context_dict[line]->open(html, open_args.c_str());
-	return "";
+	return nullptr;
 }
 
-std::string MDXX_Manager::close_context(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	std::string line = *static_cast<std::string*>(args.at(0)->get_data());
-	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args.at(1)->get_data());
-	HTML_Manager& html = **static_cast<HTML_Manager**>(args.at(2)->get_data());
+char * MDXX_Manager::close_context(Expansion_Base** args, size_t argc) {
+	if (argc < 3) {
+		throw std::runtime_error(
+"close_context (the implicit function) requires three arguments: the line as\n"
+"Expansion<char *>, the MDXX_Manager as Expansion<MDXX_Manager**>, and the\n"
+"HTML_Manager as Expansion<HTML_Manager**>. If you are not doing something weird\n"
+"with the code or changing the variables, you probably forgot the name of the\n"
+"context and you don't need to worry about the previous sentence."
+		);
+	}
+	std::string line = *static_cast<const char**>(args[0]->get_data());
+	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args[1]->get_data());
+	HTML_Manager& html = **static_cast<HTML_Manager**>(args[2]->get_data());
 	if (line == mdxx.context.back()) {
 		mdxx.cur_context()->close(html);
 		mdxx.context.pop_back();
@@ -144,16 +162,7 @@ std::string MDXX_Manager::close_context(std::vector<std::unique_ptr<Expansion_Ba
 		error_message += mdxx.print_line();
 		throw std::runtime_error(error_message);
 	}
-	return "";
-}
-
-std::string MDXX_Manager::set_var(std::vector<std::unique_ptr<Expansion_Base>>& args) {
-	std::string output = "{{nl}}{{";
-	output += *static_cast<std::string*>(args.at(0)->get_data());
-	output += "}}=\"";
-	output += *static_cast<std::string*>(args.at(1)->get_data());
-	output += "\"{{nl}}";
-	return output;
+	return nullptr;
 }
 
 void MDXX_Manager::destroy_contexts() {
@@ -201,14 +210,16 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		}
 		std::vector<std::string> var_args = split(current_sub.as_string());
 		std::string var = var_args.front();
-		std::vector<std::unique_ptr<Expansion_Base>> args;
+		std::vector<Expansion_Base *> args;
 		args.reserve(var_args.size());
 		for (auto i = var_args.begin() + 1; i != var_args.end(); i++) {
 			if (i->front() == '(' && i->back() == ')') {
 				std::string current_arg = i->substr(1, i->length() - 2);
-				args.push_back(get_var(current_arg)->make_deep_copy());
+				Expansion_Base * expansion = get_var(current_arg)->make_deep_copy();
+				args.push_back(expansion);
 			} else {
-				args.push_back(std::make_unique<Expansion<std::string>>(*i));
+				Expansion<std::string> temp_expansion(*i);
+				args.push_back(temp_expansion.make_deep_copy());
 			}
 		}
 		std::unique_ptr<Expansion_Base>& expanded_var = get_var(var);
@@ -216,7 +227,18 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		if (func_holder == nullptr) {
 			RE2::Replace(&line, variable_regex, *static_cast<std::string*>(expanded_var->get_data()));
 		} else {
-			RE2::Replace(&line, variable_regex, func_holder->func(args));
+			Expansion_Base ** c_args = new Expansion_Base*[args.size()];
+			for (size_t i = 0; i < args.size(); i++) {
+				c_args[i] = &*args[i];
+			}
+			char * output = func_holder->func(c_args, args.size());
+			if (output != nullptr) {
+				RE2::Replace(&line, variable_regex, output);
+				delete[] output;
+			} else {
+				RE2::Replace(&line, variable_regex, "");
+			}
+			delete[] c_args;
 		}
 		for (size_t i = 0; i < var_args.size(); i++) {
 			std::string positional_variable_reg = "\\[";
@@ -358,10 +380,11 @@ MDXX_Manager::~MDXX_Manager() {
 }
 
 template<>
-std::string Expansion<MDXX_Manager*>::to_string() {
+const char * Expansion<MDXX_Manager*>::to_string() {
 	std::stringstream strstr;
-	strstr << "<MDXX_Manager object @ " << this->get_data() << ">";
-	return strstr.str();
+	strstr << "<MDXX_Manager object @ " << data << ">";
+	data->mdxx_object_id = strstr.str();
+	return data->mdxx_object_id.c_str();
 }
 
 }

@@ -12,6 +12,8 @@ public:
 	Content_Manager(HTML_Manager& html, MDXX_Manager& mdxx);
 	void process_content();
 	MDXX_Manager& get_mdxx();
+public:
+	std::string content_object_id;
 private:
 	HTML_Manager& html;
 	MDXX_Manager& mdxx;
@@ -19,8 +21,11 @@ private:
 
 std::shared_ptr<Content_Manager> get_content_manager(HTML_Manager& html, MDXX_Manager& mdxx);
 
+//template<>
+//const char * Expansion<std::shared_ptr<Content_Manager>>::to_string();
+
 template<>
-std::string Expansion<std::shared_ptr<Content_Manager>>::to_string();
+const char * Expansion<Content_Manager*>::to_string();
 
 }
 
