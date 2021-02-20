@@ -8,10 +8,12 @@
 #include <iostream>
 #include <memory>
 #include <filesystem>
+#include <chrono>
 
 void usage_message(char * program_name);
 
 int main(int argc, char ** argv) {
+	auto start_time = std::chrono::high_resolution_clock::now();
 	using namespace mdxx;
 	namespace fs = std::filesystem;
 	if (argc < 3) {
@@ -35,6 +37,8 @@ int main(int argc, char ** argv) {
 	metafile.replace_extension(".json");
 	MDXX_Manager::add_variable_to_context<std::string>("default", "metafile", metafile.string());
 	template_reader.process_template();
+	auto end_time = std::chrono::high_resolution_clock::now();
+	std::cout << "Generated webpage in " << std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() << " s\n";
 	return 0;
 }
 
