@@ -146,6 +146,6 @@ Plugin_Loader::~Plugin_Loader() {
 }
 
 std::string Plugin_Loader::plugin_dir = "";
-std::unordered_map<void *, std::unique_ptr<variable_map> > plugin_variable_maps;
+std::unordered_map<void *, std::unique_ptr<variable_map> > Plugin_Loader::plugin_variable_maps;
 
 }

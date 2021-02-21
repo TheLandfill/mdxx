@@ -18,6 +18,7 @@ add_compile_options(
 )
 add_link_options(
 	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
+	"-Wl,--dynamic-list=${CMAKE_SOURCE_DIR}/md++/exported.txt"
 )
 add_link_options(
 	-ldl -lpthread
