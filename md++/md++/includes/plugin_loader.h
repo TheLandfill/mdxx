@@ -1,6 +1,7 @@
 #ifndef MDXX_PLUGIN_LOADER_H
 #define MDXX_PLUGIN_LOADER_H
 #include "expansion.h"
+#include "variable_map.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -32,11 +33,12 @@ public:
 	void load_plugin(const char * shared_libary_name);
 	static void set_plugin_dir(const std::string& pd);
 	std::string get_plugin_dir();
+	static variable_map * get_variable_map();
 	~Plugin_Loader();
 private:
 	static std::string plugin_dir;
 	std::vector<MDXX_SHARED_HANDLE_TYPE> plugins;
-	std::vector<variable_map> plugin_variable_maps;
+	static std::vector<variable_map> plugin_variable_maps;
 };
 
 extern "C" char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc);

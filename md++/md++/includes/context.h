@@ -10,6 +10,46 @@
 
 namespace mdxx {
 
+#ifdef WINDOWS_PLUGIN
+#define MDXX_VARIABLE_MAP mdxx::variable_map * variables;
+#define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \
+mdxx::Expansion_Base* X::get_variable(const char * variable_name) { \
+	return MDXX_get_variable(variables, variable_name); \
+} \
+\
+bool X::check_if_var_exists(const char * variable_name) { \
+	return MDXX_check_if_var_exists(variables, variable_name); \
+} \
+\
+const char * X::get_name() { \
+	return name.c_str(); \
+} \
+\
+void X::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { \
+	MDXX_add_general_variable(variables, variable, std::move(value)); \
+} \
+\
+void X::add_variable(const char * variable, mdxx::gen_func func) {\
+	MDXX_add_function_variable(variables, variable, func); \
+}\
+\
+void X::add_variable(const char * variable, const char * value) {\
+	MDXX_add_string_variable(variables, variable, value); \
+}\
+\
+const char * X::list_variables_as_text() { \
+	all_vars_as_text.clear(); \
+	for (auto& vars_in_context : *variables) { \
+		all_vars_as_text += "\t"; \
+		all_vars_as_text += vars_in_context.first; \
+		all_vars_as_text += "  -->  "; \
+		all_vars_as_text += vars_in_context.second->to_string(); \
+		all_vars_as_text += "\n"; \
+	} \
+	return all_vars_as_text.c_str(); \
+}
+#else
+#define MDXX_VARIABLE_MAP mdxx::variable_map variables;
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \
 mdxx::Expansion_Base* X::get_variable(const char * variable_name) { \
 	return variables.at(std::string(variable_name)).get(); \
@@ -46,6 +86,7 @@ const char * X::list_variables_as_text() { \
 	} \
 	return all_vars_as_text.c_str(); \
 }
+#endif
 
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION \
 public: \
@@ -67,7 +108,7 @@ void add_variable(const char * variable_name, mdxx::gen_func value); \
 void add_variable(const char * variable_name, const char * value); \
 private: \
 	std::string name; \
-	mdxx::variable_map variables; \
+	MDXX_VARIABLE_MAP \
 	std::string all_vars_as_text;
 
 class HTML_Manager;
