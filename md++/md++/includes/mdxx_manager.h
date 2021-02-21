@@ -17,8 +17,7 @@ public:
 	void print_expansion_flip();
 	const std::vector<std::string>& context_stack() const;
 	std::unique_ptr<Context>& cur_context();
-	variable_map& cur_context_vars();
-	std::unique_ptr<Expansion_Base>& get_var(std::string variable);
+	Expansion_Base* get_var(std::string variable);
 	std::string next_line();
 	std::string next_line_no_nl();
 	std::string print_line();
@@ -32,8 +31,6 @@ public:
 	static void add_variable_to_context(const char * context, const char * variable_name, T value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
 	static void add_variable_to_context(const char * context, const char * variable_name, T* value, MDXX_Manager* mdxx = nullptr);
-	template<typename T>
-	static void add_new_context(const std::string name, variable_map variables);
 	template<typename T>
 	static void add_new_context(const char * name);
 	static void add_function(const char * name, gen_func function);
@@ -72,20 +69,19 @@ private:
 
 template<typename T>
 void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, T value, MDXX_Manager* mdxx) {
-	throw_exception_if_context_not_found(context, mdxx);
-	context_dict[context]->add_variable(variable_name, value);
+	throw_exception_if_context_not_found(std::string(context), mdxx);
+	context_dict[context]->add_variable(variable_name, std::move(std::make_unique<Expansion<T> >(value)));
 }
 
 template<typename T>
 void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, T* value, MDXX_Manager* mdxx) {
 	throw_exception_if_context_not_found(std::string(context), mdxx);
-	context_dict[std::string(context)]->add_variable(variable_name, value);
+	context_dict[std::string(context)]->add_variable(variable_name, std::move(std::make_unique<Expansion<T*> >(value)));
 }
 
-template<typename T>
-void MDXX_Manager::add_new_context(const std::string name, variable_map variables) {
-	context_dict.emplace(name, std::make_unique<T>(name, variables));
-}
+
+template<>
+void MDXX_Manager::add_variable_to_context<gen_func>(const char * context, const char * variable_name, gen_func value, MDXX_Manager* mdxx);
 
 template<typename T>
 void MDXX_Manager::add_new_context(const char * name) {

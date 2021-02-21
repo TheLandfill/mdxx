@@ -12,6 +12,7 @@ public:
 	~Raw_HTML();
 private:
 	bool in_pre_section = false;
+MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
 };
 
 }

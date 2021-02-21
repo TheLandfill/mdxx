@@ -12,6 +12,7 @@ public:
 	~HTML_List();
 private:
 	bool list_first_element;
+MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
 };
 
 }

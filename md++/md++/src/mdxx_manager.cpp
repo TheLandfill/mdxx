@@ -38,13 +38,9 @@ std::unique_ptr<Context>& MDXX_Manager::cur_context() {
 	return context_dict.at(context.back());
 }
 
-variable_map& MDXX_Manager::cur_context_vars() {
-	return cur_context()->get_variables();
-}
-
-std::unique_ptr<Expansion_Base>& MDXX_Manager::get_var(std::string variable) {
+Expansion_Base* MDXX_Manager::get_var(std::string variable) {
 	std::string context_with_variable = find_context_with_variable(variable);
-	return context_dict.at(context_with_variable)->get_variables().at(variable);
+	return context_dict.at(context_with_variable)->get_variable(variable.c_str());
 }
 
 std::string MDXX_Manager::next_line() {
@@ -97,7 +93,7 @@ void MDXX_Manager::variable_definition(std::string& line) {
 	size_t value_start = variable_end + sizeof("}}:=\"") - 1;
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
-	cur_context_vars()[variable] = std::make_unique<Expansion<std::string>>(value);
+	cur_context()->add_variable(variable.c_str(), std::move(std::make_unique<Expansion<std::string>>(value)));
 }
 
 void MDXX_Manager::immediate_substitution(std::string& line) {
@@ -107,7 +103,7 @@ void MDXX_Manager::immediate_substitution(std::string& line) {
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
 	std::string expanded_value = expand_line(value);
-	cur_context_vars()[variable] = std::make_unique<Expansion<std::string>>(value);
+	cur_context()->add_variable(variable.c_str(), std::move(std::make_unique<Expansion<std::string>>(value)));
 }
 
 char * MDXX_Manager::open_context(Expansion_Base** args, size_t argc) {
@@ -222,8 +218,8 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 				args.push_back(temp_expansion.make_deep_copy());
 			}
 		}
-		std::unique_ptr<Expansion_Base>& expanded_var = get_var(var);
-		Expansion<gen_func>* func_holder = dynamic_cast<Expansion<gen_func>*>(expanded_var.get());
+		Expansion_Base* expanded_var = get_var(var);
+		Expansion<gen_func>* func_holder = dynamic_cast<Expansion<gen_func>*>(expanded_var);
 		if (func_holder == nullptr) {
 			RE2::Replace(&line, variable_regex, *static_cast<std::string*>(expanded_var->get_data()));
 		} else {
@@ -274,8 +270,7 @@ void MDXX_Manager::set_context(std::vector<std::string> new_context) {
 std::string MDXX_Manager::find_context_with_variable(const std::string& var) {
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
 		throw_exception_if_context_not_found(*cur_context, this);
-		variable_map& context_vars = context_dict.at(*cur_context)->get_variables();
-		if (context_vars.count(var) != 0) {
+		if (context_dict.at(*cur_context)->check_if_var_exists(var.c_str())) {
 			return *cur_context;
 		}
 	}
@@ -327,16 +322,9 @@ std::string MDXX_Manager::list_all_vars() {
 	std::string output;
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
 		throw_exception_if_context_not_found(*cur_context, this);
-		variable_map& context_vars = context_dict.at(*cur_context)->get_variables();
 		output += *cur_context;
 		output += "\n";
-		for (auto& vars_in_context : context_vars) {
-			output += "\t";
-			output += vars_in_context.first;
-			output += "  -->  ";
-			output += vars_in_context.second->to_string();
-			output += "\n";
-		}
+		output += context_dict.at(*cur_context)->list_variables_as_text();
 	}
 	return output;
 }
@@ -377,6 +365,12 @@ std::string MDXX_Manager::list_imported_functions() {
 
 MDXX_Manager::~MDXX_Manager() {
 	delete in_if_need_to_allocate;
+}
+
+template<>
+void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, gen_func value, MDXX_Manager* mdxx) {
+	throw_exception_if_context_not_found(std::string(context), mdxx);
+	context_dict[context]->add_variable(variable_name, std::move(std::make_unique<Expansion<gen_func> >(value, variable_name)));
 }
 
 template<>

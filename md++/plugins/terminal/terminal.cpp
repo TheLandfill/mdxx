@@ -12,17 +12,17 @@
 
 class DLL_IMPORT_EXPORT Terminal : public mdxx::Context {
 public:
-	Terminal(const char * name) : Context(name) {
-		add_variable<std::string>("user", "user");
-		add_variable<std::string>("computer-name", "computer");
-		add_variable<std::string>("mac-dir", "~");
-		add_variable<std::string>("dir", "~/dev");
-		add_variable<std::string>("u-and-c-color", "#4CE64C");
-		add_variable<std::string>("dir-color", "#298FDD");
-		add_variable<std::string>("user-and-comp", "<b><span style=\"color: {{u-and-c-color}};\">{{user}}@{{computer-name}}</span></b>");
-		add_variable<std::string>("full-dir", "<b><span style=\"color: {{dir-color}};\">{{dir}}</span></b>");
-		add_variable<std::string>("command", "");
-		add_variable<std::string>("oneline", "<span class=\"terminal-oneline\">");
+	Terminal(const char * n) : name(n) {
+		add_variable("user", "user");
+		add_variable("computer-name", "computer");
+		add_variable("mac-dir", "~");
+		add_variable("dir", "~/dev");
+		add_variable("u-and-c-color", "#4CE64C");
+		add_variable("dir-color", "#298FDD");
+		add_variable("user-and-comp", "<b><span style=\"color: {{u-and-c-color}};\">{{user}}@{{computer-name}}</span></b>");
+		add_variable("full-dir", "<b><span style=\"color: {{dir-color}};\">{{dir}}</span></b>");
+		add_variable("command", "");
+		add_variable("oneline", "<span class=\"terminal-oneline\">");
 		add_variable<mdxx::gen_func>("prompt", Terminal::prompt);
 		add_variable<mdxx::gen_func>("mac-prompt", Terminal::mac_prompt);
 	}
@@ -60,18 +60,78 @@ public:
 		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args, argc));
 		const char * temp = "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
 		char * output = new char[strlen(temp) + 1];
-		strcpy(output, temp);
+		strncpy(output, temp, strlen(temp) + 1);
 		return output;
 	}
 	static char * mac_prompt(mdxx::Expansion_Base** args, size_t argc) {
 		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args, argc));
 		const char * temp = "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
 		char * output = new char[strlen(temp) + 1];
-		strcpy(output, temp);
+		strncpy(output, temp, strlen(temp) + 1);
 		return output;
 	}
 	~Terminal() {}
+public:
+	const char * list_variables_as_text() override;
+	mdxx::Expansion_Base* get_variable(const char * variable_name) override;
+	bool check_if_var_exists(const char * variable_name) override;
+	const char * get_name() override;
+	void add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) override;
+	template<typename T>
+	void add_variable(const char * variable, T value) {
+		add_variable(variable, std::move(std::make_unique<mdxx::Expansion<T>>(value)));
+	}
+	template<typename T>
+	void add_variable(const char * variable, T* value) {
+		add_variable(variable, std::move(std::make_unique<mdxx::Expansion<T*>>(value)));
+	}
+	template<>
+	void add_variable<mdxx::gen_func>(const char * variable_name, mdxx::gen_func value);
+	template<>
+	void add_variable(const char * variable_name, const char * value);
+private:
+	std::string name;
+	mdxx::variable_map variables;
+	std::string all_vars_as_text;
 };
+
+mdxx::Expansion_Base* Terminal::get_variable(const char * variable_name) { 
+	return variables.at(std::string(variable_name)).get(); 
+} 
+
+bool Terminal::check_if_var_exists(const char * variable_name) { 
+	return variables.count(std::string(variable_name)) > 0; 
+} 
+
+const char * Terminal::get_name() { 
+	return name.c_str(); 
+} 
+
+void Terminal::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { 
+	variables[std::string(variable)] = std::move(value); 
+} 
+
+template<>
+void Terminal::add_variable(const char * variable, mdxx::gen_func func) {
+	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<mdxx::gen_func>>(func, std::string(variable))); 
+}
+
+template<>
+void Terminal::add_variable(const char * variable, const char * value) {
+	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<std::string>>(value)); 
+}
+
+const char * Terminal::list_variables_as_text() { 
+	all_vars_as_text.clear(); 
+	for (auto& vars_in_context : variables) { 
+		all_vars_as_text += "\t"; 
+		all_vars_as_text += vars_in_context.first; 
+		all_vars_as_text += "  -->  "; 
+		all_vars_as_text += vars_in_context.second->to_string(); 
+		all_vars_as_text += "\n"; 
+	} 
+	return all_vars_as_text.c_str(); 
+}
 
 extern "C" void import_plugin() {
 	mdxx::MDXX_Manager::add_new_context<Terminal>("terminal");

@@ -7,11 +7,12 @@
 
 namespace mdxx {
 
+#define MDXX_EXP(X, Y) new mdxx::Expansion<X>(Y)
+
 struct Expansion_Base {
 	virtual void * get_data() = 0;
 	virtual const char * to_string() = 0;
 	virtual Expansion_Base* make_deep_copy() = 0;
-	virtual ~Expansion_Base();
 };
 
 typedef char * (*gen_func)(Expansion_Base** args, size_t argc);

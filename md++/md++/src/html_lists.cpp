@@ -3,8 +3,8 @@
 
 namespace mdxx {
 
-HTML_List::HTML_List(const char * name) :
-	Context(name),
+HTML_List::HTML_List(const char * n) :
+	name(n),
 	list_first_element(true)
 {}
 
@@ -45,5 +45,7 @@ void HTML_List::close(HTML_Manager& html) {
 }
 
 HTML_List::~HTML_List() {}
+
+MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(HTML_List)
 
 }

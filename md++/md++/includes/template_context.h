@@ -13,6 +13,7 @@ public:
 	~Template_Context();
 private:
 	bool in_pre_section;
+	MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
 };
 
 }

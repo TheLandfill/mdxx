@@ -5,7 +5,7 @@
 
 namespace mdxx {
 
-Template_Context::Template_Context(const char * name) : Context(name) {}
+Template_Context::Template_Context(const char * n) : name(n) {}
 
 void Template_Context::open(HTML_Manager& html, const char * args) {
 	(void)html;
@@ -23,5 +23,7 @@ void Template_Context::close(HTML_Manager& html) {
 }
 
 Template_Context::~Template_Context() {}
+
+MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Template_Context)
 
 }

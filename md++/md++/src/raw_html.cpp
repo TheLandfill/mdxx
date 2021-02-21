@@ -3,7 +3,7 @@
 
 namespace mdxx {
 
-Raw_HTML::Raw_HTML(const char * name) : Context(name) {}
+Raw_HTML::Raw_HTML(const char * n) : name(n) {}
 
 void Raw_HTML::open(HTML_Manager& html, const char * args) {
 	(void)html;
@@ -34,5 +34,7 @@ void Raw_HTML::close(HTML_Manager& html) {
 }
 
 Raw_HTML::~Raw_HTML() {}
+
+MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Raw_HTML)
 
 }

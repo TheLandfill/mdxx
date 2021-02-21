@@ -9,6 +9,9 @@ add_compile_options(
 	"$<$<CONFIG:DEBUG>:/Od>"
 	"$<$<CONFIG:DEBUG>:/DEBUG:FASTLINK>"
 )
+add_definitions(
+	"-D_CRT_SECURE_NO_WARNINGS"
+)
 add_link_options(
 	"$<$<CONFIG:RELEASE>:/GL>"
 )

@@ -57,8 +57,8 @@ char * print_imported_functions(Expansion_Base** args, size_t argc) {
 	return nullptr;
 }
 
-Default::Default(const char * name) : Context(name) {
-	add_variable("empty", std::string(empty_str) );
+Default::Default(const char * n) : name(n) {
+	add_variable("empty", empty_str.c_str());
 	add_variable("zs", "&#8203;");
 	add_variable("{", "<code>");
 	add_variable("}", "</code>");
@@ -69,16 +69,16 @@ Default::Default(const char * name) : Context(name) {
 	add_variable("lt", "&lt;");
 	add_variable("gt", "&gt;");
 	add_variable("nl", "\n");
-	add_variable<gen_func>("print-expansion", print_expansion);
-	add_variable<gen_func>("print-variables", print_variables);
-	add_variable<gen_func>("print-context", print_context);
-	add_variable<gen_func>("print-imported-functions", print_imported_functions);
+	add_variable("print-expansion", print_expansion);
+	add_variable("print-variables", print_variables);
+	add_variable("print-context", print_context);
+	add_variable("print-imported-functions", print_imported_functions);
 	add_variable("print", "{{print-expansion (content)}}");
 	add_variable("print-vars", "{{print-variables (content)}}");
 	add_variable("print-con", "{{print-context (content)}}");
 	add_variable("print-func", "{{print-imported-functions (content)}}");
-	add_variable<gen_func>("pop", MDXX_html_pop);
-	add_variable<gen_func>("push", MDXX_html_push);
+	add_variable("pop", MDXX_html_pop);
+	add_variable("push", MDXX_html_push);
 	add_variable("mdpu", "{{push (html)}}");
 	add_variable("mdpo", "{{pop (html)}}");
 }
@@ -119,5 +119,44 @@ void Default::close(HTML_Manager& html) {
 }
 
 Default::~Default() {}
+
+
+mdxx::Expansion_Base* Default::get_variable(const char * variable_name) { 
+	return variables.at(std::string(variable_name)).get(); 
+} 
+
+bool Default::check_if_var_exists(const char * variable_name) { 
+	return variables.count(std::string(variable_name)) > 0; 
+} 
+
+const char * Default::get_name() { 
+	return name.c_str(); 
+} 
+
+void Default::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { 
+	variables[std::string(variable)] = std::move(value); 
+} 
+
+template<>
+void Default::add_variable(const char * variable, mdxx::gen_func func) {
+	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<mdxx::gen_func>>(func, std::string(variable))); 
+}
+const char * Default::list_variables_as_text() { 
+	all_vars_as_text.clear(); 
+	for (auto& vars_in_context : variables) { 
+		all_vars_as_text += "\t"; 
+		all_vars_as_text += vars_in_context.first; 
+		all_vars_as_text += "  -->  "; 
+		all_vars_as_text += vars_in_context.second->to_string(); 
+		all_vars_as_text += "\n"; 
+	} 
+	return all_vars_as_text.c_str(); 
+}
+
+
+template<>
+void Default::add_variable(const char * variable, const char * value) {
+	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<std::string>>(value));
+}
 
 }

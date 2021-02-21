@@ -30,17 +30,17 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 	MDXX_Manager::add_variable_to_context("default", "content", content.get());
 	MDXX_Manager::add_variable_to_context("default", "self", content.get());
 	MDXX_Manager::add_variable_to_context("template", "path", "");
-	MDXX_Manager::add_variable_to_context("default", "plugin", load_plugins);
+	MDXX_Manager::add_variable_to_context<gen_func>("default", "plugin", load_plugins);
 	MDXX_Manager::add_variable_to_context<gen_func>("default", "plugin-dir", MDXX_set_plugin_dir);
-	MDXX_Manager::add_variable_to_context("template", "process_content", process_content);
+	MDXX_Manager::add_variable_to_context<gen_func>("template", "process_content", process_content);
 	MDXX_Manager::add_variable_to_context("template", "switch_to_content", "{{process_content (content)}}");
 	MDXX_Manager::add_variable_to_context("default", "html", &html);
 	MDXX_Manager::add_variable_to_context("default", "mdxx", &mdxx);
-	MDXX_Manager::add_variable_to_context("default", "open-func", MDXX_Manager::open_context);
-	MDXX_Manager::add_variable_to_context("default", "close-func", MDXX_Manager::close_context);
+	MDXX_Manager::add_variable_to_context<gen_func>("default", "open-func", MDXX_Manager::open_context);
+	MDXX_Manager::add_variable_to_context<gen_func>("default", "close-func", MDXX_Manager::close_context);
 	MDXX_Manager::add_variable_to_context("default", "open", "{{open-func [1] (mdxx) (html)}}");
 	MDXX_Manager::add_variable_to_context("default", "close", "{{close-func [1] (mdxx) (html)}}");
-	MDXX_Manager::add_variable_to_context("default", "metadata", MDXX_read_metadata_file);
+	MDXX_Manager::add_variable_to_context<gen_func>("default", "metadata", MDXX_read_metadata_file);
 	template_mdxx.set_context({"default", "template"});
 }
 

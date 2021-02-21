@@ -4,8 +4,6 @@
 
 namespace mdxx {
 
-Expansion_Base::~Expansion_Base() {}
-
 const char * Expansion<gen_func>::to_string() {
 	return full_name.c_str();
 }
@@ -22,7 +20,7 @@ const char * Expansion<std::string>::to_string() {
 
 Expansion_Base* Expansion<std::string>::make_deep_copy() {
 	char * copy = new char[data.length() + 1];
-	strcpy(copy, data.c_str());
+	strncpy(copy, data.c_str(), data.length() + 1);
 	return new Expansion<char *>(copy);
 }
 

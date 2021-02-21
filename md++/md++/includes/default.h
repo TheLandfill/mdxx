@@ -13,6 +13,7 @@ public:
 	virtual void process(HTML_Manager& html, const char * line, size_t num_lines) override;
 	virtual void close(HTML_Manager& html) override;
 	~Default();
+	MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
 };
 
 extern std::string empty_str;
