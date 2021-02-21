@@ -1,10 +1,11 @@
 #ifndef MDXX_HTML_MANAGER_H
 #define MDXX_HTML_MANAGER_H
+#include "expansion.h"
+#include "dll_info.h"
 #include <fstream>
 #include <memory>
 #include <string>
 #include <vector>
-#include "expansion.h"
 
 namespace mdxx {
 
@@ -38,12 +39,12 @@ private:
 	std::string code_style = "trac";
 };
 
-extern "C" char * MDXX_html_push(Expansion_Base** args, size_t argc);
-extern "C" char * MDXX_html_pop(Expansion_Base** args, size_t argc);
+extern "C" DLL_IMPORT_EXPORT char * MDXX_html_push(Expansion_Base** args, size_t argc);
+extern "C" DLL_IMPORT_EXPORT char * MDXX_html_pop(Expansion_Base** args, size_t argc);
 
-extern "C" void MDXX_html_add(HTML_Manager* html, const char * line);
-extern "C" void MDXX_html_add_pre(HTML_Manager* html, const char * line);
-extern "C" void MDXX_html_add_no_nl(HTML_Manager* html, const char * line);
+extern "C" DLL_IMPORT_EXPORT void MDXX_html_add(HTML_Manager* html, const char * line);
+extern "C" DLL_IMPORT_EXPORT void MDXX_html_add_pre(HTML_Manager* html, const char * line);
+extern "C" DLL_IMPORT_EXPORT void MDXX_html_add_no_nl(HTML_Manager* html, const char * line);
 
 template<>
 const char * Expansion<HTML_Manager>::to_string();

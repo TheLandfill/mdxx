@@ -2,6 +2,7 @@
 #define MDXX_PLUGIN_LOADER_H
 #include "expansion.h"
 #include "variable_map.h"
+#include "dll_info.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -42,7 +43,7 @@ private:
 	static std::unordered_map<void *, std::unique_ptr<variable_map> > plugin_variable_maps;
 };
 
-extern "C" char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc);
+extern "C" DLL_IMPORT_EXPORT char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc);
 
 }
 #endif
