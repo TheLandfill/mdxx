@@ -71,67 +71,46 @@ public:
 		return output;
 	}
 	~Terminal() {}
-public:
-	const char * list_variables_as_text() override;
-	mdxx::Expansion_Base* get_variable(const char * variable_name) override;
-	bool check_if_var_exists(const char * variable_name) override;
-	const char * get_name() override;
-	void add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) override;
-	template<typename T>
-	void add_variable(const char * variable, T value) {
-		add_variable(variable, std::move(std::make_unique<mdxx::Expansion<T>>(value)));
-	}
-	template<typename T>
-	void add_variable(const char * variable, T* value) {
-		add_variable(variable, std::move(std::make_unique<mdxx::Expansion<T*>>(value)));
-	}
-	template<>
-	void add_variable<mdxx::gen_func>(const char * variable_name, mdxx::gen_func value);
-	template<>
-	void add_variable(const char * variable_name, const char * value);
-private:
-	std::string name;
-	mdxx::variable_map variables;
-	std::string all_vars_as_text;
+	MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
 };
-
-mdxx::Expansion_Base* Terminal::get_variable(const char * variable_name) { 
-	return variables.at(std::string(variable_name)).get(); 
-} 
-
-bool Terminal::check_if_var_exists(const char * variable_name) { 
-	return variables.count(std::string(variable_name)) > 0; 
-} 
-
-const char * Terminal::get_name() { 
-	return name.c_str(); 
-} 
-
-void Terminal::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { 
-	variables[std::string(variable)] = std::move(value); 
-} 
-
-template<>
-void Terminal::add_variable(const char * variable, mdxx::gen_func func) {
-	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<mdxx::gen_func>>(func, std::string(variable))); 
-}
-
-template<>
-void Terminal::add_variable(const char * variable, const char * value) {
-	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<std::string>>(value)); 
-}
-
-const char * Terminal::list_variables_as_text() { 
-	all_vars_as_text.clear(); 
-	for (auto& vars_in_context : variables) { 
-		all_vars_as_text += "\t"; 
-		all_vars_as_text += vars_in_context.first; 
-		all_vars_as_text += "  -->  "; 
-		all_vars_as_text += vars_in_context.second->to_string(); 
-		all_vars_as_text += "\n"; 
-	} 
-	return all_vars_as_text.c_str(); 
-}
+//
+//mdxx::Expansion_Base* Terminal::get_variable(const char * variable_name) { 
+//	return variables.at(std::string(variable_name)).get(); 
+//} 
+//
+//bool Terminal::check_if_var_exists(const char * variable_name) { 
+//	return variables.count(std::string(variable_name)) > 0; 
+//} 
+//
+//const char * Terminal::get_name() { 
+//	return name.c_str(); 
+//} 
+//
+//void Terminal::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { 
+//	variables[std::string(variable)] = std::move(value); 
+//} 
+//
+//template<>
+//void Terminal::add_variable(const char * variable, mdxx::gen_func func) {
+//	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<mdxx::gen_func>>(func, std::string(variable))); 
+//}
+//
+//template<>
+//void Terminal::add_variable(const char * variable, const char * value) {
+//	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<std::string>>(value)); 
+//}
+//
+//const char * Terminal::list_variables_as_text() { 
+//	all_vars_as_text.clear(); 
+//	for (auto& vars_in_context : variables) { 
+//		all_vars_as_text += "\t"; 
+//		all_vars_as_text += vars_in_context.first; 
+//		all_vars_as_text += "  -->  "; 
+//		all_vars_as_text += vars_in_context.second->to_string(); 
+//		all_vars_as_text += "\n"; 
+//	} 
+//	return all_vars_as_text.c_str(); 
+//}
 
 extern "C" void import_plugin() {
 	mdxx::MDXX_Manager::add_new_context<Terminal>("terminal");

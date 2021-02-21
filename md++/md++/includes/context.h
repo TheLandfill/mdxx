@@ -67,9 +67,7 @@ void add_variable(const char * variable, T* value) { \
 \
 	add_variable(variable, std::move(std::make_unique<mdxx::Expansion<T*>>(value))); \
 } \
-template<> \
 void add_variable(const char * variable_name, mdxx::gen_func value); \
-template<> \
 void add_variable(const char * variable_name, const char * value); \
 private: \
 	std::string name; \
