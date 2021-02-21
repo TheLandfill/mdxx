@@ -141,5 +141,6 @@ Plugin_Loader::~Plugin_Loader() {
 }
 
 std::string Plugin_Loader::plugin_dir = "";
+std::vector<variable_map> Plugin_Loader::plugin_variable_maps;
 
 }
