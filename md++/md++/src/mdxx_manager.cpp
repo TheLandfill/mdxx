@@ -93,7 +93,7 @@ void MDXX_Manager::variable_definition(std::string& line) {
 	size_t value_start = variable_end + sizeof("}}:=\"") - 1;
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
-	cur_context()->add_variable(variable.c_str(), std::move(std::make_unique<Expansion<std::string>>(value)));
+	cur_context()->add_variable(variable.c_str(), std::make_unique<Expansion<std::string>>(value));
 }
 
 void MDXX_Manager::immediate_substitution(std::string& line) {
@@ -103,7 +103,7 @@ void MDXX_Manager::immediate_substitution(std::string& line) {
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
 	std::string expanded_value = expand_line(value);
-	cur_context()->add_variable(variable.c_str(), std::move(std::make_unique<Expansion<std::string>>(value)));
+	cur_context()->add_variable(variable.c_str(), std::make_unique<Expansion<std::string>>(value));
 }
 
 char * MDXX_Manager::open_context(Expansion_Base** args, size_t argc) {
@@ -318,6 +318,16 @@ bool MDXX_Manager::at_end_of_file() {
 	return finished_reading;
 }
 
+void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, gen_func value, MDXX_Manager * mdxx) {
+	throw_exception_if_context_not_found(std::string(context), mdxx);
+	context_dict[context]->add_variable(variable_name, std::make_unique<Expansion<gen_func>>(value, variable_name));
+}
+
+void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, const char * value, MDXX_Manager * mdxx) {
+	throw_exception_if_context_not_found(std::string(context), mdxx);
+	context_dict[context]->add_variable(variable_name, std::make_unique<Expansion<std::string>>(value));
+}
+
 std::string MDXX_Manager::list_all_vars() {
 	std::string output;
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
@@ -365,12 +375,6 @@ std::string MDXX_Manager::list_imported_functions() {
 
 MDXX_Manager::~MDXX_Manager() {
 	delete in_if_need_to_allocate;
-}
-
-template<>
-void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, gen_func value, MDXX_Manager* mdxx) {
-	throw_exception_if_context_not_found(std::string(context), mdxx);
-	context_dict[context]->add_variable(variable_name, std::move(std::make_unique<Expansion<gen_func> >(value, variable_name)));
 }
 
 template<>

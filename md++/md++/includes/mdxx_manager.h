@@ -31,9 +31,10 @@ public:
 	static void add_variable_to_context(const char * context, const char * variable_name, T value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
 	static void add_variable_to_context(const char * context, const char * variable_name, T* value, MDXX_Manager* mdxx = nullptr);
+	static void add_variable_to_context(const char * context, const char * variable_name, gen_func value, MDXX_Manager* mdxx = nullptr);
+	static void add_variable_to_context(const char * context, const char * variable_name, const char * value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
 	static void add_new_context(const char * name);
-	static void add_function(const char * name, gen_func function);
 	std::string list_all_vars();
 	std::string list_context_stack();
 	static std::string list_valid_contexts();
@@ -79,9 +80,6 @@ void MDXX_Manager::add_variable_to_context(const char * context, const char * va
 	context_dict[std::string(context)]->add_variable(variable_name, std::move(std::make_unique<Expansion<T*> >(value)));
 }
 
-
-template<>
-void MDXX_Manager::add_variable_to_context<gen_func>(const char * context, const char * variable_name, gen_func value, MDXX_Manager* mdxx);
 
 template<typename T>
 void MDXX_Manager::add_new_context(const char * name) {

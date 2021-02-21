@@ -120,43 +120,6 @@ void Default::close(HTML_Manager& html) {
 
 Default::~Default() {}
 
-
-mdxx::Expansion_Base* Default::get_variable(const char * variable_name) { 
-	return variables.at(std::string(variable_name)).get(); 
-} 
-
-bool Default::check_if_var_exists(const char * variable_name) { 
-	return variables.count(std::string(variable_name)) > 0; 
-} 
-
-const char * Default::get_name() { 
-	return name.c_str(); 
-} 
-
-void Default::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { 
-	variables[std::string(variable)] = std::move(value); 
-} 
-
-template<>
-void Default::add_variable(const char * variable, mdxx::gen_func func) {
-	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<mdxx::gen_func>>(func, std::string(variable))); 
-}
-const char * Default::list_variables_as_text() { 
-	all_vars_as_text.clear(); 
-	for (auto& vars_in_context : variables) { 
-		all_vars_as_text += "\t"; 
-		all_vars_as_text += vars_in_context.first; 
-		all_vars_as_text += "  -->  "; 
-		all_vars_as_text += vars_in_context.second->to_string(); 
-		all_vars_as_text += "\n"; 
-	} 
-	return all_vars_as_text.c_str(); 
-}
-
-
-template<>
-void Default::add_variable(const char * variable, const char * value) {
-	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<std::string>>(value));
-}
+MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Default)
 
 }

@@ -28,14 +28,12 @@ void X::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base
 	variables[std::string(variable)] = std::move(value); \
 } \
 \
-template<>\
 void X::add_variable(const char * variable, mdxx::gen_func func) {\
-	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<mdxx::gen_func>>(func, std::string(variable))); \
+	variables[std::string(variable)] = std::make_unique<mdxx::Expansion<mdxx::gen_func>>(func, std::string(variable)); \
 }\
 \
-template<>\
 void X::add_variable(const char * variable, const char * value) {\
-	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<std::string>>(value)); \
+	variables[std::string(variable)] = std::make_unique<mdxx::Expansion<std::string>>(value); \
 }\
 \
 const char * X::list_variables_as_text() { \
@@ -60,12 +58,12 @@ const char * get_name() override; \
 void add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) override;\
 template<typename T> \
 void add_variable(const char * variable, T value) { \
-	add_variable(variable, std::move(std::make_unique<mdxx::Expansion<T>>(value))); \
+	add_variable(variable, std::make_unique<mdxx::Expansion<T>>(value)); \
 } \
 template<typename T> \
 void add_variable(const char * variable, T* value) { \
 \
-	add_variable(variable, std::move(std::make_unique<mdxx::Expansion<T*>>(value))); \
+	add_variable(variable, std::make_unique<mdxx::Expansion<T*>>(value)); \
 } \
 void add_variable(const char * variable_name, mdxx::gen_func value); \
 void add_variable(const char * variable_name, const char * value); \

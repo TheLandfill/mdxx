@@ -23,8 +23,8 @@ public:
 		add_variable("full-dir", "<b><span style=\"color: {{dir-color}};\">{{dir}}</span></b>");
 		add_variable("command", "");
 		add_variable("oneline", "<span class=\"terminal-oneline\">");
-		add_variable<mdxx::gen_func>("prompt", Terminal::prompt);
-		add_variable<mdxx::gen_func>("mac-prompt", Terminal::mac_prompt);
+		add_variable("prompt", Terminal::prompt);
+		add_variable("mac-prompt", Terminal::mac_prompt);
 	}
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
 		std::string args(arg_ptr);
@@ -73,44 +73,8 @@ public:
 	~Terminal() {}
 	MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
 };
-//
-//mdxx::Expansion_Base* Terminal::get_variable(const char * variable_name) { 
-//	return variables.at(std::string(variable_name)).get(); 
-//} 
-//
-//bool Terminal::check_if_var_exists(const char * variable_name) { 
-//	return variables.count(std::string(variable_name)) > 0; 
-//} 
-//
-//const char * Terminal::get_name() { 
-//	return name.c_str(); 
-//} 
-//
-//void Terminal::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { 
-//	variables[std::string(variable)] = std::move(value); 
-//} 
-//
-//template<>
-//void Terminal::add_variable(const char * variable, mdxx::gen_func func) {
-//	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<mdxx::gen_func>>(func, std::string(variable))); 
-//}
-//
-//template<>
-//void Terminal::add_variable(const char * variable, const char * value) {
-//	variables[std::string(variable)] = std::move(std::make_unique<mdxx::Expansion<std::string>>(value)); 
-//}
-//
-//const char * Terminal::list_variables_as_text() { 
-//	all_vars_as_text.clear(); 
-//	for (auto& vars_in_context : variables) { 
-//		all_vars_as_text += "\t"; 
-//		all_vars_as_text += vars_in_context.first; 
-//		all_vars_as_text += "  -->  "; 
-//		all_vars_as_text += vars_in_context.second->to_string(); 
-//		all_vars_as_text += "\n"; 
-//	} 
-//	return all_vars_as_text.c_str(); 
-//}
+
+MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Terminal)
 
 extern "C" void import_plugin() {
 	mdxx::MDXX_Manager::add_new_context<Terminal>("terminal");
