@@ -57,14 +57,14 @@ public:
 		return command;
 	}
 	static char * prompt(mdxx::Expansion_Base** args, size_t argc) {
-		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args, argc));
+		mdxx::MDXX_Manager::add_variable_to_context("terminal", "command", collect_args(args, argc));
 		const char * temp = "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
 		char * output = new char[strlen(temp) + 1];
 		strncpy(output, temp, strlen(temp) + 1);
 		return output;
 	}
 	static char * mac_prompt(mdxx::Expansion_Base** args, size_t argc) {
-		mdxx::MDXX_Manager::add_variable_to_context<std::string>("terminal", "command", collect_args(args, argc));
+		mdxx::MDXX_Manager::add_variable_to_context("terminal", "command", collect_args(args, argc));
 		const char * temp = "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
 		char * output = new char[strlen(temp) + 1];
 		strncpy(output, temp, strlen(temp) + 1);

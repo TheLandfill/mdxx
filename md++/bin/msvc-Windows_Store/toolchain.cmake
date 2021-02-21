@@ -12,8 +12,5 @@ add_compile_options(
 add_definitions(
 	"-D_CRT_SECURE_NO_WARNINGS"
 )
-add_link_options(
-	"$<$<CONFIG:RELEASE>:/GL>"
-)
 
 set(VS_STARTUP_PROJECT md++)

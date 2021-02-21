@@ -36,6 +36,7 @@ public:
 private:
 	static std::string plugin_dir;
 	std::vector<MDXX_SHARED_HANDLE_TYPE> plugins;
+	std::vector<variable_map> plugin_variable_maps;
 };
 
 extern "C" char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc);

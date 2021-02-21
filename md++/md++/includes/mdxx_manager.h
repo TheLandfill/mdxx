@@ -80,7 +80,6 @@ void MDXX_Manager::add_variable_to_context(const char * context, const char * va
 	context_dict[std::string(context)]->add_variable(variable_name, std::move(std::make_unique<Expansion<T*> >(value)));
 }
 
-
 template<typename T>
 void MDXX_Manager::add_new_context(const char * name) {
 	context_dict[std::string(name)] = std::make_unique<T>(name);

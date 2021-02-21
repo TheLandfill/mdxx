@@ -90,9 +90,8 @@ void HTML_Manager::open_paragraph() {
 
 char * MDXX_html_push(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
-		throw std::runtime_error(
-"push needs an Expansion<HTML_Manager**> as its argument."
-		);
+		std::cerr << "push needs an Expansion<HTML_Manager**> as its argument." << std::endl;
+		exit(EXIT_FAILURE);
 	}
 	(*static_cast<HTML_Manager**>(args[0]->get_data()))->push();
 	return nullptr;
@@ -112,9 +111,8 @@ void MDXX_html_add_no_nl(HTML_Manager* html, const char * line) {
 
 char * MDXX_html_pop(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
-		throw std::runtime_error(
-"pop needs an Expansion<HTML_Manager**> as its argument."
-		);
+		std::cerr << "pop needs an Expansion<HTML_Manager**> as its argument." << std::endl;
+		exit(EXIT_FAILURE);
 	}
 	(*static_cast<HTML_Manager**>(args[0]->get_data()))->pop();
 	return nullptr;

@@ -20,7 +20,8 @@ void list_required_fields(const std::vector<std::string>& fields) {
 
 char * MDXX_read_metadata_file(Expansion_Base** args, size_t argc) {
 	if (argc < 2) {
-		throw std::runtime_error("read_metadata_file expects at least two arguments.");
+		std::cerr << "read_metadata_file expects at least two arguments: the filename and the context, both as const char **'s" << std::endl;
+		exit(EXIT_FAILURE);
 	}
 	std::string filename = std::string(*static_cast<const char **>(args[0]->get_data()));
 	std::string context = std::string(*static_cast<const char **>(args[1]->get_data()));

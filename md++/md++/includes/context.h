@@ -2,14 +2,13 @@
 #define MDXX_CONTEXT_H
 #include "expansion.h"
 #include "dll_info.h"
+#include "variable_map.h"
 #include <memory>
 #include <unordered_map>
 #include <vector>
 #include <string>
 
 namespace mdxx {
-
-typedef std::unordered_map<std::string, std::unique_ptr<Expansion_Base>> variable_map;
 
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \
 mdxx::Expansion_Base* X::get_variable(const char * variable_name) { \
@@ -47,7 +46,6 @@ const char * X::list_variables_as_text() { \
 	} \
 	return all_vars_as_text.c_str(); \
 }
-
 
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION \
 public: \
