@@ -130,8 +130,13 @@ std::string Plugin_Loader::get_plugin_dir() {
 	return plugin_dir;
 }
 
-variable_map * Plugin_Loader::get_variable_map() {
-	return &(plugin_variable_maps.emplace_back());
+variable_map * Plugin_Loader::get_variable_map(void * id) {
+	plugin_variable_maps[id] = std::make_unique<variable_map>();
+	return plugin_variable_maps[id].get();
+}
+
+void Plugin_Loader::free_variable_map(void * id) {
+	plugin_variable_maps.erase(id);
 }
 
 Plugin_Loader::~Plugin_Loader() {
@@ -141,6 +146,6 @@ Plugin_Loader::~Plugin_Loader() {
 }
 
 std::string Plugin_Loader::plugin_dir = "";
-std::vector<variable_map> Plugin_Loader::plugin_variable_maps;
+std::unordered_map<void *, std::unique_ptr<variable_map> > plugin_variable_maps;
 
 }

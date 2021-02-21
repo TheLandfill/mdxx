@@ -13,6 +13,7 @@
 class DLL_IMPORT_EXPORT Terminal : public mdxx::Context {
 public:
 	Terminal(const char * n) : name(n) {
+		variables = MDXX_get_variable_map(this);
 		add_variable("user", "user");
 		add_variable("computer-name", "computer");
 		add_variable("mac-dir", "~");
@@ -70,7 +71,9 @@ public:
 		strncpy(output, temp, strlen(temp) + 1);
 		return output;
 	}
-	~Terminal() {}
+	~Terminal() {
+		MDXX_free_variable_map(this);
+	}
 	MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
 };
 

@@ -14,6 +14,8 @@ extern "C" void MDXX_add_function_variable(variable_map * variables, const char 
 extern "C" void MDXX_add_string_variable(variable_map * variables, const char * variable, const char * value);
 extern "C" Expansion_Base * MDXX_get_variable(variable_map * variables, const char * variable);
 extern "C" bool MDXX_check_if_var_exists(variable_map * variables, const char * variable);
+extern "C" variable_map * MDXX_get_variable_map(void * id);
+extern "C" void MDXX_free_variable_map(void * id);
 
 }
 

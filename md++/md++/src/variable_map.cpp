@@ -1,4 +1,5 @@
 #include "variable_map.h"
+#include "plugin_loader.h"
 
 namespace mdxx {
 
@@ -20,6 +21,14 @@ Expansion_Base * MDXX_get_variable(variable_map * variables, const char * variab
 
 bool MDXX_check_if_var_exists(variable_map * variables, const char * variable) {
 	return variables->count(std::string(variable)) > 0;
+}
+
+variable_map * MDXX_get_variable_map(void * id) {
+	return Plugin_Loader::get_variable_map(id);
+}
+
+void MDXX_free_variable_map(void * id) {
+	Plugin_Loader::free_variable_map(id);
 }
 
 }
