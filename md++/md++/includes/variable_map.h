@@ -19,4 +19,4 @@ extern "C" void MDXX_free_variable_map(void * id);
 
 }
 
-#endif // !MDXX_VARIABLE_MAP_H
+#endif

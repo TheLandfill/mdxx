@@ -1,11 +1,9 @@
-#include "metadata.h"
+#include "expansion.h"
 #include "nlohmann/json.hpp"
-#include <fstream>
-#include <memory>
-#include <stdexcept>
-#include <vector>
+#include "mdxx_manager.h"
+#include "metadata.h"
 #include <iostream>
-#include <filesystem>
+#include <fstream>
 
 namespace mdxx {
 

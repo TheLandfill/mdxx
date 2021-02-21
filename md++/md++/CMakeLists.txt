@@ -12,5 +12,11 @@ include_directories(
 
 file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/${project}/src/*.cpp")
 
+file(GLOB MDXX_INTERFACE_SOURCES "${CMAKE_SOURCE_DIR}/${project}/export_src/*.cpp")
+
+add_library(mdxx_interface SHARED
+	"${MDXX_INTERFACE_SOURCES}"
+)
+
 add_executable("${project}" "${SOURCES}")
-target_link_libraries("${project}" re2)
+target_link_libraries("${project}" re2 mdxx_interface)
