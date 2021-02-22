@@ -21,7 +21,8 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 	std::string main_dir = fs::path(argv[0]).parent_path().string();
-	Plugin_Loader::set_plugin_dir(main_dir + "/plugins/");
+	Plugin_Loader pl;
+	pl.set_plugin_dir(main_dir + "/plugins/");
 	fs::path template_path(argv[1]);
 	fs::path infile(fs::absolute(argv[2]));
 	std::ifstream in{infile};
@@ -36,6 +37,7 @@ int main(int argc, char ** argv) {
 	fs::path metafile = infile;
 	metafile.replace_extension(".json");
 	MDXX_Manager::add_variable_to_context<std::string>("default", "metafile", metafile.string());
+	MDXX_Manager::add_variable_to_context<Plugin_Loader*>("default", "plugin-obj", &pl);
 	template_reader.process_template();
 	auto end_time = std::chrono::high_resolution_clock::now();
 	std::cout << "Generated webpage in " << std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() << " s\n";

@@ -96,7 +96,6 @@ const char * Expansion<HTML_Manager*>::to_string() {
 	return data->html_object_id.c_str();
 }
 
-
 template<>
 Expansion_Base* Expansion<HTML_Manager>::make_deep_copy() {
 	throw std::logic_error("ERROR: HTML_Manager should not be copied!");

@@ -1,4 +1,4 @@
-#define WINDOWS_PLUGIN
+#define MDXX_WINDOWS_PLUGIN
 #include "expansion.h"
 #include "context.h"
 #include "html_manager.h"

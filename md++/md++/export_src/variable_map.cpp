@@ -1,3 +1,5 @@
+#define MDXX_INTERFACE_DLL
+#include "dll_info.h"
 #include "variable_map.h"
 #include "plugin_loader.h"
 
@@ -23,12 +25,12 @@ bool MDXX_check_if_var_exists(variable_map * variables, const char * variable) {
 	return variables->count(std::string(variable)) > 0;
 }
 
-variable_map * MDXX_get_variable_map(void * id) {
-	return Plugin_Loader::get_variable_map(id);
+variable_map * MDXX_get_variable_map(Plugin_Loader * pl, void * id) {
+	return pl->get_variable_map(id);
 }
 
-void MDXX_free_variable_map(void * id) {
-	Plugin_Loader::free_variable_map(id);
+void MDXX_free_variable_map(Plugin_Loader * pl, void * id) {
+	pl->free_variable_map(id);
 }
 
 }

@@ -135,7 +135,12 @@ Plugin_Loader::~Plugin_Loader() {
 	}
 }
 
-std::string Plugin_Loader::plugin_dir = "";
-std::unordered_map<void *, std::unique_ptr<variable_map> > Plugin_Loader::plugin_variable_maps;
+template<>
+const char * Expansion<Plugin_Loader*>::to_string() {
+	std::stringstream strstr;
+	strstr << "<Plugin_Loader object @ " << *static_cast<Plugin_Loader**>(this->get_data()) << ">";
+	data->plugin_loader_obj_id = strstr.str();
+	return data->plugin_loader_obj_id.c_str();
+}
 
 }

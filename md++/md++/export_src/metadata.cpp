@@ -1,3 +1,5 @@
+#define MDXX_INTERFACE_DLL
+#include "dll_info.h"
 #include "expansion.h"
 #include "nlohmann/json.hpp"
 #include "mdxx_manager.h"

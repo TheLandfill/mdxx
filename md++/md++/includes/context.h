@@ -10,7 +10,7 @@
 
 namespace mdxx {
 
-#ifdef WINDOWS_PLUGIN
+#ifdef MDXX_WINDOWS_PLUGIN
 #define MDXX_VARIABLE_MAP mdxx::variable_map* variables;
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \
 mdxx::Expansion_Base* X::get_variable(const char * variable_name) { \

@@ -28,21 +28,21 @@ public:
 	void set_context(std::vector<std::string> new_context);
 	bool at_end_of_file();
 	template<typename T>
-	static void add_variable_to_context(const char * context, const char * variable_name, T value, MDXX_Manager* mdxx = nullptr);
+	void add_variable_to_context(const char * context, const char * variable_name, T value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
-	static void add_variable_to_context(const char * context, const char * variable_name, T* value, MDXX_Manager* mdxx = nullptr);
-	static void add_variable_to_context(const char * context, const char * variable_name, gen_func value, MDXX_Manager* mdxx = nullptr);
-	static void add_variable_to_context(const char * context, const char * variable_name, const char * value, MDXX_Manager* mdxx = nullptr);
+	void add_variable_to_context(const char * context, const char * variable_name, T* value, MDXX_Manager* mdxx = nullptr);
+	void add_variable_to_context(const char * context, const char * variable_name, gen_func value, MDXX_Manager* mdxx = nullptr);
+	void add_variable_to_context(const char * context, const char * variable_name, const char * value, MDXX_Manager* mdxx = nullptr);
 	template<typename T>
-	static void add_new_context(const char * name);
+	void add_new_context(const char * name);
 	std::string list_all_vars();
 	std::string list_context_stack();
-	static std::string list_valid_contexts();
-	static std::string list_imported_functions();
+	std::string list_valid_contexts();
+	std::string list_imported_functions();
 	~MDXX_Manager();
-	static char * open_context(Expansion_Base** args, size_t argc);
-	static char * close_context(Expansion_Base** args, size_t argc);
-	static void destroy_contexts();
+	char * open_context(Expansion_Base** args, size_t argc);
+	char * close_context(Expansion_Base** args, size_t argc);
+	void destroy_contexts();
 public:
 	std::string mdxx_object_id;
 private:
@@ -61,8 +61,8 @@ private:
 	size_t line_number = 0;
 	size_t cur_line_count = 0;
 	bool print_expansion = false;
-	static std::unordered_map<std::string, std::unique_ptr<Context>> context_dict;
-	static std::unordered_map<std::string, gen_func> imported_function_dict;
+	std::unordered_map<std::string, std::unique_ptr<Context>> context_dict;
+	std::unordered_map<std::string, gen_func> imported_function_dict;
 	std::string line_stack;
 	Line_Data line_data;
 	bool finished_reading = false;

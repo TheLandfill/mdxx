@@ -32,16 +32,21 @@ public:
 	// empty context and add variables later or the second one if you already
 	// have the variables ready to use.
 	void load_plugin(const char * shared_libary_name);
-	static void set_plugin_dir(const std::string& pd);
+	void set_plugin_dir(const std::string& pd);
 	std::string get_plugin_dir();
-	static variable_map * get_variable_map(void * id);
-	static void free_variable_map(void * id);
+	variable_map * get_variable_map(void * id);
+	void free_variable_map(void * id);
 	~Plugin_Loader();
+public:
+	std::string plugin_loader_obj_id;
 private:
-	static std::string plugin_dir;
+	std::string plugin_dir;
 	std::vector<MDXX_SHARED_HANDLE_TYPE> plugins;
-	static std::unordered_map<void *, std::unique_ptr<variable_map> > plugin_variable_maps;
+	std::unordered_map<void *, std::unique_ptr<variable_map> > plugin_variable_maps;
 };
+
+template<>
+const char * Expansion<Plugin_Loader*>::to_string();
 
 extern "C" DLL_IMPORT_EXPORT char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc);
 
