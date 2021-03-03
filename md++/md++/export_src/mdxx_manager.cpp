@@ -454,17 +454,13 @@ void MDXX_Manager::handle_range_substitutions(std::string& line, const std::vect
 		std::string current_range = current_range_sub.as_string();
 		std::string current_start_str;
 		std::string current_end_str;
-		std::cout << current_range << std::endl;
 		if (current_range.find_first_of(":") > 1) {
 			current_start_str = current_range.substr(1, current_range.find_first_of(":") - 1);
-			std::cout << current_start_str << std::endl;
 			current_start = convert_string_to_long(current_start_str);
 			check_if_index_in_range(current_start, var_args.size());
 		}
 		if (current_range.find_first_of(":") + 1 < current_range.length() - 1) {
-			std::cout << current_range.find_first_of(":") + 1 << "\t" << current_range.length() - 1 << std::endl;
 			current_end_str = current_range.substr(current_range.find_first_of(":") + 1, current_range.length() - 1);
-			std::cout << current_end_str << std::endl;
 			current_end = convert_string_to_long(current_end_str);
 			check_if_index_in_range(current_end, var_args.size());
 		}

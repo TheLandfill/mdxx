@@ -21,4 +21,4 @@ add_library(mdxx_interface SHARED
 target_link_libraries(mdxx_interface re2)
 
 add_executable("${project}" "${SOURCES}")
-target_link_libraries("${project}" re2 mdxx_interface)
+target_link_libraries("${project}" mdxx_interface)
