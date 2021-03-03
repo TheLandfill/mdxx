@@ -10,9 +10,9 @@ include_directories(
 	"${CMAKE_SOURCE_DIR}/${project}/includes/"
 )
 
-file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/${project}/src/*.cpp")
+file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/${project}/program_src/*.cpp")
 
-file(GLOB MDXX_INTERFACE_SOURCES "${CMAKE_SOURCE_DIR}/${project}/export_src/*.cpp")
+file(GLOB MDXX_INTERFACE_SOURCES "${CMAKE_SOURCE_DIR}/${project}/src/*.cpp")
 
 add_library(mdxx_interface SHARED
 	"${MDXX_INTERFACE_SOURCES}"

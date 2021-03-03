@@ -4,8 +4,8 @@
 namespace mdxx {
 
 HTML_List::HTML_List(const char * n) :
-	name(n),
-	list_first_element(true)
+	list_first_element(true),
+	name(n)
 {}
 
 void HTML_List::open(HTML_Manager& html, const char * args) {
