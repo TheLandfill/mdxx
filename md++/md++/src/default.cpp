@@ -10,8 +10,6 @@
 
 namespace mdxx {
 
-std::string empty_str = "\u0007";
-
 char * print_expansion(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
 		throw std::runtime_error(

@@ -12,6 +12,11 @@
 #include <vector>
 #include <cstring>
 
+class Terminal;
+
+template<>
+const char * mdxx::Expansion<Terminal*>::to_string();
+
 class DLL_IMPORT_EXPORT Terminal : public mdxx::Context {
 public:
 	Terminal(const char * n, mdxx::Plugin_Loader * p) : name(n), pl(p) {
@@ -28,8 +33,9 @@ public:
 		add_variable("oneline", "<span class=\"terminal-oneline\">");
 		add_variable("prompt-func", Terminal::prompt);
 		add_variable("mac-prompt-func", Terminal::mac_prompt);
-		add_variable("prompt", "{{prompt-func (mdxx) [1:]}}");
-		add_variable("mac-prompt", "{{mac-prompt-func (mdxx) [1:]}}");
+		add_variable("prompt", "{{prompt-func (self) [1:]}}");
+		add_variable("mac-prompt", "{{mac-prompt-func (self) [1:]}}");
+		MDXX_add_general_variable(variables, "self", new mdxx::Expansion<Terminal*>(this));
 	}
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
 		std::string args(arg_ptr);
@@ -39,17 +45,17 @@ public:
 		} else {
 			opening = std::string("<div class=\"terminal\"") + args + "><pre>";
 		}
-		html.add_no_nl(opening);
+		MDXX_html_add_no_nl(&html, opening.c_str());
 	}
 	void process(mdxx::HTML_Manager& html, const char * line, size_t num_lines) override {
 		for (size_t i = 1; i < num_lines; i++) {
-			html.add_pre("");
+			MDXX_html_add_pre(&html, "");
 		}
-		html.add_pre(line);
+		MDXX_html_add_pre(&html, line);
 	}
 	void close(mdxx::HTML_Manager& html) override {
-		html.add_pre("</pre>");
-		html.add("</div>");
+		MDXX_html_add_pre(&html, "</pre>");
+		MDXX_html_add(&html, "</div>");
 	}
 	static std::string collect_args(mdxx::Expansion_Base** args, size_t argc) {
 		std::string command;
@@ -62,16 +68,16 @@ public:
 		return command;
 	}
 	static char * prompt(mdxx::Expansion_Base** args, size_t argc) {
-		mdxx::MDXX_Manager * mdxx = *static_cast<mdxx::MDXX_Manager**>(args[0]->get_data());
-		mdxx->add_variable_to_context("terminal", "command", collect_args(args + 1, argc - 1));
+		Terminal * term = *static_cast<Terminal**>(args[0]->get_data());
+		MDXX_add_string_variable(term->variables, "command", collect_args(args + 1, argc - 1).c_str());
 		const char * temp = "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
 		char * output = new char[strlen(temp) + 1];
 		strncpy(output, temp, strlen(temp) + 1);
 		return output;
 	}
 	static char * mac_prompt(mdxx::Expansion_Base** args, size_t argc) {
-		mdxx::MDXX_Manager * mdxx = *static_cast<mdxx::MDXX_Manager**>(args[0]->get_data());
-		mdxx->add_variable_to_context("terminal", "command", collect_args(args + 1, argc - 1));
+		Terminal * term = *static_cast<Terminal**>(args[0]->get_data());
+		MDXX_add_string_variable(term->variables, "command", collect_args(args + 1, argc - 1).c_str());
 		const char * temp = "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
 		char * output = new char[strlen(temp) + 1];
 		strncpy(output, temp, strlen(temp) + 1);
@@ -81,6 +87,8 @@ public:
 		MDXX_free_variable_map(pl, this);
 	}
 	MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
+public:
+	std::string term_object_id;
 private:
 	mdxx::Plugin_Loader * pl;
 };
@@ -93,4 +101,12 @@ extern "C" void import_plugin(mdxx::Plugin_Loader * pl, mdxx::MDXX_Manager * mdx
 
 extern "C" void print_compilation_info() {
 	std::cout << "\r\033[Kterminal:\t" << MDXX_COMPILATION_INFO << ".\n";
+}
+
+template<>
+const char * mdxx::Expansion<Terminal*>::to_string() {
+	std::stringstream strstr;
+	strstr << "<Terminal object @ " << data << ">";
+	data->term_object_id = strstr.str();
+	return data->term_object_id.c_str();
 }

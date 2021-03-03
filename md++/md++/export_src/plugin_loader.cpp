@@ -49,7 +49,8 @@ Plugin_Loader::Plugin_Loader() {
 			return LoadPackagedLibrary(*(local_buffer.get()), 0);
 		}
 	}
-	#define LOAD_PLUGIN(X, Y) MYPROC import_plugin = (MYPROC) GetProcAddress(X, Y);\
+	typedef void (__cdecl *IMPORT_PROC)(Plugin_Loader *, MDXX_Manager *);
+	#define LOAD_PLUGIN(X, Y) IMPORT_PROC import_plugin = (IMPORT_PROC) GetProcAddress(X, Y);\
 	if (import_plugin != NULL) {\
 		(import_plugin)(this, mdxx);\
 	} else {\

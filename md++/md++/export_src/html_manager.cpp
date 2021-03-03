@@ -9,6 +9,8 @@
 
 namespace mdxx {
 
+std::string empty_str = "\u0007";
+
 HTML_Manager::HTML_Manager(std::ofstream& o) : out(o) {
 	tab_level.reserve(32);
 }

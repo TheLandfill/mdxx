@@ -9,7 +9,7 @@
 
 namespace mdxx {
 
-class HTML_Manager {
+class DLL_IMPORT_EXPORT HTML_Manager {
 public:
 	HTML_Manager(std::ofstream& o);
 	HTML_Manager(std::ofstream&& o);

@@ -1,5 +1,6 @@
 #ifndef MDXX_EXPANSION_H
 #define MDXX_EXPANSION_H
+#include "dll_info.h"
 #include <string>
 #include <sstream>
 #include <vector>
@@ -9,7 +10,7 @@ namespace mdxx {
 
 #define MDXX_EXP(X, Y) new mdxx::Expansion<X>(Y)
 
-struct Expansion_Base {
+struct DLL_IMPORT_EXPORT Expansion_Base {
 	virtual void * get_data() = 0;
 	virtual const char * to_string() = 0;
 	virtual Expansion_Base* make_deep_copy() = 0;
@@ -32,7 +33,7 @@ struct Expansion : Expansion_Base {
 };
 
 template<>
-struct Expansion<std::string> : Expansion_Base {
+struct DLL_IMPORT_EXPORT Expansion<std::string> : Expansion_Base {
 	std::string data;
 	Expansion(std::string d);
 	void * get_data() override;
@@ -55,7 +56,7 @@ struct Expansion<T *> : Expansion_Base {
 };
 
 template<>
-struct Expansion<gen_func> : Expansion_Base {
+struct DLL_IMPORT_EXPORT Expansion<gen_func> : Expansion_Base {
 	gen_func func;
 	std::string name;
 	std::string full_name;
