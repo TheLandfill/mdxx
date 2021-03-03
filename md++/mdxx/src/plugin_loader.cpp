@@ -104,6 +104,7 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 
 void Plugin_Loader::set_plugin_dir(const std::string& pd) {
 #ifdef _MSC_FULL_VER
+	static const char * plugin_directory = "plugins\\";
 	if (pd.length() == 0 || pd.back() == '\\') {
 		plugin_dir = pd;
 	} else {
@@ -111,8 +112,10 @@ void Plugin_Loader::set_plugin_dir(const std::string& pd) {
 		plugin_dir += "\\";
 	}
 #else
+	static const char * plugin_directory = "plugins/";
 	plugin_dir = pd + "/";
 #endif
+	plugin_dir += plugin_directory;
 }
 
 std::string Plugin_Loader::get_plugin_dir() {

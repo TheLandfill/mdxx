@@ -17,8 +17,10 @@ add_compile_options(
 	"$<$<CONFIG:DEBUG>:-g>"
 )
 add_link_options(
-	-ldl -lpthread
+	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
+	"-Wl,-rpath='${CMAKE_BINARY_DIR}/out/'"
+	"-L'${CMAKE_BINARY_DIR}/out'"
 )
 add_link_options(
-	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
+	-ldl -lpthread
 )

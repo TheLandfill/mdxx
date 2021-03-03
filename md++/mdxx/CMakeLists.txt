@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.0.0)
 set(project mdxx)
 project("${project}")
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUT_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUT_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUT_DIR}")
 
 include_directories(
 	"${CMAKE_SOURCE_DIR}/${project}/includes/"
@@ -21,7 +21,6 @@ add_library(mdxx_interface SHARED
 target_link_libraries(mdxx_interface re2)
 
 add_executable("${project}" "${SOURCES}")
+install(TARGETS "${project}" mdxx_interface DESTINATION "${OUT_DIR}")
 target_link_libraries("${project}" mdxx_interface)
 target_compile_definitions(mdxx_interface PRIVATE MDXX_INTERFACE_DLL)
-
-install(TARGETS "${project}" mdxx_interface DESTINATION "${CMAKE_BINARY_DIR}/out")
