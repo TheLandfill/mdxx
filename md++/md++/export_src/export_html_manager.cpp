@@ -28,6 +28,10 @@ void MDXX_html_add_no_nl(HTML_Manager* html, const char * line) {
 	html->add_no_nl(line);
 }
 
+void MDXX_html_write(HTML_Manager* html, const char * line) {
+	html->write(line);
+}
+
 char * MDXX_html_pop(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
 		std::cerr << "pop needs an Expansion<HTML_Manager**> as its argument." << std::endl;

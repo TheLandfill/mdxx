@@ -39,16 +39,8 @@ private:
 	std::string code_style = "trac";
 };
 
-extern "C" DLL_IMPORT_EXPORT char * MDXX_html_push(Expansion_Base** args, size_t argc);
-extern "C" DLL_IMPORT_EXPORT char * MDXX_html_pop(Expansion_Base** args, size_t argc);
-
-extern "C" DLL_IMPORT_EXPORT void MDXX_html_add(HTML_Manager* html, const char * line);
-extern "C" DLL_IMPORT_EXPORT void MDXX_html_add_pre(HTML_Manager* html, const char * line);
-extern "C" DLL_IMPORT_EXPORT void MDXX_html_add_no_nl(HTML_Manager* html, const char * line);
-
 template<>
 const char * Expansion<HTML_Manager>::to_string();
-
 
 template<>
 Expansion_Base* Expansion<HTML_Manager>::make_deep_copy();
@@ -57,5 +49,13 @@ template<>
 const char * Expansion<HTML_Manager*>::to_string();
 
 }
+
+extern "C" DLL_IMPORT_EXPORT char * MDXX_html_push(mdxx::Expansion_Base** args, size_t argc);
+extern "C" DLL_IMPORT_EXPORT char * MDXX_html_pop(mdxx::Expansion_Base** args, size_t argc);
+
+extern "C" DLL_IMPORT_EXPORT void MDXX_html_add(mdxx::HTML_Manager* html, const char * line);
+extern "C" DLL_IMPORT_EXPORT void MDXX_html_add_pre(mdxx::HTML_Manager* html, const char * line);
+extern "C" DLL_IMPORT_EXPORT void MDXX_html_add_no_nl(mdxx::HTML_Manager* html, const char * line);
+extern "C" DLL_IMPORT_EXPORT void MDXX_html_write(mdxx::HTML_Manager* html, const char * line);
 
 #endif
