@@ -11,4 +11,4 @@ add_library(terminal SHARED
 	terminal.cpp
 )
 
-target_link_libraries(mdxx_interface)
+target_link_libraries(terminal mdxx_interface)

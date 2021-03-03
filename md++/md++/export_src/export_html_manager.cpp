@@ -3,7 +3,9 @@
 #include "html_manager.h"
 #include <iostream>
 
-namespace mdxx {
+using namespace mdxx;
+
+extern "C" {
 
 char * MDXX_html_push(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {

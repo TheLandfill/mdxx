@@ -4,6 +4,7 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 
 namespace mdxx {
@@ -12,6 +13,10 @@ void plugin_load_error(std::string function) {
 	std::string error_message = "Plugin needs to implement ";
 	error_message += function;
 	throw std::runtime_error(error_message);
+}
+
+Plugin_Loader::Plugin_Loader() {
+	plugin_variable_maps.reserve(8191);
 }
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -46,7 +51,7 @@ void plugin_load_error(std::string function) {
 	}
 	#define LOAD_PLUGIN(X, Y) MYPROC import_plugin = (MYPROC) GetProcAddress(X, Y);\
 	if (import_plugin != NULL) {\
-		(import_plugin)();\
+		(import_plugin)(this, mdxx);\
 	} else {\
 		plugin_load_error(Y);\
 	}
@@ -65,10 +70,10 @@ void plugin_load_error(std::string function) {
 #else
 	#define OPEN_SHARED_LIBRARY(X) dlopen(X, RTLD_LAZY)
 
-	#define LOAD_PLUGIN(X, Y) void(*import_plugin)();\
+	#define LOAD_PLUGIN(X, Y) void(*import_plugin)(Plugin_Loader * pl, MDXX_Manager * mdxx);\
 	*(void **)(&import_plugin) = dlsym(X, Y);\
 	if (import_plugin != NULL) {\
-		(*import_plugin)();\
+		(*import_plugin)(this, mdxx);\
 	} else {\
 		plugin_load_error(Y);\
 	}
@@ -90,7 +95,7 @@ void plugin_load_error(std::string function) {
 static std::string lib_prefix = LIB_PREFIX;
 static std::string lib_suffix = LIB_SUFFIX;
 
-void Plugin_Loader::load_plugin(const char * shared_library_name) {
+void Plugin_Loader::load_plugin(MDXX_Manager * mdxx, const char * shared_library_name) {
 	static bool first_plugin_loaded = true;
 	if (first_plugin_loaded) {
 		std::cout << "ABI info below. If md++ has a problem, check to make sure compiler versions are compatible.\n\n";
@@ -121,11 +126,12 @@ std::string Plugin_Loader::get_plugin_dir() {
 }
 
 variable_map * Plugin_Loader::get_variable_map(void * id) {
-	plugin_variable_maps[id] = std::make_unique<variable_map>();
-	return plugin_variable_maps[id].get();
+	plugin_variable_maps.insert({id, new variable_map()});
+	return plugin_variable_maps[id];
 }
 
 void Plugin_Loader::free_variable_map(void * id) {
+	delete plugin_variable_maps[id];
 	plugin_variable_maps.erase(id);
 }
 

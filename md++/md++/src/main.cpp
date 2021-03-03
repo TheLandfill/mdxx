@@ -36,8 +36,8 @@ int main(int argc, char ** argv) {
 	Template_Manager template_reader(html, content, template_file);
 	fs::path metafile = infile;
 	metafile.replace_extension(".json");
-	MDXX_Manager::add_variable_to_context<std::string>("default", "metafile", metafile.string());
-	MDXX_Manager::add_variable_to_context<Plugin_Loader*>("default", "plugin-obj", &pl);
+	mdxx.add_variable_to_context<std::string>("default", "metafile", metafile.string());
+	mdxx.add_variable_to_context<Plugin_Loader*>("default", "plugin-obj", &pl);
 	template_reader.process_template();
 	auto end_time = std::chrono::high_resolution_clock::now();
 	std::cout << "Generated webpage in " << std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() << " s\n";

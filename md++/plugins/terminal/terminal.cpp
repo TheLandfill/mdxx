@@ -4,6 +4,8 @@
 #include "html_manager.h"
 #include "mdxx_manager.h"
 #include "compilation_info.h"
+#include "plugin_loader.h"
+#include "variable_map.h"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -12,8 +14,8 @@
 
 class DLL_IMPORT_EXPORT Terminal : public mdxx::Context {
 public:
-	Terminal(const char * n) : name(n) {
-		variables = MDXX_get_variable_map(this);
+	Terminal(const char * n, mdxx::Plugin_Loader * p) : name(n), pl(p) {
+		variables = MDXX_get_variable_map(pl, this);
 		add_variable("user", "user");
 		add_variable("computer-name", "computer");
 		add_variable("mac-dir", "~");
@@ -24,8 +26,10 @@ public:
 		add_variable("full-dir", "<b><span style=\"color: {{dir-color}};\">{{dir}}</span></b>");
 		add_variable("command", "");
 		add_variable("oneline", "<span class=\"terminal-oneline\">");
-		add_variable("prompt", Terminal::prompt);
-		add_variable("mac-prompt", Terminal::mac_prompt);
+		add_variable("prompt-func", Terminal::prompt);
+		add_variable("mac-prompt-func", Terminal::mac_prompt);
+		add_variable("prompt", "{{prompt-func (mdxx) [1:]}}");
+		add_variable("mac-prompt", "{{mac-prompt-func (mdxx) [1:]}}");
 	}
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
 		std::string args(arg_ptr);
@@ -58,29 +62,33 @@ public:
 		return command;
 	}
 	static char * prompt(mdxx::Expansion_Base** args, size_t argc) {
-		mdxx::MDXX_Manager::add_variable_to_context("terminal", "command", collect_args(args, argc));
+		mdxx::MDXX_Manager * mdxx = *static_cast<mdxx::MDXX_Manager**>(args[0]->get_data());
+		mdxx->add_variable_to_context("terminal", "command", collect_args(args + 1, argc - 1));
 		const char * temp = "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
 		char * output = new char[strlen(temp) + 1];
 		strncpy(output, temp, strlen(temp) + 1);
 		return output;
 	}
 	static char * mac_prompt(mdxx::Expansion_Base** args, size_t argc) {
-		mdxx::MDXX_Manager::add_variable_to_context("terminal", "command", collect_args(args, argc));
+		mdxx::MDXX_Manager * mdxx = *static_cast<mdxx::MDXX_Manager**>(args[0]->get_data());
+		mdxx->add_variable_to_context("terminal", "command", collect_args(args + 1, argc - 1));
 		const char * temp = "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
 		char * output = new char[strlen(temp) + 1];
 		strncpy(output, temp, strlen(temp) + 1);
 		return output;
 	}
 	~Terminal() {
-		MDXX_free_variable_map(this);
+		MDXX_free_variable_map(pl, this);
 	}
 	MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
+private:
+	mdxx::Plugin_Loader * pl;
 };
 
 MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Terminal)
 
-extern "C" void import_plugin() {
-	mdxx::MDXX_Manager::add_new_context<Terminal>("terminal");
+extern "C" void import_plugin(mdxx::Plugin_Loader * pl, mdxx::MDXX_Manager * mdxx) {
+	MDXX_add_new_context(mdxx, "terminal", new Terminal("terminal", pl));
 }
 
 extern "C" void print_compilation_info() {

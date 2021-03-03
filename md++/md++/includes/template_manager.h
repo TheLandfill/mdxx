@@ -21,8 +21,6 @@ private:
 	MDXX_Manager& mdxx;
 	std::string template_name;
 	MDXX_Manager template_mdxx;
-	static char * load_plugins(Expansion_Base** args, size_t argc);
-	static Plugin_Loader plugin_loader;
 };
 
 template<>

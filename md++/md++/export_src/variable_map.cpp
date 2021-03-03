@@ -3,10 +3,13 @@
 #include "variable_map.h"
 #include "plugin_loader.h"
 
-namespace mdxx {
+using namespace mdxx;
 
-void MDXX_add_general_variable(variable_map * variables, const char * variable, std::unique_ptr<Expansion_Base>&& value) {
-	(*variables)[std::string(variable)] = std::move(value);
+extern "C" {
+
+void MDXX_add_general_variable(variable_map * variables, const char * variable, Expansion_Base * value) {
+	std::unique_ptr<Expansion_Base> temp_value(value);
+	(*variables)[std::string(variable)] = std::move(temp_value);
 }
 
 void MDXX_add_function_variable(variable_map * variables, const char * variable, gen_func func) {

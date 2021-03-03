@@ -2,7 +2,7 @@
 #define MDXX_CONTEXT_H
 #include "expansion.h"
 #include "dll_info.h"
-#include "variable_map.h"
+#include "variable_map_definition.h"
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -25,8 +25,8 @@ const char * X::get_name() { \
 	return name.c_str(); \
 } \
 \
-void X::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { \
-	MDXX_add_general_variable(variables, variable, std::move(value)); \
+void X::add_variable(const char * variable, mdxx::Expansion_Base * value) { \
+	MDXX_add_general_variable(variables, variable, value); \
 } \
 \
 void X::add_variable(const char * variable, mdxx::gen_func func) {\
@@ -63,8 +63,9 @@ const char * X::get_name() { \
 	return name.c_str(); \
 } \
 \
-void X::add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) { \
-	variables[std::string(variable)] = std::move(value); \
+void X::add_variable(const char * variable, mdxx::Expansion_Base * value) { \
+	std::unique_ptr<Expansion_Base> temp_value(value); \
+	variables[std::string(variable)] = std::move(temp_value); \
 } \
 \
 void X::add_variable(const char * variable, mdxx::gen_func func) {\
@@ -94,15 +95,15 @@ const char * list_variables_as_text() override; \
 mdxx::Expansion_Base* get_variable(const char * variable_name) override; \
 bool check_if_var_exists(const char * variable_name) override; \
 const char * get_name() override; \
-void add_variable(const char * variable, std::unique_ptr<mdxx::Expansion_Base>&& value) override;\
+void add_variable(const char * variable, mdxx::Expansion_Base * value) override;\
 template<typename T> \
 void add_variable(const char * variable, T value) { \
-	add_variable(variable, std::make_unique<mdxx::Expansion<T>>(value)); \
+	add_variable(variable, new mdxx::Expansion<T>(value)); \
 } \
 template<typename T> \
 void add_variable(const char * variable, T* value) { \
 \
-	add_variable(variable, std::make_unique<mdxx::Expansion<T*>>(value)); \
+	add_variable(variable, new mdxx::Expansion<T*>(value)); \
 } \
 void add_variable(const char * variable_name, mdxx::gen_func value); \
 void add_variable(const char * variable_name, const char * value); \
@@ -121,7 +122,7 @@ public:
 	virtual const char * list_variables_as_text() = 0;
 	virtual Expansion_Base* get_variable(const char * variable_name) = 0;
 	virtual bool check_if_var_exists(const char * variable_name) = 0;
-	virtual void add_variable(const char * variable_name, std::unique_ptr<Expansion_Base>&& variable_value) = 0;
+	virtual void add_variable(const char * variable_name, Expansion_Base * variable_value) = 0;
 	virtual const char * get_name() = 0;
 };
 

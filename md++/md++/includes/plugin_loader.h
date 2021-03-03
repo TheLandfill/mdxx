@@ -1,8 +1,9 @@
 #ifndef MDXX_PLUGIN_LOADER_H
 #define MDXX_PLUGIN_LOADER_H
 #include "expansion.h"
-#include "variable_map.h"
+#include "variable_map_definition.h"
 #include "dll_info.h"
+#include "mdxx_manager.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -19,6 +20,7 @@ namespace mdxx {
 
 class Plugin_Loader {
 public:
+	Plugin_Loader();
 	// Should have a shared library with functions/contexts and should use either
 	// 		template<typename T>
 	// 		void MDXX_Manager::add_new_context(const std::string name)
@@ -31,7 +33,7 @@ public:
 	// all MDXX_Managers can use. Use the first one if you want to create an
 	// empty context and add variables later or the second one if you already
 	// have the variables ready to use.
-	void load_plugin(const char * shared_libary_name);
+	void load_plugin(MDXX_Manager * mdxx, const char * shared_libary_name);
 	void set_plugin_dir(const std::string& pd);
 	std::string get_plugin_dir();
 	variable_map * get_variable_map(void * id);
@@ -42,13 +44,14 @@ public:
 private:
 	std::string plugin_dir;
 	std::vector<MDXX_SHARED_HANDLE_TYPE> plugins;
-	std::unordered_map<void *, std::unique_ptr<variable_map> > plugin_variable_maps;
+	std::unordered_map<void *, variable_map*> plugin_variable_maps;
 };
 
 template<>
 const char * Expansion<Plugin_Loader*>::to_string();
 
 extern "C" DLL_IMPORT_EXPORT char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc);
+extern "C" DLL_IMPORT_EXPORT char * MDXX_load_plugins(Expansion_Base** args, size_t argc);
 
 }
 #endif
