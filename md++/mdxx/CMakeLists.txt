@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-set(project md++)
+set(project mdxx)
 project("${project}")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -23,3 +23,5 @@ target_link_libraries(mdxx_interface re2)
 add_executable("${project}" "${SOURCES}")
 target_link_libraries("${project}" mdxx_interface)
 target_compile_definitions(mdxx_interface PRIVATE MDXX_INTERFACE_DLL)
+
+install(TARGETS "${project}" mdxx_interface DESTINATION "${CMAKE_BINARY_DIR}/out")

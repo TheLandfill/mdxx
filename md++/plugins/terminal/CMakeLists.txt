@@ -12,3 +12,5 @@ add_library(terminal SHARED
 )
 
 target_link_libraries(terminal mdxx_interface)
+
+install(TARGETS terminal DESTINATION "${CMAKE_BINARY_DIR}/out/plugins")
