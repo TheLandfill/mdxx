@@ -332,18 +332,18 @@ bool MDXX_Manager::at_end_of_file() {
 	return finished_reading;
 }
 
-void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, gen_func value) {
-	throw_exception_if_context_not_found(std::string(context));
-	(*context_dict)[context]->add_variable(variable_name, new Expansion<gen_func>(value, variable_name));
+void MDXX_Manager::add_variable_to_context(const char * context_name, const char * variable_name, gen_func value) {
+	throw_exception_if_context_not_found(std::string(context_name));
+	(*context_dict)[context_name]->add_variable(variable_name, new Expansion<gen_func>(value, variable_name));
 }
 
-void MDXX_Manager::add_variable_to_context(const char * context, const char * variable_name, const char * value) {
-	throw_exception_if_context_not_found(std::string(context));
-	(*context_dict)[context]->add_variable(variable_name, new Expansion<std::string>(value));
+void MDXX_Manager::add_variable_to_context(const char * context_name, const char * variable_name, const char * value) {
+	throw_exception_if_context_not_found(std::string(context_name));
+	(*context_dict)[context_name]->add_variable(variable_name, new Expansion<std::string>(value));
 }
 
-void MDXX_Manager::add_raw_context(const char * name, std::unique_ptr<Context>& context) {
-	(*context_dict)[std::string(name)] = std::move(context);
+void MDXX_Manager::add_raw_context(const char * name, std::unique_ptr<Context>& context_ptr) {
+	(*context_dict)[std::string(name)] = std::move(context_ptr);
 }
 
 std::string MDXX_Manager::list_all_vars() {
@@ -408,6 +408,7 @@ long MDXX_Manager::convert_string_to_long(const std::string& str) {
 	try {
 		return std::stol(str);
 	} catch (const std::invalid_argument& e) {
+		(void)e;
 		std::string error_message;
 		error_message.reserve(2048);
 		error_message += "ERROR: Could not convert ";
@@ -417,6 +418,7 @@ long MDXX_Manager::convert_string_to_long(const std::string& str) {
 		error_message += print_line();
 		throw std::invalid_argument(error_message);
 	} catch (const std::out_of_range& e) {
+		(void)e;
 		std::string error_message;
 		error_message.reserve(2048);
 		error_message += "ERROR: Could not fit ";

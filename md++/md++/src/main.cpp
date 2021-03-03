@@ -12,7 +12,7 @@
 
 void usage_message(char * program_name);
 
-extern "C" int MDXX_run_program(int argc, char ** argv) {
+extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
 	using namespace mdxx;
 	namespace fs = std::filesystem;

@@ -7,3 +7,6 @@
 #else
 	#define DLL_IMPORT_EXPORT
 #endif
+
+#define MDXX_STRX(X) #X
+#define MDXX_STR(X) MDXX_STRX(X)

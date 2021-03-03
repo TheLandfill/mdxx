@@ -22,3 +22,4 @@ target_link_libraries(mdxx_interface re2)
 
 add_executable("${project}" "${SOURCES}")
 target_link_libraries("${project}" mdxx_interface)
+target_compile_definitions(mdxx_interface PRIVATE MDXX_INTERFACE_DLL)

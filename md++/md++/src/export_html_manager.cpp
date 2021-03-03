@@ -1,4 +1,3 @@
-#define MDXX_INTERFACE_DLL
 #include "dll_info.h"
 #include "html_manager.h"
 #include <iostream>

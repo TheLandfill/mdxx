@@ -17,7 +17,7 @@ class Terminal;
 template<>
 const char * mdxx::Expansion<Terminal*>::to_string();
 
-class DLL_IMPORT_EXPORT Terminal : public mdxx::Context {
+class Terminal : public mdxx::Context {
 public:
 	Terminal(const char * n, mdxx::Plugin_Loader * p) : name(n), pl(p) {
 		variables = MDXX_get_variable_map(pl, this);
