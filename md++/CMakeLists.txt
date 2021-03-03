@@ -11,8 +11,6 @@ file(GLOB VENDOR_LIBRARY_DIRS "${VENDOR_DIR}/libs/*")
 link_directories("${VENDOR_LIBRARY_DIRS}")
 
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/out")
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/out/plugins")
-
 
 add_subdirectory(mdxx)
 add_subdirectory(plugins)

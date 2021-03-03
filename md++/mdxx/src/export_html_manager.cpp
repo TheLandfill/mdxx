@@ -15,6 +15,15 @@ char * MDXX_html_push(Expansion_Base** args, size_t argc) {
 	return nullptr;
 }
 
+char * MDXX_html_pop(Expansion_Base** args, size_t argc) {
+	if (argc < 1) {
+		std::cerr << "pop needs an Expansion<HTML_Manager**> as its argument." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	(*static_cast<HTML_Manager**>(args[0]->get_data()))->pop();
+	return nullptr;
+}
+
 void MDXX_html_add(HTML_Manager* html, const char * line) {
 	html->add(line);
 }
@@ -29,15 +38,6 @@ void MDXX_html_add_no_nl(HTML_Manager* html, const char * line) {
 
 void MDXX_html_write(HTML_Manager* html, const char * line) {
 	html->write(line);
-}
-
-char * MDXX_html_pop(Expansion_Base** args, size_t argc) {
-	if (argc < 1) {
-		std::cerr << "pop needs an Expansion<HTML_Manager**> as its argument." << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	(*static_cast<HTML_Manager**>(args[0]->get_data()))->pop();
-	return nullptr;
 }
 
 }

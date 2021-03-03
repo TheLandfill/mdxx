@@ -208,7 +208,7 @@ void MDXX_Manager::find_next_content_line() {
 		cur_line_count += 1;
 		current_line = next_line();
 	}
-	while (current_line.back() == '\n') {
+	while (current_line.length() > 0 && current_line.back() == '\n') {
 		current_line.pop_back();
 	}
 	line_data = Line_Data{ current_line, cur_line_count };

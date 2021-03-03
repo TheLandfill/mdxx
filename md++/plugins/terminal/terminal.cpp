@@ -95,11 +95,11 @@ private:
 
 MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Terminal)
 
-extern "C" void import_plugin(mdxx::Plugin_Loader * pl, mdxx::MDXX_Manager * mdxx) {
+extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::MDXX_Manager * mdxx) {
 	MDXX_add_new_context(mdxx, "terminal", new Terminal("terminal", pl));
 }
 
-extern "C" void print_compilation_info() {
+extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {
 	std::cout << "\r\033[Kterminal:\t" << MDXX_COMPILATION_INFO << ".\n";
 }
 

@@ -12,7 +12,7 @@ public:
 	virtual void close(HTML_Manager& html) override;
 	~Template_Context();
 private:
-	bool in_pre_section;
+	bool in_pre_section = false;
 	MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION
 };
 

@@ -25,34 +25,18 @@ Plugin_Loader::Plugin_Loader() {
 	typedef void (__cdecl *MYPROC)();
 	#define OPEN_SHARED_LIBRARY(X) open_dll(X)
 	HINSTANCE open_dll(const char * dll_name) {
-		size_t num_bytes = MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, dll_name, -1, nullptr, 0);
-		std::unique_ptr<LPWSTR[]> local_buffer = std::make_unique<LPWSTR[]>(num_bytes);
-		if (MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, dll_name, -1, *(local_buffer.get()), num_bytes) == 0) {
-			std::string error_message;
-			switch (GetLastError()) {
-			case ERROR_INSUFFICIENT_BUFFER:
-				error_message = "Provided buffer size for converting filenames is not large enough, which should not be possible because we query the size before allocating.\n";
-				break;
-			case ERROR_INVALID_FLAGS:
-				error_message = "Invalid flags in converting filenames, which should not be possible because we're using the default flags.\n";
-				break;
-			case ERROR_NO_UNICODE_TRANSLATION:
-				error_message = "Filename \"";
-				error_message += dll_name;
-				error_message += "\" has invalid unicode.\n";
-				break;
-			case ERROR_INVALID_PARAMETER:
-				error_message = "Invalid parameter in converting filenames, which shouldn't be possible because all parameters should be valid.\n";
-			}
-			throw std::runtime_error(error_message);
+		HINSTANCE hinstlib = LoadLibrary(dll_name);
+		if (hinstlib != NULL) {
+			return hinstlib;
 		} else {
-			return LoadPackagedLibrary(*(local_buffer.get()), 0);
+			std::cerr << "Library " << dll_name << " was unable to load.";
+			throw std::runtime_error("");
 		}
 	}
 	typedef void (__cdecl *IMPORT_PROC)(Plugin_Loader *, MDXX_Manager *);
 	#define LOAD_PLUGIN(X, Y) IMPORT_PROC import_plugin = (IMPORT_PROC) GetProcAddress(X, Y);\
 	if (import_plugin != NULL) {\
-		(import_plugin)(this, mdxx);\
+		(import_plugin)(this, mdxx_ptr);\
 	} else {\
 		plugin_load_error(Y);\
 	}
@@ -71,10 +55,10 @@ Plugin_Loader::Plugin_Loader() {
 #else
 	#define OPEN_SHARED_LIBRARY(X) dlopen(X, RTLD_LAZY)
 
-	#define LOAD_PLUGIN(X, Y) void(*import_plugin)(Plugin_Loader * pl, MDXX_Manager * mdxx);\
+	#define LOAD_PLUGIN(X, Y) void(*import_plugin)(mdxx::Plugin_Loader *, mdxx::MDXX_Manager *);\
 	*(void **)(&import_plugin) = dlsym(X, Y);\
 	if (import_plugin != NULL) {\
-		(*import_plugin)(this, mdxx);\
+		(*import_plugin)(this, mdxx_ptr);\
 	} else {\
 		plugin_load_error(Y);\
 	}
@@ -96,7 +80,7 @@ Plugin_Loader::Plugin_Loader() {
 static std::string lib_prefix = LIB_PREFIX;
 static std::string lib_suffix = LIB_SUFFIX;
 
-void Plugin_Loader::load_plugin(MDXX_Manager * mdxx, const char * shared_library_name) {
+void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_library_name) {
 	static bool first_plugin_loaded = true;
 	if (first_plugin_loaded) {
 		std::cout << "ABI info below. If md++ has a problem, check to make sure compiler versions are compatible.\n\n";
@@ -119,7 +103,16 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx, const char * shared_library
 }
 
 void Plugin_Loader::set_plugin_dir(const std::string& pd) {
+#ifdef _MSC_FULL_VER
+	if (pd.length() == 0 || pd.back() == '\\') {
+		plugin_dir = pd;
+	} else {
+		plugin_dir = pd;
+		plugin_dir += "\\";
+	}
+#else
 	plugin_dir = pd + "/";
+#endif
 }
 
 std::string Plugin_Loader::get_plugin_dir() {
