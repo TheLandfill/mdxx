@@ -1,7 +1,7 @@
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_CROSSCOMPILING TRUE)
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_C_COMPILER gcc)
+set(CMAKE_CXX_COMPILER g++)
 
 add_compile_options(-Wall -Wextra)
 add_compile_options(
@@ -18,9 +18,11 @@ add_compile_options(
 )
 add_link_options(
 	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
-	"-Wl,-rpath='${CMAKE_BINARY_DIR}/out/'"
+	"-Wl,-rpath='${CMAKE_BINARY_DIR}/lib'"
+	"-L'${CMAKE_BINARY_DIR}/lib'"
+	"-Wl,-rpath='${CMAKE_BINARY_DIR}/out'"
 	"-L'${CMAKE_BINARY_DIR}/out'"
 )
 add_link_options(
-	-ldl -lpthread
+	-ldl -pthread
 )
