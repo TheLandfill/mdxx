@@ -28,7 +28,6 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		return 1;
 	}
 	std::string main_dir = fs::path(argv[0]).parent_path().string();
-	std::cout << main_dir << std::endl;
 	Plugin_Loader pl;
 	pl.set_plugin_dir(main_dir);
 	fs::path template_path(argv[1]);
