@@ -24,5 +24,5 @@ add_link_options(
 	"-L'${CMAKE_BINARY_DIR}/out'"
 )
 add_link_options(
-	-ldl -lpthread
+	-ldl -pthread
 )

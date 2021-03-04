@@ -7,7 +7,15 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
-#include <filesystem>
+#if __has_include(<filesystem>)
+  #include <filesystem>
+  namespace fs = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
+  #include <experimental/filesystem>
+  namespace fs = std::experimental::filesystem;
+#else
+  error "Missing the <filesystem> header."
+#endif
 #include <chrono>
 
 void usage_message(char * program_name);
@@ -15,7 +23,6 @@ void usage_message(char * program_name);
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
 	using namespace mdxx;
-	namespace fs = std::filesystem;
 	if (argc < 3) {
 		usage_message(argv[0]);
 		return 1;

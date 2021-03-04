@@ -20,7 +20,10 @@ add_library(mdxx_interface SHARED
 
 target_link_libraries(mdxx_interface re2)
 
+if (NOT WIN32)
+	target_link_libraries(mdxx_interface dl)
+endif (NOT WIN32)
+
 add_executable("${project}" "${SOURCES}")
-install(TARGETS "${project}" mdxx_interface DESTINATION "${OUT_DIR}")
 target_link_libraries("${project}" mdxx_interface)
 target_compile_definitions(mdxx_interface PRIVATE MDXX_INTERFACE_DLL)
