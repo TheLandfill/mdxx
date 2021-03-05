@@ -80,6 +80,12 @@ Plugin_Loader::Plugin_Loader() {
 static std::string lib_prefix = LIB_PREFIX;
 static std::string lib_suffix = LIB_SUFFIX;
 
+#ifdef WIN32
+#define CLEAR_LINE "\r\x1b[K"
+#else
+#define CLEAR_LINE "\r\033[K"
+#endif
+
 void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_library_name) {
 	static bool first_plugin_loaded = true;
 	if (first_plugin_loaded) {
@@ -89,6 +95,7 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 	}
 	std::string full_library_name = plugin_dir + lib_prefix + shared_library_name + lib_suffix;
 	std::cout << "Attempting to load " << full_library_name << "." << std::flush;
+	std::cout << CLEAR_LINE;
 	plugins.push_back(OPEN_SHARED_LIBRARY(full_library_name.c_str()));
 	if (plugins.back() != nullptr) {
 		LOAD_PLUGIN(plugins.back(), "import_plugin");

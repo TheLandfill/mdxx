@@ -100,7 +100,7 @@ extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::
 }
 
 extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {
-	std::cout << "\r\033[Kterminal:\t" << MDXX_COMPILATION_INFO << ".\n";
+	std::cout << "terminal:\t" << MDXX_COMPILATION_INFO << ".\n";
 }
 
 template<>

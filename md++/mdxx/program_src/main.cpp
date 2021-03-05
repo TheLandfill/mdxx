@@ -1,13 +1,17 @@
 #include "run_program.h"
 #ifdef WIN32
 #include <windows.h>
+#include <iostream>
 #define SETUP_ANSI_TERMINAL setup_ansi_terminal();
 void setup_ansi_terminal() {
-	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
-	if (hStdin == INVALID_HANDLE_VALUE) {
+	DWORD l_mode;
+	HANDLE hstd = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (hstd == INVALID_HANDLE_VALUE) {
+		std::cout << "Won't be able to display ANSI terminal characters.\n";
 		return;
 	}
-	SetConsoleMode(hStdin, ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+	GetConsoleMode(hstd, &l_mode);
+	SetConsoleMode(hstd, l_mode | DISABLE_NEWLINE_AUTO_RETURN | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 #else
 #define SETUP_ANSI_TERMINAL
