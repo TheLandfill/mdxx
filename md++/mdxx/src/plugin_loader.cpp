@@ -25,21 +25,9 @@ Plugin_Loader::Plugin_Loader() {
 	typedef void (__cdecl *MYPROC)();
 	#define OPEN_SHARED_LIBRARY(X) open_dll(X)
 	HINSTANCE open_dll(const char * dll_name) {
-		HINSTANCE hinstlib = LoadLibrary(dll_name);
-		if (hinstlib != NULL) {
-			return hinstlib;
-		} else {
-			std::cerr << "Library " << dll_name << " was unable to load.";
-			throw std::runtime_error("");
-		}
+		return LoadLibrary(dll_name);
 	}
-	typedef void (__cdecl *IMPORT_PROC)(Plugin_Loader *, MDXX_Manager *);
-	#define LOAD_PLUGIN(X, Y) IMPORT_PROC import_plugin = (IMPORT_PROC) GetProcAddress(X, Y);\
-	if (import_plugin != NULL) {\
-		(import_plugin)(this, mdxx_ptr);\
-	} else {\
-		plugin_load_error(Y);\
-	}
+	#define LOAD_PLUGIN(X, Y) (import_func_ptr) GetProcAddress(X, Y);
 
 	#define PRINT_COMPILATION_INFO(X, Y) MYPROC print_compilation_info = (MYPROC) GetProcAddress(X, Y);\
 	if (print_compilation_info != NULL) {\
@@ -55,12 +43,9 @@ Plugin_Loader::Plugin_Loader() {
 #else
 	#define OPEN_SHARED_LIBRARY(X) dlopen(X, RTLD_LAZY)
 
-	#define LOAD_PLUGIN(X, Y) void(*import_plugin)(mdxx::Plugin_Loader *, mdxx::MDXX_Manager *);\
-	*(void **)(&import_plugin) = dlsym(X, Y);\
-	if (import_plugin != NULL) {\
-		(*import_plugin)(this, mdxx_ptr);\
-	} else {\
-		plugin_load_error(Y);\
+	#define LOAD_PLUGIN(X, Y) get_plugin_import_func(X, Y);
+	import_func_ptr get_plugin_import_func(MDXX_SHARED_HANDLE_TYPE handle, const char * function) {
+		return (import_func_ptr)dlsym(handle, function);
 	}
 
 	#define PRINT_COMPILATION_INFO(X, Y) void(*print_compilation_info)();\
@@ -96,17 +81,25 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 	std::string full_library_name = plugin_dir + lib_prefix + shared_library_name + lib_suffix;
 	std::cout << "Attempting to load " << full_library_name << "." << std::flush;
 	std::cout << CLEAR_LINE;
-	plugins.push_back(OPEN_SHARED_LIBRARY(full_library_name.c_str()));
-	if (plugins.back() != nullptr) {
-		LOAD_PLUGIN(plugins.back(), "import_plugin");
-		PRINT_COMPILATION_INFO(plugins.back(), "print_compilation_info");
-	} else {
-		std::cerr << "\n";
-		std::string error_message = "Plugin ";
-		error_message += shared_library_name;
-		error_message += " does not exist.";
-		throw std::runtime_error(error_message);
+	import_func_ptr import_plugin_func = NULL;
+	if (plugins.count(full_library_name) == 0) {
+		auto plugin_handle = OPEN_SHARED_LIBRARY(full_library_name.c_str());
+		if (plugin_handle != nullptr) {
+			import_plugin_func = LOAD_PLUGIN(plugin_handle, "import_plugin");
+			if (import_plugin_func == NULL) {
+				plugin_load_error("import_plugin");
+			}
+		} else {
+			std::cerr << "\n";
+			std::string error_message = "Plugin ";
+			error_message += shared_library_name;
+			error_message += " does not exist.";
+			throw std::runtime_error(error_message);
+		}
+		plugins[full_library_name] = Plugin_Info{plugin_handle, import_plugin_func};
+		PRINT_COMPILATION_INFO(plugin_handle, "print_compilation_info");
 	}
+	plugins[full_library_name].import_plugin(this, mdxx_ptr);
 }
 
 void Plugin_Loader::set_plugin_dir(const std::string& pd) {
@@ -130,18 +123,17 @@ std::string Plugin_Loader::get_plugin_dir() {
 }
 
 variable_map * Plugin_Loader::get_variable_map(void * id) {
-	plugin_variable_maps.insert({id, new variable_map()});
-	return plugin_variable_maps[id];
+	plugin_variable_maps.emplace(id, variable_map());
+	return &plugin_variable_maps[id];
 }
 
 void Plugin_Loader::free_variable_map(void * id) {
-	delete plugin_variable_maps[id];
 	plugin_variable_maps.erase(id);
 }
 
 Plugin_Loader::~Plugin_Loader() {
-	for (auto library : plugins) {
-		CLOSE_SHARED_LIBRARY(library);
+	for (auto& library : plugins) {
+		CLOSE_SHARED_LIBRARY(library.second.plugin_handle);
 	}
 }
 

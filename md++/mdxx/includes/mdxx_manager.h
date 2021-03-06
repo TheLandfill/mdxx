@@ -79,6 +79,8 @@ private:
 	std::string line_stack;
 	Line_Data line_data;
 	bool finished_reading = false;
+	Expansion_Base ** c_args;
+	size_t num_c_args = 256;
 };
 
 template<typename T>

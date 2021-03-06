@@ -15,10 +15,12 @@ namespace mdxx {
 
 MDXX_Manager::MDXX_Manager(std::ifstream& i) : in(i) {
 	init_dictionaries();
+	c_args = new Expansion_Base*[num_c_args];
 }
 
 MDXX_Manager::MDXX_Manager(std::ifstream&& i) : in(i) {
 	init_dictionaries();
+	c_args = new Expansion_Base*[num_c_args];
 }
 
 MDXX_Manager::MDXX_Manager(std::string filename) :
@@ -26,6 +28,7 @@ MDXX_Manager::MDXX_Manager(std::string filename) :
 	in(*in_if_need_to_allocate)
 {
 	init_dictionaries();
+	c_args = new Expansion_Base*[num_c_args];
 }
 
 void MDXX_Manager::init_dictionaries() {
@@ -247,7 +250,13 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		if (func_holder == nullptr) {
 			RE2::Replace(&line, variable_regex, *static_cast<std::string*>(expanded_var->get_data()));
 		} else {
-			Expansion_Base ** c_args = new Expansion_Base*[args.size()];
+			if (args.size() > num_c_args) {
+				delete[] c_args;
+				while (args.size() > num_c_args) {
+					num_c_args *= 2;
+				}
+				c_args = new Expansion_Base*[num_c_args];
+			}
 			for (size_t i = 0; i < args.size(); i++) {
 				c_args[i] = &*args[i];
 			}
@@ -258,7 +267,6 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 			} else {
 				RE2::Replace(&line, variable_regex, "");
 			}
-			delete[] c_args;
 		}
 		for (size_t i = 0; i < var_args.size(); i++) {
 			std::string positional_variable_reg = "\\[";
@@ -486,6 +494,7 @@ void MDXX_Manager::handle_range_substitutions(std::string& line, const std::vect
 
 MDXX_Manager::~MDXX_Manager() {
 	delete in_if_need_to_allocate;
+	delete[] c_args;
 }
 
 template<>
