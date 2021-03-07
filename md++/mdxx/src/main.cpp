@@ -21,6 +21,7 @@
 void usage_message(char * program_name);
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
+	auto start_time = std::chrono::high_resolution_clock::now();
 	using namespace mdxx;
 	if (argc < 3) {
 		usage_message(argv[0]);
@@ -30,9 +31,9 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	Plugin_Loader pl;
 	pl.set_plugin_dir(main_dir);
 	fs::path template_path(argv[1]);
+	#pragma omp parallel for schedule(dynamic)
 	for (int current_file = 2; current_file < argc; current_file++) {
-		auto start_time = std::chrono::high_resolution_clock::now();
-		fs::path infile(fs::absolute(argv[2]));
+		fs::path infile(fs::absolute(argv[current_file]));
 		std::ifstream in{infile};
 		MDXX_Manager mdxx = MDXX_Manager(in);
 		fs::path outfile = infile;
@@ -47,9 +48,11 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		mdxx.add_variable_to_context<std::string>("default", "metafile", metafile.string());
 		mdxx.add_variable_to_context<Plugin_Loader*>("default", "plugin-obj", &pl);
 		template_reader.process_template();
-		auto end_time = std::chrono::high_resolution_clock::now();
-		std::cout << "Generated webpage in " << std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() << " s\n";
 	}
+	auto end_time = std::chrono::high_resolution_clock::now();
+	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
+	std::cout << "Generated " << argc - 2 << " webpages in " << total_time << " ms\n";
+	std::cout << "Average time per webpage was " << total_time / (argc - 2) << " ms\n";
 	return 0;
 }
 

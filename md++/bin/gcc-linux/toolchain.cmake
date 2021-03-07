@@ -15,6 +15,7 @@ add_compile_options(
 	"$<$<CONFIG:RELEASE>:-flto>"
 	"$<$<CONFIG:DEBUG>:-O0>"
 	"$<$<CONFIG:DEBUG>:-g>"
+	"-fopenmp"
 )
 add_link_options(
 	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
@@ -24,5 +25,5 @@ add_link_options(
 	"-L'${CMAKE_BINARY_DIR}/out'"
 )
 add_link_options(
-	-ldl -pthread
+	-ldl -pthread -fopenmp
 )
