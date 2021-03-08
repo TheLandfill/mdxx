@@ -19,7 +19,8 @@ const char * mdxx::Expansion<Terminal*>::to_string();
 
 class Terminal : public mdxx::Context {
 public:
-	Terminal(const char * n, mdxx::Plugin_Loader * p) : name(n), pl(p) {
+	Terminal(const char * n, mdxx::Plugin_Loader * p, mdxx::MDXX_Manager * m) : name(n), pl(p), md(m) {
+		(void)md;
 		variables = MDXX_get_variable_map(pl, this);
 		add_variable("user", "user");
 		add_variable("computer-name", "computer");
@@ -68,6 +69,10 @@ public:
 		return command;
 	}
 	static char * prompt(mdxx::Expansion_Base** args, size_t argc) {
+		if (argc == 0) {
+			std::cerr << "ERROR: First argument to prompt must be (self)." << std::endl;
+			exit(EXIT_FAILURE);
+		}
 		Terminal * term = *static_cast<Terminal**>(args[0]->get_data());
 		MDXX_add_string_variable(term->variables, "command", collect_args(args + 1, argc - 1).c_str());
 		const char * temp = "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
@@ -76,6 +81,10 @@ public:
 		return output;
 	}
 	static char * mac_prompt(mdxx::Expansion_Base** args, size_t argc) {
+		if (argc == 0) {
+			std::cerr << "ERROR: First argument to mac-prompt must be (self)." << std::endl;
+			exit(EXIT_FAILURE);
+		}
 		Terminal * term = *static_cast<Terminal**>(args[0]->get_data());
 		MDXX_add_string_variable(term->variables, "command", collect_args(args + 1, argc - 1).c_str());
 		const char * temp = "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
@@ -91,12 +100,13 @@ public:
 	std::string term_object_id;
 private:
 	mdxx::Plugin_Loader * pl;
+	mdxx::MDXX_Manager * md;
 };
 
 MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Terminal)
 
-extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::MDXX_Manager * mdxx) {
-	MDXX_add_new_context(mdxx, "terminal", new Terminal("terminal", pl));
+extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::MDXX_Manager * md) {
+	MDXX_add_new_context(md, "terminal", new Terminal("terminal", pl, md));
 }
 
 extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {

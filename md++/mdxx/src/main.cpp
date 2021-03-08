@@ -17,11 +17,15 @@
   error "Missing the <filesystem> header."
 #endif
 #include <chrono>
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
 
 void usage_message(char * program_name);
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
+	Py_Initialize();
+	PyRun_SimpleString("import sys;import os;sys.path.append(os.getcwd() + os.path.sep + 'out' + os.path.sep + 'plugins');print(sys.path)");
 	using namespace mdxx;
 	if (argc < 3) {
 		usage_message(argv[0]);
@@ -31,7 +35,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	Plugin_Loader pl;
 	pl.set_plugin_dir(main_dir);
 	fs::path template_path(argv[1]);
-	#pragma omp parallel for schedule(dynamic)
+	//#pragma omp parallel for schedule(dynamic)
 	for (int current_file = 2; current_file < argc; current_file++) {
 		fs::path infile(fs::absolute(argv[current_file]));
 		std::ifstream in{infile};
@@ -53,6 +57,9 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
 	std::cout << "Generated " << argc - 2 << " webpages in " << total_time << " ms\n";
 	std::cout << "Average time per webpage was " << total_time / (argc - 2) << " ms\n";
+	if (Py_FinalizeEx() < 0) {
+		std::cerr << "ERROR: Python had trouble closing for some reason.\n";
+	}
 	return 0;
 }
 

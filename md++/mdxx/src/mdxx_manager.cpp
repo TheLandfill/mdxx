@@ -130,12 +130,10 @@ char * MDXX_Manager::open_context(Expansion_Base** args, size_t argc) {
 	std::string line = *static_cast<const char **>(args[0]->get_data());
 	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args[1]->get_data());
 	HTML_Manager& html = **static_cast<HTML_Manager**>(args[2]->get_data());
-	using namespace re2;
 	std::string open_args = "";
-	size_t args_split = line.find_first_of("\t ");
-	if (args_split != std::string::npos) {
-		open_args = line.substr(args_split + 1);
-		line = line.substr(0, args_split);
+	for (size_t i = 4; i < argc; i++) {
+		open_args += *static_cast<const char **>(args[i]->get_data());
+		open_args += " ";
 	}
 	mdxx.throw_exception_if_context_not_found(line);
 	mdxx.context.push_back(line);

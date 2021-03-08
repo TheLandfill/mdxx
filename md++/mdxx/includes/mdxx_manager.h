@@ -105,4 +105,9 @@ const char * Expansion<MDXX_Manager*>::to_string();
 }
 
 extern "C" DLL_IMPORT_EXPORT void MDXX_add_new_context(mdxx::MDXX_Manager * mdxx, const char * name, mdxx::Context * context);
+
+extern "C" DLL_IMPORT_EXPORT char * MDXX_print_current_line(mdxx::MDXX_Manager * mdxx);
+
+extern "C" DLL_IMPORT_EXPORT void MDXX_print_current_line_and_exit(mdxx::MDXX_Manager * md);
+
 #endif
