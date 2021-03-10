@@ -4,6 +4,7 @@
 #include "template_manager.h"
 #include "plugin_loader.h"
 #include "metadata.h"
+#include "clear_line.h"
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -17,15 +18,12 @@
   error "Missing the <filesystem> header."
 #endif
 #include <chrono>
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
 
+void MDXX_py_finalize();
 void usage_message(char * program_name);
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
-	Py_Initialize();
-	PyRun_SimpleString("import sys;import os;sys.path.append(os.getcwd() + os.path.sep + 'out' + os.path.sep + 'plugins')");
 	using namespace mdxx;
 	if (argc < 3) {
 		usage_message(argv[0]);
@@ -35,7 +33,8 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	Plugin_Loader pl;
 	pl.set_plugin_dir(main_dir);
 	fs::path template_path(argv[1]);
-	//#pragma omp parallel for schedule(dynamic)
+	int finished_webpages = 0;
+	#pragma omp parallel for schedule(dynamic)
 	for (int current_file = 2; current_file < argc; current_file++) {
 		fs::path infile(fs::absolute(argv[current_file]));
 		std::ifstream in{infile};
@@ -52,14 +51,18 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		mdxx.add_variable_to_context<std::string>("default", "metafile", metafile.string());
 		mdxx.add_variable_to_context<Plugin_Loader*>("default", "plugin-obj", &pl);
 		template_reader.process_template();
+		#pragma omp critical
+		{
+			finished_webpages++;
+			std::cout << MDXX_CLEAR_LINE << finished_webpages << "/" << argc - 2 << " finished." << std::flush;
+		}
 	}
+	std::cout << std::endl;
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
 	std::cout << "Generated " << argc - 2 << " webpages in " << total_time << " ms\n";
 	std::cout << "Average time per webpage was " << total_time / (argc - 2) << " ms\n";
-	if (Py_FinalizeEx() < 0) {
-		std::cerr << "ERROR: Python had trouble closing for some reason.\n";
-	}
+	MDXX_py_finalize();
 	return 0;
 }
 

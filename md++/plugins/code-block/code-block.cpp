@@ -7,6 +7,7 @@
 #include "plugin_loader.h"
 #include "variable_map.h"
 #include "split.h"
+#include "py_init.h"
 #include <iostream>
 #include <stdexcept>
 #define PY_SSIZE_T_CLEAN
@@ -29,6 +30,7 @@ const char * mdxx::Expansion<Code_Block*>::to_string();
 class Code_Block : public mdxx::Context {
 public:
 	Code_Block(const char * n, mdxx::Plugin_Loader * p, mdxx::MDXX_Manager * m) : name(n), pl(p), md(m) {
+		MDXX_py_init();
 		variables = MDXX_get_variable_map(pl, this);
 		add_variable("{", "{");
 		add_variable("}", "}");
