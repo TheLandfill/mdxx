@@ -25,7 +25,7 @@ void usage_message(char * program_name);
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
 	Py_Initialize();
-	PyRun_SimpleString("import sys;import os;sys.path.append(os.getcwd() + os.path.sep + 'out' + os.path.sep + 'plugins');print(sys.path)");
+	PyRun_SimpleString("import sys;import os;sys.path.append(os.getcwd() + os.path.sep + 'out' + os.path.sep + 'plugins')");
 	using namespace mdxx;
 	if (argc < 3) {
 		usage_message(argv[0]);
