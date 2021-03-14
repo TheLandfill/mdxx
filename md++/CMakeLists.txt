@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.13.0)
-project(md++)
+set(CMAKE_GENERATOR_PLATFORM x64)
+project(mdxx)
+set(project ${CMAKE_PROJECT_NAME})
 
 set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendors/)
 include_directories(
