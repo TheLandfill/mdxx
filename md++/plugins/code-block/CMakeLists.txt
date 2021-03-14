@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 3.0.0)
 
 find_package(PythonLibs REQUIRED)
 add_library(py STATIC IMPORTED)
+if (WIN32)
 set_property(TARGET py PROPERTY IMPORTED_LOCATION_DEBUG "${PYTHON_DEBUG_LIBRARY}")
 set_property(TARGET py PROPERTY IMPORTED_LOCATION_RELEASE "${PYTHON_LIBRARY_RELEASE}")
+else()
+set_property(TARGET py PROPERTY IMPORTED_LOCATION "${PYTHON_LIBRARY_RELEASE}")
+endif()
 
 
 add_library(code-block SHARED
