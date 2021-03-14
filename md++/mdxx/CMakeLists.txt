@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.0.0)
-set(CMAKE_GENERATOR_PLATFORM x64)
 
 find_package(PythonLibs REQUIRED)
 add_library(py STATIC IMPORTED)
@@ -18,11 +17,17 @@ file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/${project}/program_src/*.cpp")
 
 file(GLOB MDXX_INTERFACE_SOURCES "${CMAKE_SOURCE_DIR}/${project}/src/*.cpp")
 
+file(GLOB UTIL_SOURCES "${CMAKE_SOURCE_DIR}/${project}/util/*.cpp")
+
 add_library(mdxx_interface SHARED
 	"${MDXX_INTERFACE_SOURCES}"
 )
 
-target_link_libraries(mdxx_interface re2 py)
+add_library(mdxx_util STATIC
+	"${UTIL_SOURCES}"
+)
+
+target_link_libraries(mdxx_interface re2 py mdxx_util)
 
 if (NOT WIN32)
 	target_link_libraries(mdxx_interface dl)

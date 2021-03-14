@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.13.0)
-set(CMAKE_GENERATOR_PLATFORM x64)
+if (WIN32)
+	set(CMAKE_GENERATOR_PLATFORM x64)
+endif(WIN32)
 project(mdxx)
 set(project ${CMAKE_PROJECT_NAME})
 

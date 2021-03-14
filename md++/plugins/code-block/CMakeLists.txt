@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.0.0)
-set(CMAKE_GENERATOR_PLATFORM x64)
 
 find_package(PythonLibs REQUIRED)
 add_library(py STATIC IMPORTED)
@@ -11,7 +10,7 @@ add_library(code-block SHARED
 
 include_directories(${PYTHON_INCLUDE_DIRS})
 
-target_link_libraries(code-block mdxx_interface py)
+target_link_libraries(code-block mdxx_interface py mdxx_util)
 if (WIN32)
 	install(TARGETS code-block DESTINATION "${PLUGIN_DIR}")
 endif (WIN32)

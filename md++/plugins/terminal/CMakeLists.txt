@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.0.0)
-set(CMAKE_GENERATOR_PLATFORM x64)
 
 add_library(terminal SHARED
 	terminal.cpp
