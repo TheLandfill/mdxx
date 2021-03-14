@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.0.0)
 
 find_package(PythonLibs REQUIRED)
 add_library(py STATIC IMPORTED)
-set_property(TARGET py PROPERTY IMPORTED_LOCATION ${PYTHON_LIBRARIES})
+set_property(TARGET py PROPERTY IMPORTED_LOCATION_DEBUG "${PYTHON_DEBUG_LIBRARY}")
+set_property(TARGET py PROPERTY IMPORTED_LOCATION_RELEASE "${PYTHON_LIBRARY_RELEASE}")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUT_DIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUT_DIR}")
@@ -19,12 +20,12 @@ file(GLOB MDXX_INTERFACE_SOURCES "${CMAKE_SOURCE_DIR}/${project}/src/*.cpp")
 
 file(GLOB UTIL_SOURCES "${CMAKE_SOURCE_DIR}/${project}/util/*.cpp")
 
-add_library(mdxx_interface SHARED
-	"${MDXX_INTERFACE_SOURCES}"
-)
-
 add_library(mdxx_util STATIC
 	"${UTIL_SOURCES}"
+)
+
+add_library(mdxx_interface SHARED
+	"${MDXX_INTERFACE_SOURCES}"
 )
 
 target_link_libraries(mdxx_interface re2 py mdxx_util)

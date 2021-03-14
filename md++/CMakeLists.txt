@@ -12,10 +12,11 @@ include_directories(
 	"${CMAKE_SOURCE_DIR}/mdxx/includes/"
 )
 file(GLOB VENDOR_LIBRARY_DIRS "${VENDOR_DIR}/libs/*")
-link_directories("${VENDOR_LIBRARY_DIRS}")
 
 set(OUT_DIR "${CMAKE_BINARY_DIR}/out")
 set(PLUGIN_DIR "${OUT_DIR}/plugins")
+
+link_directories("${VENDOR_LIBRARY_DIRS}" "${OUT_DIR}")
 
 add_subdirectory(mdxx)
 add_subdirectory(plugins)
