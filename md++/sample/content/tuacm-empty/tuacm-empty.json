@@ -1,0 +1,10 @@
+{
+  "title"            : "Test",
+  "author"           : "Joseph Mellor",
+  "date"             : "March 14, 2021",
+  "tagline"          : "Testing stuff.",
+  "description"      : "I'm trying to remake tuacm's tumd template into an mdxx template",
+  "stylesheets"      : "terminal code-block code-style/trac+dark",
+  "scripts"          : "",
+  "tags"             : ""
+}
