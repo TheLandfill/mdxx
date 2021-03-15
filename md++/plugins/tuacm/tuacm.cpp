@@ -1,4 +1,4 @@
-#define MDXX_WINDOWS_PLUGIN
+#define MDXX_EXTERNAL_CONTEXT
 #include "expansion.h"
 #include "context.h"
 #include "html_manager.h"
@@ -13,6 +13,20 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+
+struct Headings_Holder {
+	std::vector<std::string> headings;
+	std::string headings_object_id;
+};
+
+template<>
+const char * mdxx::Expansion<Headings_Holder*>::to_string() {
+	std::stringstream strstr;
+	strstr << "<HTML_Manager object @ " << this->get_data() << ">";
+	data->headings_object_id = strstr.str();
+	return data->headings_object_id.c_str();
+}
+
 
 std::string url_to_lower(std::string str) {
 	std::transform(
@@ -112,13 +126,15 @@ extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::
 	MDXX_add_string_variable_to_context(mdxx, "template", "js-suffix", "\".js></script>");
 	MDXX_add_string_variable_to_context(mdxx, "template", "style", "{{prefix-suffix-loop-func (html) (css-prefix) (css-suffix) (stylesheets)}}");
 	MDXX_add_string_variable_to_context(mdxx, "template", "write-scripts", "{{prefix-suffix-loop-func (html) (js-prefix) (js-suffix) (scripts)}}");
+	MDXX_add_string_variable_to_context(mdxx, "default", "h", "{{heading-to-section (headings-do-not-touch) [:]}}");
 	MDXX_add_function_variable_to_context(mdxx, "template", "prefix-suffix-loop-func", prefix_suffix_loop_func);
 	MDXX_add_function_variable_to_context(mdxx, "default", "heading-to-section", heading_to_section);
 	MDXX_add_function_variable_to_context(mdxx, "default", "urlify", urlify);
 	MDXX_add_function_variable_to_context(mdxx, "template", "author-description", get_author_description);
 	MDXX_add_function_variable_to_context(mdxx, "template", "sidenav", sidenav);
+	MDXX_add_general_variable_to_context(mdxx, "default", "headings-do-not-touch", new mdxx::Expansion<Headings_Holder*>(new Headings_Holder{}));
 }
 
 extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {
-	std::cout << "tuacm:\t" << MDXX_COMPILATION_INFO << ".\n";
+	std::cout << "tuacm:\t\t" << MDXX_COMPILATION_INFO << ".\n";
 }

@@ -1,5 +1,6 @@
 #include "raw_html.h"
 #include "html_manager.h"
+#include "variable_map.h"
 
 namespace mdxx {
 

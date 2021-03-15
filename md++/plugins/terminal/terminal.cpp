@@ -1,4 +1,4 @@
-#define MDXX_WINDOWS_PLUGIN
+#define MDXX_EXTERNAL_CONTEXT
 #include "expansion.h"
 #include "context.h"
 #include "html_manager.h"

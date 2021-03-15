@@ -43,7 +43,7 @@ const char * Expansion<const char *>::to_string() {
 template<>
 const char * Expansion<char *>::to_string() {
 	std::stringstream strstr;
-	strstr << data << " (char *)";
+	strstr << data;
 	to_str = strstr.str();
 	return to_str.c_str();
 }

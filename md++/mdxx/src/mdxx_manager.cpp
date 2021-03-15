@@ -298,14 +298,15 @@ std::string MDXX_Manager::find_context_with_variable(const std::string& var) {
 		}
 	}
 	std::string error_message = "ERROR: ";
-	error_message.reserve(2048);
+	error_message.reserve(8192);
 	error_message += var;
 	error_message += " is not a variable in the current context stack.\n";
+	error_message += "\nLine that caused the problem:\n";
+	error_message += print_line();
+	error_message += "\n";
 	error_message += list_context_stack();
 	error_message += "\n\n";
 	error_message += list_all_vars();
-	error_message += "\nLine that caused the problem:\n";
-	error_message += print_line();
 	throw std::runtime_error(error_message);
 }
 
@@ -358,8 +359,9 @@ std::string MDXX_Manager::list_all_vars() {
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
 		throw_exception_if_context_not_found(*cur_context);
 		output += *cur_context;
-		output += "\n";
+		output += " variables:\n";
 		output += context_dict->at(*cur_context)->list_variables_as_text();
+		output += "\n";
 	}
 	return output;
 }

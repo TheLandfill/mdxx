@@ -2,6 +2,7 @@
 #include "mdxx_manager.h"
 #include "content_manager.h"
 #include "html_manager.h"
+#include "variable_map.h"
 #include <algorithm>
 #include <memory>
 #include <stdexcept>
