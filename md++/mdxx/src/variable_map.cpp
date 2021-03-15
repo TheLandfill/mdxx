@@ -16,7 +16,7 @@ void MDXX_add_function_variable(variable_map * variables, const char * variable,
 }
 
 void MDXX_add_string_variable(variable_map * variables, const char * variable, const char * value) {
-	(*variables)[std::string(variable)] = std::make_unique<Expansion<std::string>>(value);
+	(*variables)[std::string(variable)] = std::make_unique<Expansion<const char *>>(value);
 }
 
 Expansion_Base * MDXX_get_variable(variable_map * variables, const char * variable) {

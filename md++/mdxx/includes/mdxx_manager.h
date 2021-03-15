@@ -52,6 +52,7 @@ public:
 	void set_context_dict(context_dict_type other_context_dict);
 	imported_function_dict_type get_imported_function_dict();
 	void set_imported_function_dict(imported_function_dict_type other_imported_function_dict);
+	void throw_exception_if_context_not_found(const std::string& context);
 public:
 	std::string mdxx_object_id;
 private:
@@ -61,7 +62,6 @@ private:
 	void check_variable_dependency(const Context& c);
 
 	std::string find_context_with_variable(const std::string& var);
-	void throw_exception_if_context_not_found(const std::string& context);
 	void check_if_imported_function_found(const std::string& function);
 	void handle_curly_braces(std::string& line);
 	long convert_string_to_long(const std::string& str);
@@ -104,10 +104,38 @@ const char * Expansion<MDXX_Manager*>::to_string();
 
 }
 
-extern "C" DLL_IMPORT_EXPORT void MDXX_add_new_context(mdxx::MDXX_Manager * mdxx, const char * name, mdxx::Context * context);
+extern "C" DLL_IMPORT_EXPORT
+void MDXX_add_general_variable_to_context(mdxx::MDXX_Manager * mdxx,
+	const char * context_name,
+	const char * variable,
+	mdxx::Expansion_Base * value
+);
 
-extern "C" DLL_IMPORT_EXPORT char * MDXX_print_current_line(mdxx::MDXX_Manager * mdxx);
+extern "C" DLL_IMPORT_EXPORT
+void MDXX_add_function_variable_to_context(mdxx::MDXX_Manager * mdxx,
+	const char * context_name,
+	const char * variable,
+	mdxx::gen_func func
+);
 
-extern "C" DLL_IMPORT_EXPORT void MDXX_print_current_line_and_exit(mdxx::MDXX_Manager * md);
+extern "C" DLL_IMPORT_EXPORT
+void MDXX_add_string_variable_to_context(mdxx::MDXX_Manager * mdxx,
+	const char * context_name,
+	const char * name,
+	const char * value,
+	bool immediate_expansion = false
+);
+
+extern "C" DLL_IMPORT_EXPORT
+void MDXX_add_new_context(mdxx::MDXX_Manager * mdxx,
+	const char * name,
+	mdxx::Context * context
+);
+
+extern "C" DLL_IMPORT_EXPORT
+char * MDXX_print_current_line(mdxx::MDXX_Manager * mdxx);
+
+extern "C" DLL_IMPORT_EXPORT
+void MDXX_print_current_line_and_exit(mdxx::MDXX_Manager * md);
 
 #endif

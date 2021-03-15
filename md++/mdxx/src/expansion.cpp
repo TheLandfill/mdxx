@@ -1,5 +1,5 @@
 #include "expansion.h"
-#include <cstring>
+#include "c_string_copy.h"
 #include <memory>
 
 namespace mdxx {
@@ -19,9 +19,7 @@ const char * Expansion<std::string>::to_string() {
 }
 
 Expansion_Base* Expansion<std::string>::make_deep_copy() {
-	char * copy = new char[data.length() + 1];
-	strncpy(copy, data.c_str(), data.length() + 1);
-	return new Expansion<char *>(copy);
+	return new Expansion<char *>(c_string_copy(data));
 }
 
 Expansion<gen_func>::Expansion(gen_func function, std::string n) : func(function),

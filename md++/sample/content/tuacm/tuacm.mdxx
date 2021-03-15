@@ -1,0 +1,76 @@
+tuacm-article.mdxx
+{{plugin terminal}}
+
+This is a test.
+
+{{immediate-test-0}}="This is just a test."
+{{immediate-test-1}}="{{immediate-test-0}} {{immediate-test-0}}"
+{{immediate-test-2}}="{{immediate-test-1}} {{immediate-test-1}}"
+{{immediate-test-3}}="{{immediate-test-2}} {{immediate-test-2}}"
+{I wonder if I've implemented paragraphs yet}.
+\{This should be between normal curly braces.\}
+
+{{immediate-test-3}}
+
+{{immediate-test-2}}
+
+{{immediate-test-1}}
+{{immediate-test-0}}
+{{delayed-test-0}}:="{{immediate-test-1}}{{immediate-test-2}}"
+
+{I wonder if I've implemented paragraphs yet{{delayed-test-0}}}.
+\{This should be between normal curly braces.\}
+\{\{test\}\}\{\{test\}\}
+
+{{open raw-html}}<div>
+{{open raw-html}}{{mdpu}}<div>
+{{mdpu}}{{open terminal}}
+{{prompt ls -l}}
+file
+file file
+
+file file file
+
+</div>{{close terminal}}{{mdpo}}
+{{close raw-html}}{{mdpo}}</div>{{close raw-html}}
+
+{{open ol}}test
+
+test 2
+test 3
+{{close ol}}
+
+Let's see if it adds the paragraphs here or if it only forgets at the end of the file.
+
+{{open ul}}should be unordered
+
+this better be unordered
+
+let's try again
+{{close ul}}
+
+{{test}}:="[3] [2] [1]"
+{{test a b c}}
+
+{{open ol}}
+
+1
+
+2
+3
+
+4
+5
+6
+
+7
+
+{{test the big dog}}
+
+{{close ol}}
+
+Test
+{{new-var}}="This should not display a new paragraph."
+{{new-var}} Test.
+
+This article, {{title}}, was written by {{author}} and published on {{date}}.

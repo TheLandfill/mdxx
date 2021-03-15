@@ -54,7 +54,7 @@ public:
 
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
 		(void)html;
-		std::vector<std::string> args = split(arg_ptr);
+		std::vector<std::string> args = mdxx::split(arg_ptr);
 		if (args.size() < 1) {
 			std::cerr << "ERROR: Need to specify the programming language for the code-block context." << std::endl;
 			PyErr_Print();

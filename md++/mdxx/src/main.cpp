@@ -1,3 +1,4 @@
+#include "c_string_copy.h"
 #include "mdxx_manager.h"
 #include "html_manager.h"
 #include "content_manager.h"
@@ -48,7 +49,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		Template_Manager template_reader(html, content, template_file);
 		fs::path metafile = infile;
 		metafile.replace_extension(".json");
-		mdxx.add_variable_to_context<std::string>("default", "metafile", metafile.string());
+		mdxx.add_variable_to_context("default", "metafile", c_string_copy(metafile.string().c_str()));
 		mdxx.add_variable_to_context<Plugin_Loader*>("default", "plugin-obj", &pl);
 		template_reader.process_template();
 		#pragma omp critical

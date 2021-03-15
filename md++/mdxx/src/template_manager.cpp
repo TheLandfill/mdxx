@@ -29,11 +29,13 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 	mdxx.add_new_context<HTML_List>("ol");
 	mdxx.add_new_context<HTML_List>("ul");
 	mdxx.add_variable_to_context("template", "template", this);
+	mdxx.add_variable_to_context("template", "t-mdxx", &template_mdxx);
 	mdxx.add_variable_to_context("default", "content", content.get());
 	mdxx.add_variable_to_context("default", "self", content.get());
 	mdxx.add_variable_to_context("template", "path", "");
 	mdxx.add_variable_to_context("default", "plugin-loader", MDXX_load_plugins);
 	mdxx.add_variable_to_context("default", "plugin", "{{plugin-loader (plugin-obj) (mdxx) [1:]}}");
+	mdxx.add_variable_to_context("template", "t-plugin", "{{plugin-loader (plugin-obj) (t-mdxx) [1:]}}");
 	mdxx.add_variable_to_context("default", "plugin-dir", MDXX_set_plugin_dir);
 	mdxx.add_variable_to_context("template", "process_content", process_content);
 	mdxx.add_variable_to_context("template", "switch_to_content", "{{process_content (content)}}");

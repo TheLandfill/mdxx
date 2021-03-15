@@ -1,7 +1,7 @@
 #include "mdxx_manager.h"
 #include "context.h"
+#include "c_string_copy.h"
 #include <memory>
-#include <cstring>
 #include <iostream>
 
 extern "C" {
@@ -12,10 +12,7 @@ void MDXX_add_new_context(mdxx::MDXX_Manager * mdxx, const char * name, mdxx::Co
 }
 
 char * MDXX_print_current_line(mdxx::MDXX_Manager * mdxx) {
-	std::string temp = mdxx->print_line();
-	char * str = new char[temp.length() + 1];
-	strncpy(str, temp.c_str(), temp.length() + 1);
-	return str;
+	return mdxx::c_string_copy(mdxx->print_line());
 }
 
 void MDXX_print_current_line_and_exit(mdxx::MDXX_Manager * md) {
@@ -25,5 +22,39 @@ void MDXX_print_current_line_and_exit(mdxx::MDXX_Manager * md) {
 	delete[] cur_line;
 	exit(EXIT_FAILURE);
 }
+
+void MDXX_add_general_variable_to_context(mdxx::MDXX_Manager * mdxx,
+	const char * context_name,
+	const char * variable,
+	mdxx::Expansion_Base * value
+) {
+	mdxx->throw_exception_if_context_not_found(context_name);
+	(*mdxx->get_context_dict())[context_name]->add_variable(variable, value);
+}
+
+void MDXX_add_function_variable_to_context(mdxx::MDXX_Manager * mdxx,
+	const char * context_name,
+	const char * variable,
+	mdxx::gen_func func
+) {
+	mdxx->throw_exception_if_context_not_found(context_name);
+	(*mdxx->get_context_dict())[context_name]->add_variable(variable, new mdxx::Expansion<mdxx::gen_func>(func, variable));
+}
+
+void MDXX_add_string_variable_to_context(mdxx::MDXX_Manager * mdxx,
+	const char * context_name,
+	const char * name,
+	const char * value,
+	bool immediate_expansion
+) {
+	mdxx->throw_exception_if_context_not_found(context_name);
+	if (immediate_expansion) {
+		std::string str_val = value;
+		(*mdxx->get_context_dict())[context_name]->add_variable(name, new mdxx::Expansion<const char *>(mdxx::c_string_copy(mdxx->expand_line(str_val))));
+	} else {
+		(*mdxx->get_context_dict())[context_name]->add_variable(name, new mdxx::Expansion<const char *>(value));
+	}
+}
+
 
 }

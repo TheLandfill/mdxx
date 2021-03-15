@@ -3,5 +3,7 @@
   "author"           : "Joseph Mellor",
   "date"             : "31 Jan 2021",
   "tagline"          : "Picking the best algorithm for the task will make your code run fast. Using memory properly will make it even faster.",
-  "metadescription"  : "In this article, we'll discuss how the computer uses the memory hierarchy and caching to improve the speed of programs."
+  "metadescription"  : "In this article, we'll discuss how the computer uses the memory hierarchy and caching to improve the speed of programs.",
+  "stylesheets"      : "",
+  "scripts"          : ""
 }

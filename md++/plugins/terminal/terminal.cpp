@@ -6,6 +6,7 @@
 #include "compilation_info.h"
 #include "plugin_loader.h"
 #include "variable_map.h"
+#include "c_string_copy.h"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -74,11 +75,9 @@ public:
 			exit(EXIT_FAILURE);
 		}
 		Terminal * term = *static_cast<Terminal**>(args[0]->get_data());
-		MDXX_add_string_variable(term->variables, "command", collect_args(args + 1, argc - 1).c_str());
+		MDXX_add_string_variable(term->variables, "command", mdxx::c_string_copy(collect_args(args + 1, argc - 1)));
 		const char * temp = "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
-		char * output = new char[strlen(temp) + 1];
-		strncpy(output, temp, strlen(temp) + 1);
-		return output;
+		return mdxx::c_string_copy(temp);
 	}
 	static char * mac_prompt(mdxx::Expansion_Base** args, size_t argc) {
 		if (argc == 0) {
@@ -86,11 +85,9 @@ public:
 			exit(EXIT_FAILURE);
 		}
 		Terminal * term = *static_cast<Terminal**>(args[0]->get_data());
-		MDXX_add_string_variable(term->variables, "command", collect_args(args + 1, argc - 1).c_str());
+		MDXX_add_string_variable(term->variables, "command", mdxx::c_string_copy(collect_args(args + 1, argc - 1)));
 		const char * temp = "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
-		char * output = new char[strlen(temp) + 1];
-		strncpy(output, temp, strlen(temp) + 1);
-		return output;
+		return mdxx::c_string_copy(temp);
 	}
 	~Terminal() {
 		MDXX_free_variable_map(pl, this);
