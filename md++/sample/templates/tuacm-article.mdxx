@@ -41,12 +41,21 @@ gtag('config', 'UA-146716017-1');
 <div id="date-and-tags">Posted {{date}} {{tags}}</div>
 <div id="author-box">
 {{author-url}}="{{urlify (author)}}"
-{{mdpu}}<div id="author-image" style="background: url({{root}}authors/{{author-url}}/large.jpg) 50% 50% no-repeat; background-size: auto 50px;"></div>
+{{author-image}}="{{root}}authors/{{author-url}}/large.jpg"
+{{mdpu}}<div id="author-image" style="background: url({{author-image}}) 50% 50% no-repeat; background-size: auto 50px;"></div>
 <div id="author-name">By {{author}}</div>
 {{mdpo}}</div>
 
 <hr style="border: 3px solid black;">
-{{switch_to_content}}{{author-description (author-dir) (author) 330}}{{sidenav}}{{mdpo}}</div>
+{{switch_to_content}}<div id="author-description-local">
+{{mdpu}}<img src="{{author-image}}" id="author-description-image" alt="A picture of {{author}}, the author.">
+<div id="author-description-text">
+{{mdpu}}<p>{{author-description (author-dir) (author) 330}}
+</p>
+{{mdpo}}</div>
+{{mdpo}}</div>
+{{mdpo}}</div>
+{{sidenav}}{{mdpo}}</div>
 
 <div id="footer" class="mt-5 py-5 text-center px-4">
 {{mdpu}}<div id="footer-links">
