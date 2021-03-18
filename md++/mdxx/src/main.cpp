@@ -20,6 +20,10 @@
 #endif
 #include <chrono>
 
+namespace mdxx {
+	const char * main_program_dir;
+}
+
 void MDXX_py_finalize();
 void usage_message(char * program_name);
 
@@ -31,6 +35,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		return 1;
 	}
 	std::string main_dir = fs::path(argv[0]).parent_path().string();
+	main_program_dir = main_dir.c_str();
 	Plugin_Loader pl;
 	pl.set_plugin_dir(main_dir);
 	fs::path template_path(argv[1]);

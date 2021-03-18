@@ -4,4 +4,8 @@
 
 extern "C" DLL_IMPORT_EXPORT void MDXX_py_init();
 
+namespace mdxx {
+	extern const char * main_program_dir;
+}
+
 #endif

@@ -7,8 +7,11 @@ static bool python_has_been_initialized = false;
 extern "C" DLL_IMPORT_EXPORT void MDXX_py_init() {
 	if (!python_has_been_initialized) {
 		Py_Initialize();
+		std::string py_plugin_path_load = "import sys;import os;sys.path.append(";
+		py_plugin_path_load += mdxx::main_program_dir;
+		py_plugin_path_load += " + os.path.sep + 'plugins')";
 		// I should probably use Py_SetProgramName
-		PyRun_SimpleString("import sys;import os;sys.path.append(os.getcwd() + os.path.sep + 'out' + os.path.sep + 'plugins')");
+		PyRun_SimpleString(py_plugin_path_load.c_str());
 		python_has_been_initialized = true;
 	}
 }
