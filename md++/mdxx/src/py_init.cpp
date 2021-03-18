@@ -1,7 +1,6 @@
 #include "py_init.h"
 #include <Python.h>
 #include <iostream>
-#include <filesystem>
 
 static bool python_has_been_initialized = false;
 
