@@ -2,6 +2,7 @@
 #include "expansion.h"
 #include "html_manager.h"
 #include "process_html.h"
+#include "variable_map.h"
 
 namespace mdxx {
 

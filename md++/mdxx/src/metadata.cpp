@@ -5,15 +5,32 @@
 #include "metadata.h"
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 using json = nlohmann::json;
 using namespace mdxx;
 
-void list_required_fields(const std::vector<std::string>& fields) {
-	std::cerr << "Create the file and set the following fields:\n";
-	for (const auto& field : fields) {
-		std::cerr << "\t" << field << "\n";
+static void nice_print(const std::string& str, bool add_comma=true) {
+	std::string output;
+	output.reserve(256);
+	output += "\"";
+	output += str;
+	output += "\"";
+	std::cerr << "\t" << std::left << std::setw(20) << output << ": \"What you want " << str << " to be.\"";
+	if (add_comma) {
+		std::cerr << ",";
 	}
+	std::cerr << "\n";
+}
+
+void list_required_fields(const std::vector<std::string>& fields) {
+	std::cerr << "The contents of the file should look like:\n\n";
+	std::cerr << "{\n";
+	for (size_t i = 0; i < fields.size() - 1; i++) {
+		nice_print(fields[i]);
+	}
+	nice_print(fields.back(), false);
+	std::cerr << "}\n\n";
 }
 
 extern "C" char * MDXX_read_metadata_file(Expansion_Base** args, size_t argc) {
@@ -51,7 +68,7 @@ extern "C" char * MDXX_read_metadata_file(Expansion_Base** args, size_t argc) {
 	}
 	for (const auto& field : fields) {
 		if (j.contains(field)) {
-			mdxx->add_variable_to_context<std::string>(context.c_str(), field.c_str(), j[field].get<std::string>());
+			mdxx->add_variable_to_context(context.c_str(), field.c_str(), mdxx::c_string_copy(j[field].get<std::string>()));
 		} else {
 			std::cerr << "Warning: Field \"" << field << "\" is missing and will be filled with a default value in the output.\n";
 		}

@@ -3,6 +3,7 @@
 #include "html_manager.h"
 #include "split.h"
 #include "re2/re2.h"
+#include "c_string_copy.h"
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
@@ -15,10 +16,12 @@ namespace mdxx {
 
 MDXX_Manager::MDXX_Manager(std::ifstream& i) : in(i) {
 	init_dictionaries();
+	c_args = new Expansion_Base*[num_c_args];
 }
 
 MDXX_Manager::MDXX_Manager(std::ifstream&& i) : in(i) {
 	init_dictionaries();
+	c_args = new Expansion_Base*[num_c_args];
 }
 
 MDXX_Manager::MDXX_Manager(std::string filename) :
@@ -26,6 +29,7 @@ MDXX_Manager::MDXX_Manager(std::string filename) :
 	in(*in_if_need_to_allocate)
 {
 	init_dictionaries();
+	c_args = new Expansion_Base*[num_c_args];
 }
 
 void MDXX_Manager::init_dictionaries() {
@@ -64,7 +68,7 @@ std::string MDXX_Manager::next_line() {
 
 std::string MDXX_Manager::next_line_no_nl() {
 	std::string current_line = next_line();
-	while (current_line.back() == '\n' || current_line.back() == '\r') {
+	while (current_line.length() > 0 && (current_line.back() == '\n' || current_line.back() == '\r')) {
 		current_line.pop_back();
 	}
 	return current_line;
@@ -101,7 +105,7 @@ void MDXX_Manager::variable_definition(std::string& line) {
 	size_t value_start = variable_end + sizeof("}}:=\"") - 1;
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
-	cur_context()->add_variable(variable.c_str(), new Expansion<std::string>(value));
+	cur_context()->add_variable(variable.c_str(), new Expansion<char *>(c_string_copy(value.c_str())));
 }
 
 void MDXX_Manager::immediate_substitution(std::string& line) {
@@ -111,7 +115,7 @@ void MDXX_Manager::immediate_substitution(std::string& line) {
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
 	std::string expanded_value = expand_line(value);
-	cur_context()->add_variable(variable.c_str(), new Expansion<std::string>(value));
+	cur_context()->add_variable(variable.c_str(), new Expansion<char *>(c_string_copy(value.c_str())));
 }
 
 char * MDXX_Manager::open_context(Expansion_Base** args, size_t argc) {
@@ -127,12 +131,10 @@ char * MDXX_Manager::open_context(Expansion_Base** args, size_t argc) {
 	std::string line = *static_cast<const char **>(args[0]->get_data());
 	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args[1]->get_data());
 	HTML_Manager& html = **static_cast<HTML_Manager**>(args[2]->get_data());
-	using namespace re2;
 	std::string open_args = "";
-	size_t args_split = line.find_first_of("\t ");
-	if (args_split != std::string::npos) {
-		open_args = line.substr(args_split + 1);
-		line = line.substr(0, args_split);
+	for (size_t i = 4; i < argc; i++) {
+		open_args += *static_cast<const char **>(args[i]->get_data());
+		open_args += " ";
 	}
 	mdxx.throw_exception_if_context_not_found(line);
 	mdxx.context.push_back(line);
@@ -245,9 +247,15 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		Expansion_Base* expanded_var = get_var(var);
 		Expansion<gen_func>* func_holder = dynamic_cast<Expansion<gen_func>*>(expanded_var);
 		if (func_holder == nullptr) {
-			RE2::Replace(&line, variable_regex, *static_cast<std::string*>(expanded_var->get_data()));
+			RE2::Replace(&line, variable_regex, *static_cast<const char **>(expanded_var->get_data()));
 		} else {
-			Expansion_Base ** c_args = new Expansion_Base*[args.size()];
+			if (args.size() > num_c_args) {
+				delete[] c_args;
+				while (args.size() > num_c_args) {
+					num_c_args *= 2;
+				}
+				c_args = new Expansion_Base*[num_c_args];
+			}
 			for (size_t i = 0; i < args.size(); i++) {
 				c_args[i] = &*args[i];
 			}
@@ -258,7 +266,6 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 			} else {
 				RE2::Replace(&line, variable_regex, "");
 			}
-			delete[] c_args;
 		}
 		for (size_t i = 0; i < var_args.size(); i++) {
 			std::string positional_variable_reg = "\\[";
@@ -291,14 +298,15 @@ std::string MDXX_Manager::find_context_with_variable(const std::string& var) {
 		}
 	}
 	std::string error_message = "ERROR: ";
-	error_message.reserve(2048);
+	error_message.reserve(8192);
 	error_message += var;
 	error_message += " is not a variable in the current context stack.\n";
+	error_message += "\nLine that caused the problem:\n";
+	error_message += print_line();
+	error_message += "\n";
 	error_message += list_context_stack();
 	error_message += "\n\n";
 	error_message += list_all_vars();
-	error_message += "\nLine that caused the problem:\n";
-	error_message += print_line();
 	throw std::runtime_error(error_message);
 }
 
@@ -339,7 +347,7 @@ void MDXX_Manager::add_variable_to_context(const char * context_name, const char
 
 void MDXX_Manager::add_variable_to_context(const char * context_name, const char * variable_name, const char * value) {
 	throw_exception_if_context_not_found(std::string(context_name));
-	(*context_dict)[context_name]->add_variable(variable_name, new Expansion<std::string>(value));
+	(*context_dict)[context_name]->add_variable(variable_name, new Expansion<char *>(c_string_copy(value)));
 }
 
 void MDXX_Manager::add_raw_context(const char * name, std::unique_ptr<Context>& context_ptr) {
@@ -351,8 +359,9 @@ std::string MDXX_Manager::list_all_vars() {
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
 		throw_exception_if_context_not_found(*cur_context);
 		output += *cur_context;
-		output += "\n";
+		output += " variables:\n";
 		output += context_dict->at(*cur_context)->list_variables_as_text();
+		output += "\n";
 	}
 	return output;
 }
@@ -393,15 +402,15 @@ std::string MDXX_Manager::list_imported_functions() {
 
 void MDXX_Manager::handle_curly_braces(std::string& line) {
 	static const RE2 left_bracket_at_start_of_line("^{");
-	RE2::Replace(&line, left_bracket_at_start_of_line, *static_cast<std::string*>(get_var("{")->get_data()));
+	RE2::Replace(&line, left_bracket_at_start_of_line, *static_cast<const char **>(get_var("{")->get_data()));
 	static const RE2 left_bracket("([^\\\\]){");
-	RE2::GlobalReplace(&line, left_bracket, std::string("\\1") + *static_cast<std::string*>(get_var("{")->get_data()));
+	RE2::GlobalReplace(&line, left_bracket, std::string("\\1") + *static_cast<const char **>(get_var("{")->get_data()));
 	static const RE2 right_bracket("([^\\\\])}");
-	RE2::GlobalReplace(&line, right_bracket, std::string("\\1") + *static_cast<std::string*>(get_var("}")->get_data()));
+	RE2::GlobalReplace(&line, right_bracket, std::string("\\1") + *static_cast<const char **>(get_var("}")->get_data()));
 	static const RE2 escaped_left_bracket("\\\\{");
-	RE2::GlobalReplace(&line, escaped_left_bracket, *static_cast<std::string*>(get_var("\\{")->get_data()));
+	RE2::GlobalReplace(&line, escaped_left_bracket, *static_cast<const char **>(get_var("\\{")->get_data()));
 	static const RE2 escaped_right_bracket("\\\\}");
-	RE2::GlobalReplace(&line, escaped_right_bracket, *static_cast<std::string*>(get_var("\\}")->get_data()));
+	RE2::GlobalReplace(&line, escaped_right_bracket, *static_cast<const char **>(get_var("\\}")->get_data()));
 }
 
 long MDXX_Manager::convert_string_to_long(const std::string& str) {
@@ -486,6 +495,7 @@ void MDXX_Manager::handle_range_substitutions(std::string& line, const std::vect
 
 MDXX_Manager::~MDXX_Manager() {
 	delete in_if_need_to_allocate;
+	delete[] c_args;
 }
 
 template<>

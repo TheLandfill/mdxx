@@ -3,6 +3,7 @@
 #include "expansion.h"
 #include "dll_info.h"
 #include "variable_map_definition.h"
+#include "c_string_copy.h"
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -10,7 +11,7 @@
 
 namespace mdxx {
 
-#ifdef MDXX_WINDOWS_PLUGIN
+#ifdef MDXX_EXTERNAL_CONTEXT
 #define MDXX_VARIABLE_MAP mdxx::variable_map* variables;
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \
 mdxx::Expansion_Base* X::get_variable(const char * variable_name) { \
@@ -73,7 +74,7 @@ void X::add_variable(const char * variable, mdxx::gen_func func) {\
 }\
 \
 void X::add_variable(const char * variable, const char * value) {\
-	variables[std::string(variable)] = std::make_unique<mdxx::Expansion<std::string>>(value); \
+	variables[std::string(variable)] = std::make_unique<mdxx::Expansion<char *>>(c_string_copy(value)); \
 }\
 \
 const char * X::list_variables_as_text() { \

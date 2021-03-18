@@ -9,3 +9,5 @@ include_directories(
 )
 
 add_subdirectory(terminal)
+add_subdirectory(code-block)
+add_subdirectory(tuacm)

@@ -2,6 +2,7 @@
 #include "mdxx_manager.h"
 #include "content_manager.h"
 #include "html_manager.h"
+#include "variable_map.h"
 #include <algorithm>
 #include <memory>
 #include <stdexcept>
@@ -13,41 +14,41 @@ namespace mdxx {
 char * print_expansion(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
 		throw std::runtime_error(
-"print_expansion requires an argument of Expansion<Content_Manager**>.\n"
+"print_expansion requires an argument of MDXX_Manager*.\n"
 		);
 	}
-	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args[0]->get_data()))->get_mdxx();
-	mdxx.print_expansion_flip();
+	MDXX_Manager* mdxx = (*static_cast<MDXX_Manager**>(args[0]->get_data()));
+	mdxx->print_expansion_flip();
 	return nullptr;
 }
 
 char * print_variables(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
 		throw std::runtime_error(
-"print_variables requires an argument of Expansion<Content_Manager**>.\n"
+"print_variables requires an argument of MDXX_Manager*.\n"
 		);
 	}
-	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args[0]->get_data()))->get_mdxx();
-	std::cout << mdxx.list_all_vars() << "\n";
+	MDXX_Manager* mdxx = (*static_cast<MDXX_Manager**>(args[0]->get_data()));
+	std::cout << mdxx->list_all_vars() << "\n";
 	return nullptr;
 }
 
 char * print_context(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
 		throw std::runtime_error(
-"print_context requires an argument of Expansion<Content_Manager**>.\n"
+"print_context requires an argument of MDXX_Manager*.\n"
 		);
 	}
-	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args[0]->get_data()))->get_mdxx();
-	std::cout << mdxx.list_context_stack() << "\n";
-	std::cout << mdxx.list_valid_contexts() << "\n";
+	MDXX_Manager* mdxx = (*static_cast<MDXX_Manager**>(args[0]->get_data()));
+	std::cout << mdxx->list_context_stack() << "\n";
+	std::cout << mdxx->list_valid_contexts() << "\n";
 	return nullptr;
 }
 
 char * print_imported_functions(Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
 		throw std::runtime_error(
-"print_imported_functions requires an argument of Expansion<Content_Manager**>.\n"
+"print_imported_functions requires an argument of MDXX_Manager*.\n"
 		);
 	}
 	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args[0]->get_data()))->get_mdxx();
@@ -71,10 +72,10 @@ Default::Default(const char * n) : name(n) {
 	add_variable("print-variables", print_variables);
 	add_variable("print-context", print_context);
 	add_variable("print-imported-functions", print_imported_functions);
-	add_variable("print", "{{print-expansion (content)}}");
-	add_variable("print-vars", "{{print-variables (content)}}");
-	add_variable("print-con", "{{print-context (content)}}");
-	add_variable("print-func", "{{print-imported-functions (content)}}");
+	add_variable("print", "{{print-expansion (mdxx)}}");
+	add_variable("print-vars", "{{print-variables (mdxx)}}");
+	add_variable("print-con", "{{print-context (mdxx)}}");
+	add_variable("print-func", "{{print-imported-functions (mdxx)}}");
 	add_variable("pop", MDXX_html_pop);
 	add_variable("push", MDXX_html_push);
 	add_variable("mdpu", "{{push (html)}}");
@@ -85,6 +86,7 @@ void throw_default_context_exception() {
 	std::string error_message =
 "You can neither open nor close the default context manually. You must create\n"
 "your own or use one that already exists.";
+	throw std::runtime_error(error_message);
 }
 
 void Default::open(HTML_Manager& html, const char * args) {

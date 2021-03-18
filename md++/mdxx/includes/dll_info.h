@@ -1,5 +1,5 @@
 #if defined(_MSC_FULL_VER)
-	#if defined(MDXX_WINDOWS_PLUGIN) || defined(MDXX_INTERFACE_DLL)
+	#if defined(MDXX_EXTERNAL_CONTEXT) || defined(MDXX_INTERFACE_DLL)
 		#define DLL_IMPORT_EXPORT __declspec(dllexport)
 	#else
 		#define DLL_IMPORT_EXPORT __declspec(dllimport)

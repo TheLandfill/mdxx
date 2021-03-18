@@ -36,7 +36,6 @@ private:
 	std::string tab_level = "";
 	std::ofstream& out;
 	bool need_to_close_paragraph = false;
-	std::string code_style = "trac";
 };
 
 template<>
