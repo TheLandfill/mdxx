@@ -35,7 +35,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		return 1;
 	}
 	std::string main_dir = fs::path(argv[0]).parent_path().string();
-	if (!(main_dir == "" || main_dir == ".")) {
+	if (!(main_dir == "" || main_dir == "./")) {
 		main_dir += fs::path::preferred_separator;
 		main_dir += fs::path::preferred_separator;
 	}
