@@ -13,6 +13,9 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <filesystem>
+#undef min
+#undef max
 
 struct Heading {
 	std::string heading_text;
@@ -87,8 +90,10 @@ char * get_author_description(mdxx::Expansion_Base** args, size_t argc) {
 	std::string author_directory = *static_cast<const char **>(args[0]->get_data());
 	std::string author_name = string_urlify(*static_cast<const char **>(args[1]->get_data()));
 	size_t description_length = strtoul(*static_cast<const char **>(args[2]->get_data()), nullptr, 10);
-	const static std::string description = "/description.txt";
-	std::string file = author_directory + author_name + description;
+	const static std::string description = "description.txt";
+	std::string file = author_directory + author_name;
+	file += std::filesystem::path::preferred_separator;
+	file += description;
 	std::ifstream in{file};
 	if (!in.is_open()) {
 		std::cerr << "ERROR: Could not read the file `" << file << "`.\n";

@@ -68,7 +68,7 @@ std::string MDXX_Manager::next_line() {
 
 std::string MDXX_Manager::next_line_no_nl() {
 	std::string current_line = next_line();
-	while (current_line.back() == '\n' || current_line.back() == '\r') {
+	while (current_line.length() > 0 && (current_line.back() == '\n' || current_line.back() == '\r')) {
 		current_line.pop_back();
 	}
 	return current_line;

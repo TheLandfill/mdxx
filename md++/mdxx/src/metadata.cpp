@@ -68,7 +68,7 @@ extern "C" char * MDXX_read_metadata_file(Expansion_Base** args, size_t argc) {
 	}
 	for (const auto& field : fields) {
 		if (j.contains(field)) {
-			mdxx->add_variable_to_context<std::string>(context.c_str(), field.c_str(), j[field].get<std::string>());
+			mdxx->add_variable_to_context(context.c_str(), field.c_str(), mdxx::c_string_copy(j[field].get<std::string>()));
 		} else {
 			std::cerr << "Warning: Field \"" << field << "\" is missing and will be filled with a default value in the output.\n";
 		}
