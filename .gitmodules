@@ -1,9 +1,6 @@
 [submodule "md++/vendors/re2"]
 	path = md++/vendors/re2
 	url = https://github.com/google/re2.git
-[submodule "md++/vendors/pygments"]
-	path = md++/vendors/pygments
-	url = https://github.com/pygments/pygments
 [submodule "md++/vendors/nlohmann_json_cmake_fetchcontent"]
 	path = md++/vendors/nlohmann_json_cmake_fetchcontent
 	url = https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
