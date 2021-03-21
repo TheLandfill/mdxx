@@ -71,7 +71,7 @@ extern "C" char * MDXX_read_metadata_file(Expansion_Base** args, size_t argc) {
 		if (j.contains(field)) {
 			std::string value = j[field].get<std::string>();
 			remove_angle_brackets(value);
-			mdxx->add_variable_to_context(context.c_str(), field.c_str(), mdxx::c_string_copy(replace_quotes(value)));
+			mdxx->add_variable_to_context(context.c_str(), field.c_str(), mdxx::c_string_copy(replace_double_quotes(value)));
 		} else {
 			std::cerr << "Warning: Field \"" << field << "\" is missing and will be filled with a default value in the output.\n";
 		}

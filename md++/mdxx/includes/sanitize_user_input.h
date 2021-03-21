@@ -8,6 +8,10 @@ std::string replace_angle_brackets(const std::string& str);
 
 void remove_angle_brackets(std::string& str);
 
+std::string replace_double_quotes(const std::string& str);
+
+void remove_double_quotes(std::string& str);
+
 std::string replace_quotes(const std::string& str);
 
 void remove_quotes(std::string& str);

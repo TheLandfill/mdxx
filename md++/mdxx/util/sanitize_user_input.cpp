@@ -32,6 +32,28 @@ void remove_angle_brackets(std::string& str) {
 	str.erase(index);
 }
 
+std::string replace_double_quotes(const std::string& str) {
+	std::string output;
+	output.reserve(str.length() * 2);
+	for (char c : str) {
+		if (c == '"') {
+			output += "&quot;";
+		} else {
+			output += c;
+		}
+	}
+	return output;
+}
+
+void remove_double_quotes(std::string& str) {
+	size_t index = 0;
+	for (char c : str) {
+		str[index] = c;
+		index += (c != '"');
+	}
+	str.erase(index);
+}
+
 std::string replace_quotes(const std::string& str) {
 	std::string output;
 	output.reserve(str.length() * 2);
