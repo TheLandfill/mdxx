@@ -1,5 +1,6 @@
 #include "mdxx_manager.h"
 #include "expansion.h"
+#include "sanitize_user_input.h"
 #include "html_manager.h"
 #include "split.h"
 #include "re2/re2.h"
@@ -321,6 +322,14 @@ void MDXX_Manager::throw_exception_if_context_not_found(const std::string& con) 
 		error_message += print_line();
 		throw std::runtime_error(error_message);
 	}
+}
+
+void MDXX_Manager::sanitize_ampersands() {
+	correctly_substitute_ampersands(line_data.line);
+}
+
+void MDXX_Manager::replace_angle_brackets_in_line() {
+	line_data.line = replace_angle_brackets(line_data.line);
 }
 
 void MDXX_Manager::check_if_imported_function_found(const std::string& function) {

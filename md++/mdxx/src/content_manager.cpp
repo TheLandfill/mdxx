@@ -1,4 +1,5 @@
 #include "content_manager.h"
+#include "sanitize_user_input.h"
 #include <memory>
 #include <sstream>
 #include <vector>
@@ -12,7 +13,9 @@ Content_Manager::Content_Manager(HTML_Manager& h, MDXX_Manager& m) : html(h), md
 
 void Content_Manager::process_content() {
 	while (true) {
-		std::string line = mdxx.find_and_return_next_content_line();
+		mdxx.find_next_content_line();
+		mdxx.replace_angle_brackets_in_line();
+		mdxx.sanitize_ampersands();
 		if (mdxx.at_end_of_file()) {
 			break;
 		}

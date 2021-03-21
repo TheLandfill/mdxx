@@ -67,6 +67,7 @@ Default::Default(const char * n) : name(n) {
 	add_variable("rdb", "\\\\}{{empty}}\\\\}");
 	add_variable("lt", "&lt;");
 	add_variable("gt", "&gt;");
+	add_variable("amp", "&amp;");
 	add_variable("nl", "\n");
 	add_variable("print-expansion", print_expansion);
 	add_variable("print-variables", print_variables);

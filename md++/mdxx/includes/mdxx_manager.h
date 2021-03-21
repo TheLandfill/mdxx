@@ -53,6 +53,8 @@ public:
 	imported_function_dict_type get_imported_function_dict();
 	void set_imported_function_dict(imported_function_dict_type other_imported_function_dict);
 	void throw_exception_if_context_not_found(const std::string& context);
+	void replace_angle_brackets_in_line();
+	void sanitize_ampersands();
 public:
 	std::string mdxx_object_id;
 private:

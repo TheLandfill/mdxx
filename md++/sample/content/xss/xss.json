@@ -1,0 +1,10 @@
+{
+    "title"             : "<script>alert(\"title xss\")</script>",
+    "author"            : "../Joseph Mellor",
+    "date"              : "\" onload=alert(\"date\");",
+    "tagline"           : "<script>alert(\"tagline xss\")</script>",
+    "description"       : "javascript:alert(1234)",
+    "stylesheets"       : "code-block code-style/trac+dark",
+    "scripts"           : "<script>alert(\"scripts xss\")</script>",
+    "tags"              : "<script>alert(\"tags xss\")</script>"
+}

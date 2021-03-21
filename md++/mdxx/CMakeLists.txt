@@ -28,11 +28,13 @@ add_library(mdxx_util STATIC
 	"${UTIL_SOURCES}"
 )
 
+target_link_libraries(mdxx_util re2)
+
 add_library(mdxx_interface SHARED
 	"${MDXX_INTERFACE_SOURCES}"
 )
 
-target_link_libraries(mdxx_interface re2 py mdxx_util)
+target_link_libraries(mdxx_interface py mdxx_util)
 
 if (NOT WIN32)
 	target_link_libraries(mdxx_interface dl)
