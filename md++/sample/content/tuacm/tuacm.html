@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<meta name="description" content="I'm trying to remake tuacm's tumd template into an mdxx template">
+		<meta name="description" content="I&apos;m trying to remake tuacm&apos;s tumd template into an mdxx template">
 		<link rel="icon" type="image/x-icon" href="https://tuacm.com/resources/favicon.png">
 		<link rel="stylesheet" href="https://tuacm.com/css/nanobs.css">
 		<link rel="stylesheet" href="https://tuacm.com/css/general.css">
@@ -31,8 +31,8 @@
 		</div>
 		<div>
 			<div class="article">
-				<div id="article-title"><h1 id="">Test</h1></div>
-				<div id="meta-description">I'm trying to remake tuacm's tumd template into an mdxx template</div>
+				<div id="article-title"><h1 id="test">Test</h1></div>
+				<div id="meta-description">I&apos;m trying to remake tuacm&apos;s tumd template into an mdxx template</div>
 				<div id="date-and-tags">Posted March 14, 2021 </div>
 				<div id="author-box">
 					<div id="author-image" style="background: url(https://tuacm.com/authors/joseph-mellor/large.jpg) 50% 50% no-repeat; background-size: auto 50px;"></div>
@@ -55,8 +55,8 @@
 					{This should be between normal curly braces.}
 					{{test}}{{test}}
 				</p>
-				<div>
-					<div>
+				&lt;div&gt;
+					&lt;div&gt;
 						<div class="terminal"><pre>
 <span class="terminal-oneline"><b><span style="color: #4CE64C;">user@computer</span></b>:<b><span style="color: #298FDD;">~/dev</span></b>$ ls -l</span>
 file
@@ -65,8 +65,8 @@ file file
 file file file
 </pre>
 						</div>
-					</div>
-				</div>
+					&lt;/div&gt;
+				&lt;/div&gt;
 				<ol>
 					<li>test
 					</li>
@@ -108,23 +108,34 @@ file file file
 				</p>
 				<p>This article, Test, was written by Joseph Mellor and published on March 14, 2021.
 				</p>
-				Joseph Mellor is a Senior at TU majoring in Physics, Computer Science, and
-				Math.
-				He is also the chief editor of the website and the author of the tumd markdown
-				compiler.
-				If you want to see more of his work, check out his <a
-				href="https://josephmellor.xyz">personal website</a>.
-				<br>
-				Credit to Allison Pennybaker for the picture.
-			</div>
-			<div id="footer" class="mt-5 py-5 text-center px-4">
-				<div id="footer-links">
-					<a href="#">Blog</a>
-					<a href="#">Get Involved</a>
-					<a href="http://hacktulsa.com">Hackathon</a>
-					<a href="#">GitHub</a>
+				<div id="author-description-local">
+					<img src="https://tuacm.com/authors/joseph-mellor/large.jpg" id="author-description-image" alt="A picture of Joseph Mellor, the author.">
+					<div id="author-description-text">
+						<p>Joseph Mellor is a Senior at TU majoring in Physics, Computer Science, and
+						Math.
+						He is also the chief editor of the website and the author of the tumd markdown
+						compiler.
+						If you want to see more of his work, check out his <a
+						href="https://josephmellor.xyz">personal website</a>.
+						<br>
+						Credit to Allison Pennybaker for the picture.
+						</p>
+					</div>
 				</div>
 			</div>
-			<script src="https://tuacm.com/js/sidenav.js"></script>
-		</body>
-	</html>
+			<nav id="sidenav">
+			<a href="#test" style="padding-left: 12px;">Test</a>
+			</nav>
+			<div id="sidenav-activator"></div>
+		</div>
+		<div id="footer" class="mt-5 py-5 text-center px-4">
+			<div id="footer-links">
+				<a href="#">Blog</a>
+				<a href="#">Get Involved</a>
+				<a href="http://hacktulsa.com">Hackathon</a>
+				<a href="#">GitHub</a>
+			</div>
+		</div>
+		<script src="https://tuacm.com/js/sidenav.js"></script>
+	</body>
+</html>

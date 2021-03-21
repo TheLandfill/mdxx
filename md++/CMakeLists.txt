@@ -20,6 +20,8 @@ set(PLUGIN_DIR "${OUT_DIR}/plugins")
 
 link_directories("${VENDOR_LIBRARY_DIRS}" "${OUT_DIR}")
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 add_subdirectory(mdxx)
 add_subdirectory(plugins)
 add_subdirectory(vendors)

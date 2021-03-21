@@ -1,7 +1,6 @@
 tuacm-article.mdxx
 
 {{plugin code-block}}
-{{print}}
 
 {{lt}}="<"
 {{gt}}=">"
@@ -23,7 +22,6 @@ int main(void) {
 {{delayed-variable-xss}}:="{{immediate-variable-xss}}"
 
 {{immediate-variable-xss}} + {{delayed-variable-xss}}
-{{print}}
 
 It might get mad at me & be bad or it might not get mad at me. volt&amp or volt&amp;
 

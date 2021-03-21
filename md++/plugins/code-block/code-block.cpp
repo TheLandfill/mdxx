@@ -40,13 +40,13 @@ public:
 		add_variable("amp", "&");
 		PyObject* myModule = PyImport_ImportModule("code_block");
 		if (myModule == NULL) {
-			std::cerr << "ERROR: Could not load code_block.py\n";
+			std::cerr << "ERROR: Could not load code_block.py" << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
 		pygments_wrapper = PyObject_GetAttrString(myModule,(char*)"hand_code_to_pygments");
 		if (pygments_wrapper == NULL) {
-			std::cerr << "ERROR: Could not find method \"hand_code_to_pygments\", which shouldn't happen.\n";
+			std::cerr << "ERROR: Could not find method \"hand_code_to_pygments\", which shouldn't happen." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
@@ -104,77 +104,82 @@ public:
 	}
 
 	void close(mdxx::HTML_Manager& html) override {
+		#pragma omp critical
+		{
 		PyObject* py_lines_to_highlight = PyList_New(lines_to_highlight.size());
 		if (py_lines_to_highlight == NULL) {
-			std::cerr << "ERROR: Could not create python list.\n";
+			std::cerr << "ERROR: Could not create python list." << std::endl;
 			PyErr_Print();
+			std::cerr << std::flush;
+			std::cout << std::flush;
 			MDXX_print_current_line_and_exit(md);
 		}
 		for (size_t i = 0; i < lines_to_highlight.size(); i++) {
 			PyObject* py_current_line = PyLong_FromUnsignedLong(lines_to_highlight[i]);
 			if (py_current_line == NULL) {
 				std::cerr << "ERROR: Could not convert lines_to_highlight[" << i << "] to a PyLong\n";
-				std::cerr << "\tlines_to_highlight[" << i << "]:\t" << lines_to_highlight[i] << "\n";
+				std::cerr << "\tlines_to_highlight[" << i << "]:\t" << lines_to_highlight[i] << std::endl;
 				PyErr_Print();
 				MDXX_print_current_line_and_exit(md);
 			}
 			if (PyList_SetItem(py_lines_to_highlight, i, py_current_line) == -1) {
 				std::cerr << "ERROR: Tried to insert object at index " << i << ", which is out of bounds for the list.\n";
-				std::cerr << "Size of list should be " << lines_to_highlight.size() << ".";
+				std::cerr << "Size of list should be " << lines_to_highlight.size() << "." << std::endl;
 				PyErr_Print();
 				MDXX_print_current_line_and_exit(md);
 			}
 		}
 		PyObject* py_code_block = PyUnicode_FromString(code_block.c_str());
 		if (py_code_block == NULL) {
-			std::cerr << "ERROR: Could not convert code_block to python string.\n";
+			std::cerr << "ERROR: Could not convert code_block to python string." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
 		PyObject* py_code_language = PyUnicode_FromString(code_language.c_str());
 		if (py_code_language == NULL) {
-			std::cerr << "ERROR: Could not convert code_language to python string.\n";
+			std::cerr << "ERROR: Could not convert code_language to python string." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
 		PyObject* py_code_style = PyUnicode_FromString(code_style.c_str());
 		if (py_code_style == NULL) {
-			std::cerr << "ERROR: Could not convert code_style to python string.\n";
+			std::cerr << "ERROR: Could not convert code_style to python string." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
 		PyObject* py_add_line_numbers = PyBool_FromLong(add_line_numbers);
 		if (py_add_line_numbers == NULL) {
-			std::cerr << "ERROR: Could not convert add_line_numbers to python bool.\n";
+			std::cerr << "ERROR: Could not convert add_line_numbers to python bool." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
 		PyObject* args = PyTuple_Pack(5, py_code_block, py_code_language, py_add_line_numbers, py_code_style, py_lines_to_highlight);
 		if (args == NULL) {
-			std::cerr << "ERROR: Could not pack the arguments to hand_code_to_pygments.\n";
+			std::cerr << "ERROR: Could not pack the arguments to hand_code_to_pygments." << std::endl;
 			std::cerr << "\t" << code_block.c_str()
 				<< "\n\t" << code_language.c_str()
 				<< "\n\t" << add_line_numbers
 				<< "\n\t" << code_style.c_str()
 				<< "\n\t" << py_lines_to_highlight
-				<< "\n";
+				<< std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
 		PyObject* myResult = PyObject_CallObject(pygments_wrapper, args);
 		if (myResult == NULL) {
-			std::cerr << "ERROR: hand_code_to_pygments was unable to produce output.\n";
+			std::cerr << "ERROR: hand_code_to_pygments was unable to produce output." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
 		Py_ssize_t size;
 		const char *ptr = PyUnicode_AsUTF8AndSize(myResult, &size);
 		if (ptr == NULL) {
-			std::cerr << "ERROR: pygments returned something that could not be written in UTF8\n";
+			std::cerr << "ERROR: pygments returned something that could not be written in UTF8." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 		}
 		MDXX_html_write(&html, ptr);
+		}
 		MDXX_html_add(&html, "");
 		if (add_line_numbers) {
 			MDXX_html_add(&html, "</div>");
@@ -206,8 +211,10 @@ private:
 	bool first_line = true;
 	bool add_line_numbers = true;
 	std::vector<uint32_t> lines_to_highlight;
-	PyObject * pygments_wrapper = NULL;
+	static PyObject * pygments_wrapper;
 };
+
+PyObject * Code_Block::pygments_wrapper = NULL;
 
 MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Code_Block)
 
@@ -216,7 +223,7 @@ extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::
 }
 
 extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {
-	std::cout << "code-block:\t" << MDXX_COMPILATION_INFO << ".\n";
+	std::cout << "code-block:\t" << MDXX_COMPILATION_INFO << "." << std::endl;
 }
 
 template<>
