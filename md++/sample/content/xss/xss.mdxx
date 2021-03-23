@@ -25,17 +25,27 @@ int main(void) {
 
 It might get mad at me & be bad or it might not get mad at me. volt&amp or volt&quot;
 
+{{a ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;= text}}
 {{a josephmellor.xyz Here is my website}}.
 {{img inline josephmellor.xyz/resources/favicon-large.png I think this will have alt text and a width of 500px mdxx-width 500px}}
 {{a josephmellor.xyz Here is my website mdxx-title Now it has title text mdxx-alt and alt text}}.
 {{img-a inline josephmellor.xyz josephmellor.xyz/resources/favicon-large.png alt text}}
 {{img josephmellor.xyz That should be the source image}}
 
-{{img "onmouseover="alert("lol")" alt text}}
-{{img java script:alert("lol") alt text}}
-{{img java	script:alert("lol") alt text}}
-{{img jAvAsCrIpT:alert("lol") alt text}}
-{{img `jAvAsCrIpT:alert("lol")` alt text}}
+Testing unicode: ▸.
+{{img josephmellor.xyz mdxx-alt " onmouseover="alert("lol")"}}
+
+
+{{open ul}}\{\{img "onmouseover="alert('lol')" alt text\}\} fails because the {"} is caught immediately.
+
+\{\{img java script:alert('lol') alt text\}\} will pass, but the url will be
+"http://java", which is valid if "http://java" is valid.
+
+\{\{img java&tab;script:alert('lol') alt text\}\} fails because the tab is caught immediately.
+
+\{\{img jAvAsCrIpT:alert('lol') alt text\}\} fails because it is an invalid protocol.
+
+\{\{img `jAvAsCrIpT:alert('lol')` alt text\}\} fails because the {`} is caught immediately.{{close ul}}
 
 {{lt}}="&lt;"
 {{gt}}="&gt;"
