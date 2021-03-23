@@ -23,7 +23,19 @@ int main(void) {
 
 {{immediate-variable-xss}} + {{delayed-variable-xss}}
 
-It might get mad at me & be bad or it might not get mad at me. volt&amp or volt&amp;
+It might get mad at me & be bad or it might not get mad at me. volt&amp or volt&quot;
+
+{{a josephmellor.xyz Here is my website}}.
+{{img inline josephmellor.xyz/resources/favicon-large.png I think this will have alt text and a width of 500px mdxx-width 500px}}
+{{a josephmellor.xyz Here is my website mdxx-title Now it has title text mdxx-alt and alt text}}.
+{{img-a inline josephmellor.xyz josephmellor.xyz/resources/favicon-large.png alt text}}
+{{img josephmellor.xyz That should be the source image}}
+
+{{img "onmouseover="alert("lol")" alt text}}
+{{img java script:alert("lol") alt text}}
+{{img java	script:alert("lol") alt text}}
+{{img jAvAsCrIpT:alert("lol") alt text}}
+{{img `jAvAsCrIpT:alert("lol")` alt text}}
 
 {{lt}}="&lt;"
 {{gt}}="&gt;"

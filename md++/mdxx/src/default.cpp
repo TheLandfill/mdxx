@@ -3,6 +3,7 @@
 #include "content_manager.h"
 #include "html_manager.h"
 #include "variable_map.h"
+#include "html_utils.h"
 #include <algorithm>
 #include <memory>
 #include <stdexcept>
@@ -81,6 +82,12 @@ Default::Default(const char * n) : name(n) {
 	add_variable("push", MDXX_html_push);
 	add_variable("mdpu", "{{push (html)}}");
 	add_variable("mdpo", "{{pop (html)}}");
+	add_variable("link-func", link);
+	add_variable("img-func", img);
+	add_variable("img-a-func", img_link);
+	add_variable("a", "{{link-func [1:]}}");
+	add_variable("img", "{{img-func (html) [1:]}}");
+	add_variable("img-a", "{{img-a-func (html) [1:]}}");
 }
 
 void throw_default_context_exception() {

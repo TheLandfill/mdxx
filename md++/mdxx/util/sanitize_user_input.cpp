@@ -122,13 +122,13 @@ void remove_all_html_chars(std::string& str) {
 void correctly_substitute_ampersands(std::string& str) {
 	static const RE2 simple_ampersand_regex("&\\s");
 	static const RE2 complex_ampersand_regex_1("&([#]?[a-zA-Z0-9])");
-	static const RE2 complex_ampersand_regex_2("<check-amp>([#]?[a-zA-Z0-9];)");
-	static const RE2 complex_ampersand_regex_3("(<check-amp>|&)([^\\s]?)");
+	static const RE2 complex_ampersand_regex_2("<check-amp>([#]?[a-zA-Z0-9]+;)");
+	static const RE2 complex_ampersand_regex_3("<check-amp>");
 	static const RE2 complex_ampersand_regex_4("<valid-amp>");
 	RE2::GlobalReplace(&str, simple_ampersand_regex, "{{amp}} ");
 	RE2::GlobalReplace(&str, complex_ampersand_regex_1, "<check-amp>\\1");
 	RE2::GlobalReplace(&str, complex_ampersand_regex_2, "<valid-amp>\\1");
-	RE2::GlobalReplace(&str, complex_ampersand_regex_3, "{{amp}}\\2");
+	RE2::GlobalReplace(&str, complex_ampersand_regex_3, "{{amp}}");
 	RE2::GlobalReplace(&str, complex_ampersand_regex_4, "&");
 }
 
