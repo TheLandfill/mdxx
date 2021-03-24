@@ -22,7 +22,6 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 	)
 {
 	template_mdxx.set_context_dict(mdxx.get_context_dict());
-	template_mdxx.set_imported_function_dict(mdxx.get_imported_function_dict());
 	mdxx.add_new_context<Template_Context>("template");
 	mdxx.add_new_context<Raw_HTML>("raw-html");
 	mdxx.add_new_context<Default>("default");

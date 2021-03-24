@@ -46,17 +46,6 @@ char * print_context(Expansion_Base** args, size_t argc) {
 	return nullptr;
 }
 
-char * print_imported_functions(Expansion_Base** args, size_t argc) {
-	if (argc < 1) {
-		throw std::runtime_error(
-"print_imported_functions requires an argument of MDXX_Manager*.\n"
-		);
-	}
-	MDXX_Manager& mdxx = (*static_cast<Content_Manager**>(args[0]->get_data()))->get_mdxx();
-	std::cout << mdxx.list_imported_functions() << "\n";
-	return nullptr;
-}
-
 Default::Default(const char * n) : name(n) {
 	add_variable("empty", empty_str.c_str());
 	add_variable("zs", "&#8203;");
@@ -73,11 +62,9 @@ Default::Default(const char * n) : name(n) {
 	add_variable("print-expansion", print_expansion);
 	add_variable("print-variables", print_variables);
 	add_variable("print-context", print_context);
-	add_variable("print-imported-functions", print_imported_functions);
 	add_variable("print", "{{print-expansion (mdxx)}}");
 	add_variable("print-vars", "{{print-variables (mdxx)}}");
 	add_variable("print-con", "{{print-context (mdxx)}}");
-	add_variable("print-func", "{{print-imported-functions (mdxx)}}");
 	add_variable("pop", MDXX_html_pop);
 	add_variable("push", MDXX_html_push);
 	add_variable("mdpu", "{{push (html)}}");

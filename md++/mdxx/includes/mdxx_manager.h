@@ -10,7 +10,6 @@
 namespace mdxx {
 
 typedef std::shared_ptr<std::unordered_map<std::string, std::unique_ptr<Context>>> context_dict_type;
-typedef std::shared_ptr<std::unordered_map<std::string, gen_func>> imported_function_dict_type;
 
 class MDXX_Manager {
 public:
@@ -43,15 +42,12 @@ public:
 	std::string list_all_vars();
 	std::string list_context_stack();
 	std::string list_valid_contexts();
-	std::string list_imported_functions();
 	~MDXX_Manager();
 	static char * open_context(Expansion_Base** args, size_t argc);
 	static char * close_context(Expansion_Base** args, size_t argc);
 	void destroy_contexts();
 	context_dict_type get_context_dict();
 	void set_context_dict(context_dict_type other_context_dict);
-	imported_function_dict_type get_imported_function_dict();
-	void set_imported_function_dict(imported_function_dict_type other_imported_function_dict);
 	void throw_exception_if_context_not_found(const std::string& context);
 	void replace_angle_brackets_in_line();
 	void sanitize_ampersands();
@@ -64,7 +60,6 @@ private:
 	void check_variable_dependency(const Context& c);
 
 	std::string find_context_with_variable(const std::string& var);
-	void check_if_imported_function_found(const std::string& function);
 	void handle_curly_braces(std::string& line);
 	long convert_string_to_long(const std::string& str);
 	void check_if_index_in_range(long index, size_t size);
@@ -77,7 +72,6 @@ private:
 	size_t cur_line_count = 0;
 	bool print_expansion = false;
 	std::shared_ptr<std::unordered_map<std::string, std::unique_ptr<Context>>> context_dict;
-	std::shared_ptr<std::unordered_map<std::string, gen_func>> imported_function_dict;
 	std::string line_stack;
 	Line_Data line_data;
 	bool finished_reading = false;

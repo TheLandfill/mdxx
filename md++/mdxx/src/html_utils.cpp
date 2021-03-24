@@ -141,7 +141,7 @@ const static bool valid_url_chars[256] = {
 	/* }		*/	false,
 	/* ~		*/	true,
 	/* DEL		*/	false,
-// Extended ASCII
+// Extended ASCII / UTF-8
 					false,
 					false,
 					false,
@@ -270,6 +270,7 @@ const static bool valid_url_chars[256] = {
 					false,
 					false,
 					false
+// Lookup table ftw, lol, rofl
 };
 
 static const std::string attribute_prefix = "mdxx-";

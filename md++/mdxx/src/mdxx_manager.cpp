@@ -35,7 +35,6 @@ MDXX_Manager::MDXX_Manager(std::string filename) :
 
 void MDXX_Manager::init_dictionaries() {
 	context_dict = std::make_shared<std::unordered_map<std::string, std::unique_ptr<Context>>>();
-	imported_function_dict = std::make_shared<std::unordered_map<std::string, gen_func>>();
 }
 
 void MDXX_Manager::print_expansion_flip() {
@@ -184,14 +183,6 @@ void MDXX_Manager::set_context_dict(context_dict_type other_context_dict) {
 	context_dict = other_context_dict;
 }
 
-imported_function_dict_type MDXX_Manager::get_imported_function_dict() {
-	return imported_function_dict;
-}
-
-void MDXX_Manager::set_imported_function_dict(imported_function_dict_type other_imported_function_dict) {
-	imported_function_dict = other_imported_function_dict;
-}
-
 void MDXX_Manager::find_next_content_line() {
 	std::string current_line = "    ";
 	if (line_stack != "") {
@@ -332,19 +323,6 @@ void MDXX_Manager::replace_angle_brackets_in_line() {
 	line_data.line = replace_angle_brackets(line_data.line);
 }
 
-void MDXX_Manager::check_if_imported_function_found(const std::string& function) {
-	if (imported_function_dict->count(function) == 0) {
-		std::string error_message = "ERROR: ";
-		error_message.reserve(2048);
-		error_message += function;
-		error_message += " Has not been imported.\n\n";
-		error_message += list_imported_functions();
-		error_message += "\nLine that caused the problem:\n";
-		error_message += print_line();
-		throw std::runtime_error(error_message);
-	}
-}
-
 bool MDXX_Manager::at_end_of_file() {
 	return finished_reading;
 }
@@ -400,12 +378,6 @@ std::string list_elements_in_dict(const std::unordered_map<std::string, T>& dict
 std::string MDXX_Manager::list_valid_contexts() {
 	std::string output = "Valid Contexts:\n";
 	output += list_elements_in_dict(*context_dict);
-	return output;
-}
-
-std::string MDXX_Manager::list_imported_functions() {
-	std::string output = "Imported Functions:\n";
-	output += list_elements_in_dict(*imported_function_dict);
 	return output;
 }
 
