@@ -9,11 +9,12 @@
 #include "split.h"
 #include "join.h"
 #include "c_string_copy.h"
+#include "sanitize_user_input.h"
 #include <iostream>
 #include <algorithm>
-#include <cctype>
 #include <string>
 #include <filesystem>
+#include <locale>
 #undef min
 #undef max
 
@@ -31,7 +32,7 @@ struct Headings_Holder {
 template<>
 const char * mdxx::Expansion<Headings_Holder*>::to_string() {
 	std::stringstream strstr;
-	strstr << "<HTML_Manager object @ " << this->get_data() << ">";
+	strstr << "<Headings_Holder object @ " << this->get_data() << ">";
 	data->headings_object_id = strstr.str();
 	return data->headings_object_id.c_str();
 }
@@ -48,27 +49,41 @@ std::string url_to_lower(std::string str) {
 	return str;
 }
 
-void remove_html_tags(std::string& str) {
-	bool seen_less_than = false;
-	size_t index = 0;
-	for (auto c : str) {
-		seen_less_than = (c == '<');
-		if (seen_less_than || c == '>') {
-			seen_less_than = (c != '>');
-			continue;
+// author specific
+std::string percent_encode_name(const std::string& str) {
+	char to_hex[] = "0123456789ABCDEF";
+	std::string output;
+	output.reserve(str.length() * 3);
+	static std::locale loc{"C"};
+	for (char c : str) {
+		bool is_dash = (c == '-');
+		bool is_underscore = (c == '_');
+		bool is_dot = (c == '.');
+		bool is_tilde = (c == '~');
+		bool is_alpha_numeric = isalnum(c, loc);
+		bool use_normal = is_dash
+			|| is_underscore
+			|| is_dot
+			|| is_tilde
+			|| is_alpha_numeric;
+		if (use_normal) {
+			output += c;
+		} else {
+			output += "%";
+			output += to_hex[(c >> 4) & 0b1111];
+			output += to_hex[c & 0b1111];
 		}
-		str[index] = c;
-		index++;
 	}
-	str.erase(index);
+	return output;
 }
 
 void remove_non_word_characters(std::string& str) {
 	size_t index = 0;
+	static std::locale loc{"en_US.UTF-8"};
 	for (char c : str) {
 		bool is_asterisk = (c == '*');
 		bool is_dash = (c == '-');
-		bool is_alpha_numeric = isalnum(c);
+		bool is_alpha_numeric = isalnum(c, loc);
 		str[index] = c;
 		index += is_asterisk || is_dash || is_alpha_numeric;
 	}
@@ -77,7 +92,7 @@ void remove_non_word_characters(std::string& str) {
 
 std::string string_urlify(const std::string& str) {
 	std::string output = str;
-	remove_html_tags(output);
+	mdxx::remove_all_html_chars(output);
 	output = url_to_lower(mdxx::join(mdxx::split(output), "-"));
 	remove_non_word_characters(output);
 	return output;

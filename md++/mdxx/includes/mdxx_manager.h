@@ -60,7 +60,6 @@ private:
 	void check_variable_dependency(const Context& c);
 
 	std::string find_context_with_variable(const std::string& var);
-	void handle_curly_braces(std::string& line);
 	long convert_string_to_long(const std::string& str);
 	void check_if_index_in_range(long index, size_t size);
 	void handle_range_substitutions(std::string& line, const std::vector<std::string>& num_args);

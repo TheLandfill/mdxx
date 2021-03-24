@@ -6,7 +6,8 @@ namespace mdxx {
 
 HTML_List::HTML_List(const char * n) :
 	list_first_element(true),
-	name(n)
+	name(n),
+	allow_autosubs(true)
 {}
 
 void HTML_List::open(HTML_Manager& html, const char * args) {

@@ -1,0 +1,26 @@
+tuacm-article.mdxx
+{{plugin terminal}}
+
+This is a test.
+1{Heading 1}1
+2{Heading 2}2
+3{Heading 3}3
+4{Heading 4}4
+5{Heading 5}5
+6{Heading 6}6
+b{bold text}b
+i{italic text}i
+B{both bold and italic text}B
+textv{subtext}v
+text^{suptext}^
+~{del text}~
+!{spoiler text}!
+q{simple quote}q
+Q{block quote}Q
+c{code text}c
+
+{{open terminal}}{{prompt}}
+{{cmd}}="1{this should not be a heading}1"
+{{prompt (cmd)}}
+{{prompt}}
+{{close terminal}}

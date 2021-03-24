@@ -7,6 +7,7 @@
 #include "plugin_loader.h"
 #include "variable_map.h"
 #include "c_string_copy.h"
+#include "sanitize_user_input.h"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -41,11 +42,12 @@ public:
 	}
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
 		std::string args(arg_ptr);
+		mdxx::remove_all_html_chars(args);
 		std::string opening;
 		if (args.length() >= 3 && args.substr(0, 3) == "mac") {
-			opening = std::string("<div class=\"mac-terminal\"") + args.substr(3) + "><pre>";
+			opening = std::string("<div class=\"mac-terminal ") + args.substr(3) + "\"><pre>";
 		} else {
-			opening = std::string("<div class=\"terminal\"") + args + "><pre>";
+			opening = std::string("<div class=\"terminal ") + args + "\"><pre>";
 		}
 		MDXX_html_add_no_nl(&html, opening.c_str());
 	}
@@ -60,6 +62,9 @@ public:
 		MDXX_html_add(&html, "</div>");
 	}
 	static std::string collect_args(mdxx::Expansion_Base** args, size_t argc) {
+		if (argc == 0) {
+			return "";
+		}
 		std::string command;
 		command.reserve(128);
 		for (size_t i = 0; i < argc; i++) {

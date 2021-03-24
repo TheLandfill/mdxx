@@ -14,6 +14,9 @@ namespace mdxx {
 #ifdef MDXX_EXTERNAL_CONTEXT
 #define MDXX_VARIABLE_MAP mdxx::variable_map* variables;
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \
+bool X::can_allow_autosubs() {\
+	return allow_autosubs; \
+} \
 mdxx::Expansion_Base* X::get_variable(const char * variable_name) { \
 	return MDXX_get_variable(variables, variable_name); \
 } \
@@ -52,6 +55,9 @@ const char * X::list_variables_as_text() { \
 #else
 #define MDXX_VARIABLE_MAP mdxx::variable_map variables;
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \
+bool X::can_allow_autosubs() {\
+	return allow_autosubs; \
+} \
 mdxx::Expansion_Base* X::get_variable(const char * variable_name) { \
 	return variables.at(std::string(variable_name)).get(); \
 } \
@@ -92,6 +98,7 @@ const char * X::list_variables_as_text() { \
 
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DECLARATION \
 public: \
+bool can_allow_autosubs() override; \
 const char * list_variables_as_text() override; \
 mdxx::Expansion_Base* get_variable(const char * variable_name) override; \
 bool check_if_var_exists(const char * variable_name) override; \
@@ -111,7 +118,9 @@ void add_variable(const char * variable_name, const char * value); \
 private: \
 	std::string name; \
 	MDXX_VARIABLE_MAP \
-	std::string all_vars_as_text;
+	std::string all_vars_as_text; \
+public: \
+	const bool allow_autosubs = false;
 
 class HTML_Manager;
 
@@ -125,6 +134,7 @@ public:
 	virtual bool check_if_var_exists(const char * variable_name) = 0;
 	virtual void add_variable(const char * variable_name, Expansion_Base * variable_value) = 0;
 	virtual const char * get_name() = 0;
+	virtual bool can_allow_autosubs() = 0;
 };
 
 }

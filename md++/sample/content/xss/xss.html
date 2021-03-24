@@ -16,7 +16,7 @@
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-146716017-1"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
+			function gtag()\{dataLayer.push(arguments);\}
 			gtag('js', new Date());
 			gtag('config', 'UA-146716017-1');
 		</script>
@@ -63,7 +63,7 @@
 				</p>
 				<img src="http://josephmellor.xyz" alt="&quot; onmouseover=&quot;alert(&quot;lol&quot;)&quot;">
 				<ul>
-					<li>{{img "onmouseover="alert('lol')" alt text}} fails because the <code>"</code> is caught immediately.
+					<li>{{img "onmouseover="alert('lol')" alt text}} fails because the {"} is caught immediately.
 					</li>
 					<li>{{img java script:alert('lol') alt text}} will pass, but the url will be
 						"http://java", which is valid if "http://java" is valid.
@@ -73,7 +73,7 @@
 					<li>{{img jAvAsCrIpT:alert('lol') alt text}} fails because it is an invalid protocol.
 					</li>
 				</ul>
-				<p>{{img `jAvAsCrIpT:alert('lol')` alt text}} fails because the <code>`</code> is caught immediately.
+				<p>{{img `jAvAsCrIpT:alert('lol')` alt text}} fails because the {`} is caught immediately.
 				</p>
 				<p>&lt;IMG SRC="javascript:alert('XSS');"&gt;
 				</p>
@@ -134,7 +134,7 @@
 				</p>
 				<p>&lt;iframe src=http://xss.rocks/scriptlet.html &lt;
 				</p>
-				<p>&lt;SCRIPT&gt;var a="$ENV<code>QUERY\_STRING</code>";&lt;/SCRIPT&gt;
+				<p>&lt;SCRIPT&gt;var a="$ENV{QUERY\_STRING}";&lt;/SCRIPT&gt;
 				</p>
 				<p>&lt;INPUT TYPE="IMAGE" SRC="javascript:alert('XSS');"&gt;
 				</p>
@@ -142,7 +142,7 @@
 				</p>
 				<p>&lt;IMG LOWSRC="javascript:alert('XSS')"&gt;
 				</p>
-				<p>&lt;STYLE&gt;li <code>list-style-image: url("javascript:alert('XSS')");</code>&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS&lt;/br&gt;
+				<p>&lt;STYLE&gt;li {list-style-image: url("javascript:alert('XSS')");}&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS&lt;/br&gt;
 				</p>
 				<p>&lt;IMG SRC='vbscript:msgbox("XSS")'&gt;
 				</p>
@@ -152,7 +152,7 @@
 				</p>
 				<p>&lt;BGSOUND SRC="javascript:alert('XSS');"&gt;
 				</p>
-				<p>&lt;BR SIZE="&<code>alert('XSS')</code>"&gt;
+				<p>&lt;BR SIZE="&{alert('XSS')}"&gt;
 				</p>
 				<p>&lt;TABLE BACKGROUND="javascript:alert('XSS')"&gt;
 				</p>

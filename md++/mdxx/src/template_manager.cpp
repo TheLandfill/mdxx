@@ -1,5 +1,4 @@
 #include "template_manager.h"
-#include "raw_html.h"
 #include "default.h"
 #include "html_lists.h"
 #include "metadata.h"
@@ -23,7 +22,6 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 {
 	template_mdxx.set_context_dict(mdxx.get_context_dict());
 	mdxx.add_new_context<Template_Context>("template");
-	mdxx.add_new_context<Raw_HTML>("raw-html");
 	mdxx.add_new_context<Default>("default");
 	mdxx.add_new_context<HTML_List>("ol");
 	mdxx.add_new_context<HTML_List>("ul");

@@ -5,6 +5,8 @@
 #include "split.h"
 #include "re2/re2.h"
 #include "c_string_copy.h"
+#include "curly_braces_sub.h"
+#include "mdxx_get.h"
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
@@ -274,7 +276,9 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 	if (print_expansion) {
 		std::cout << complete_line << line << "\n";
 	}
-	handle_curly_braces(line);
+	if (cur_context()->can_allow_autosubs()) {
+		handle_curly_braces(&line, *MDXX_GET(HTML_Manager*, get_var("html")), *this);
+	}
 	return line;
 }
 
@@ -381,19 +385,6 @@ std::string MDXX_Manager::list_valid_contexts() {
 	return output;
 }
 
-void MDXX_Manager::handle_curly_braces(std::string& line) {
-	static const RE2 left_bracket_at_start_of_line("^{");
-	RE2::Replace(&line, left_bracket_at_start_of_line, *static_cast<const char **>(get_var("{")->get_data()));
-	static const RE2 left_bracket("([^\\\\]){");
-	RE2::GlobalReplace(&line, left_bracket, std::string("\\1") + *static_cast<const char **>(get_var("{")->get_data()));
-	static const RE2 right_bracket("([^\\\\])}");
-	RE2::GlobalReplace(&line, right_bracket, std::string("\\1") + *static_cast<const char **>(get_var("}")->get_data()));
-	static const RE2 escaped_left_bracket("\\\\{");
-	RE2::GlobalReplace(&line, escaped_left_bracket, *static_cast<const char **>(get_var("\\{")->get_data()));
-	static const RE2 escaped_right_bracket("\\\\}");
-	RE2::GlobalReplace(&line, escaped_right_bracket, *static_cast<const char **>(get_var("\\}")->get_data()));
-}
-
 long MDXX_Manager::convert_string_to_long(const std::string& str) {
 	try {
 		return std::stol(str);
@@ -435,7 +426,6 @@ void MDXX_Manager::check_if_index_in_range(long index, size_t size) {
 		throw std::runtime_error(error_message);
 	}
 }
-
 
 void MDXX_Manager::handle_range_substitutions(std::string& line, const std::vector<std::string>& var_args) {
 	static const RE2 range_arguments_regex("(\\[\\d*:\\d*\\])");

@@ -4,6 +4,7 @@
 #include "html_manager.h"
 #include "variable_map.h"
 #include "html_utils.h"
+#include "curly_braces_sub.h"
 #include <algorithm>
 #include <memory>
 #include <stdexcept>
@@ -46,15 +47,9 @@ char * print_context(Expansion_Base** args, size_t argc) {
 	return nullptr;
 }
 
-Default::Default(const char * n) : name(n) {
+Default::Default(const char * n) : name(n), allow_autosubs(true) {
 	add_variable("empty", empty_str.c_str());
 	add_variable("zs", "&#8203;");
-	add_variable("{", "<code>");
-	add_variable("}", "</code>");
-	add_variable("\\{", "{" );
-	add_variable("\\}", "}");
-	add_variable("ldb", "\\\\{{{empty}}\\\\{");
-	add_variable("rdb", "\\\\}{{empty}}\\\\}");
 	add_variable("lt", "&lt;");
 	add_variable("gt", "&gt;");
 	add_variable("amp", "&amp;");
@@ -75,6 +70,11 @@ Default::Default(const char * n) : name(n) {
 	add_variable("a", "{{link-func [1:]}}");
 	add_variable("img", "{{img-func (html) [1:]}}");
 	add_variable("img-a", "{{img-a-func (html) [1:]}}");
+	const Autosub * a = curly_autosubs;
+	while (a->var != nullptr) {
+		add_variable(a->var, a->value);
+		a++;
+	}
 }
 
 void throw_default_context_exception() {
