@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-extern "C" DLL_IMPORT_EXPORT char * MDXX_read_metadata_file(mdxx::Expansion_Base** args, size_t argc);
+extern "C" DLL_IMPORT_EXPORT char * MDXX_read_metadata_file(mdxx::MDXX_Manager * md, mdxx::Expansion_Base** args, size_t argc);
 
 
 #endif

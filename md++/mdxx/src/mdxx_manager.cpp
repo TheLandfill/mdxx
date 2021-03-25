@@ -120,54 +120,50 @@ void MDXX_Manager::immediate_substitution(std::string& line) {
 	cur_context()->add_variable(variable.c_str(), new Expansion<char *>(c_string_copy(value.c_str())));
 }
 
-char * MDXX_Manager::open_context(Expansion_Base** args, size_t argc) {
-	if (argc < 3) {
+char * MDXX_Manager::open_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	if (argc < 2) {
 		throw std::runtime_error(
-"open_context (the implicit function) requires three arguments: the line as\n"
-"Expansion<char *>, the MDXX_Manager as Expansion<MDXX_Manager**>, and the\n"
-"HTML_Manager as Expansion<HTML_Manager**>. If you are not doing something weird\n"
-"with the code or changing the variables, you probably forgot the name of the\n"
-"context and you don't need to worry about the previous sentence."
+"open_context (the implicit function) requires two arguments: the line as\n"
+"text and the HTML_Manager*. If you are not doing something weird with the code\n"
+"or changing the variables, you probably forgot the name of the context and you\n"
+"don't need to worry about the previous sentence."
 		);
 	}
-	std::string line = *static_cast<const char **>(args[0]->get_data());
-	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args[1]->get_data());
-	HTML_Manager& html = **static_cast<HTML_Manager**>(args[2]->get_data());
+	std::string line = MDXX_GET(const char *, args[0]);
+	HTML_Manager& html = *MDXX_GET(HTML_Manager*, args[1]);
 	std::string open_args = "";
-	for (size_t i = 4; i < argc; i++) {
-		open_args += *static_cast<const char **>(args[i]->get_data());
+	for (size_t i = 2; i < argc; i++) {
+		open_args += MDXX_GET(const char *, args[i]);
 		open_args += " ";
 	}
-	mdxx.throw_exception_if_context_not_found(line);
-	mdxx.context.push_back(line);
+	mdxx->throw_exception_if_context_not_found(line);
+	mdxx->context.push_back(line);
 	html.check_and_close_paragraph();
-	(*mdxx.context_dict)[line]->open(html, open_args.c_str());
+	(*(mdxx->context_dict))[line]->open(html, open_args.c_str());
 	return nullptr;
 }
 
-char * MDXX_Manager::close_context(Expansion_Base** args, size_t argc) {
-	if (argc < 3) {
+char * MDXX_Manager::close_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	if (argc < 2) {
 		throw std::runtime_error(
-"close_context (the implicit function) requires three arguments: the line as\n"
-"Expansion<char *>, the MDXX_Manager as Expansion<MDXX_Manager**>, and the\n"
-"HTML_Manager as Expansion<HTML_Manager**>. If you are not doing something weird\n"
-"with the code or changing the variables, you probably forgot the name of the\n"
-"context and you don't need to worry about the previous sentence."
+"close_context (the implicit function) requires two arguments: the line as\n"
+"text and the HTML_Manager as HTML_Manager*. If you are not doing something\n"
+"weird with the code or changing the variables, you probably forgot the name\n"
+"of the context and you don't need to worry about the previous sentence."
 		);
 	}
-	std::string line = *static_cast<const char**>(args[0]->get_data());
-	MDXX_Manager& mdxx = **static_cast<MDXX_Manager**>(args[1]->get_data());
-	HTML_Manager& html = **static_cast<HTML_Manager**>(args[2]->get_data());
-	if (line == mdxx.context.back()) {
-		mdxx.cur_context()->close(html);
-		mdxx.context.pop_back();
+	std::string line = MDXX_GET(const char *, args[0]);
+	HTML_Manager& html = *MDXX_GET(HTML_Manager*, args[1]);
+	if (line == mdxx->context.back()) {
+		mdxx->cur_context()->close(html);
+		mdxx->context.pop_back();
 	} else {
 		std::string error_message = "ERROR: ";
 		error_message.reserve(2048);
 		error_message += line;
 		error_message += " was not opened but it was closed.";
 		error_message += "\nLine that caused the problem:\n";
-		error_message += mdxx.print_line();
+		error_message += mdxx->print_line();
 		throw std::runtime_error(error_message);
 	}
 	return nullptr;
@@ -241,7 +237,7 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		Expansion_Base* expanded_var = get_var(var);
 		Expansion<gen_func>* func_holder = dynamic_cast<Expansion<gen_func>*>(expanded_var);
 		if (func_holder == nullptr) {
-			RE2::Replace(&line, variable_regex, *static_cast<const char **>(expanded_var->get_data()));
+			RE2::Replace(&line, variable_regex, MDXX_GET(const char *, expanded_var));
 		} else {
 			if (args.size() > num_c_args) {
 				delete[] c_args;
@@ -253,7 +249,7 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 			for (size_t i = 0; i < args.size(); i++) {
 				c_args[i] = &*args[i];
 			}
-			char * output = func_holder->func(c_args, args.size());
+			char * output = func_holder->func(this, c_args, args.size());
 			if (output != nullptr) {
 				RE2::Replace(&line, variable_regex, output);
 				delete[] output;
@@ -319,12 +315,21 @@ void MDXX_Manager::throw_exception_if_context_not_found(const std::string& con) 
 	}
 }
 
+void MDXX_Manager::replace_angle_brackets_in_line() {
+	line_data.line = replace_angle_brackets(line_data.line);
+}
+
 void MDXX_Manager::sanitize_ampersands() {
 	correctly_substitute_ampersands(line_data.line);
 }
 
-void MDXX_Manager::replace_angle_brackets_in_line() {
-	line_data.line = replace_angle_brackets(line_data.line);
+void MDXX_Manager::error_exit() {
+	finished_reading = true;
+	caused_error = true;
+}
+
+bool MDXX_Manager::had_error() {
+	return caused_error;
 }
 
 bool MDXX_Manager::at_end_of_file() {

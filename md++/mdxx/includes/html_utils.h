@@ -6,11 +6,11 @@
 
 namespace mdxx {
 
-char * link(Expansion_Base** args, size_t argc);
+char * link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 
-char * img(Expansion_Base** args, size_t argc);
+char * img(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 
-char * img_link(Expansion_Base** args, size_t argc);
+char * img_link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 
 typedef std::unordered_map<std::string, std::string> str_map;
 

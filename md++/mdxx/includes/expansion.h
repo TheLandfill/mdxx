@@ -16,7 +16,9 @@ struct Expansion_Base {
 	virtual Expansion_Base* make_deep_copy() = 0;
 };
 
-typedef char * (*gen_func)(Expansion_Base** args, size_t argc);
+class MDXX_Manager;
+
+typedef char * (*gen_func)(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 
 template<typename T>
 struct Expansion : Expansion_Base {

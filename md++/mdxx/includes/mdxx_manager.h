@@ -43,14 +43,16 @@ public:
 	std::string list_context_stack();
 	std::string list_valid_contexts();
 	~MDXX_Manager();
-	static char * open_context(Expansion_Base** args, size_t argc);
-	static char * close_context(Expansion_Base** args, size_t argc);
+	static char * open_context(MDXX_Manager* mdxx, Expansion_Base** args, size_t argc);
+	static char * close_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 	void destroy_contexts();
 	context_dict_type get_context_dict();
 	void set_context_dict(context_dict_type other_context_dict);
 	void throw_exception_if_context_not_found(const std::string& context);
 	void replace_angle_brackets_in_line();
 	void sanitize_ampersands();
+	void error_exit();
+	bool had_error();
 public:
 	std::string mdxx_object_id;
 private:
@@ -74,6 +76,7 @@ private:
 	std::string line_stack;
 	Line_Data line_data;
 	bool finished_reading = false;
+	bool caused_error = false;
 	Expansion_Base ** c_args;
 	size_t num_c_args = 256;
 };

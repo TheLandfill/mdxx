@@ -20,7 +20,7 @@ void MDXX_print_current_line_and_exit(mdxx::MDXX_Manager * md) {
 	char * cur_line = MDXX_print_current_line(md);
 	std::cerr << cur_line;
 	delete[] cur_line;
-	exit(EXIT_FAILURE);
+	md->error_exit();
 }
 
 void MDXX_add_general_variable_to_context(mdxx::MDXX_Manager * mdxx,

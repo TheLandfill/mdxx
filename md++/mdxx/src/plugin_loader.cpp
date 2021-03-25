@@ -1,6 +1,7 @@
 #include "plugin_loader.h"
 #include "compilation_info.h"
 #include "clear_line.h"
+#include "mdxx_get.h"
 #include <memory>
 #include <string>
 #include <stdexcept>
@@ -141,7 +142,7 @@ Plugin_Loader::~Plugin_Loader() {
 template<>
 const char * Expansion<Plugin_Loader*>::to_string() {
 	std::stringstream strstr;
-	strstr << "<Plugin_Loader object @ " << *static_cast<Plugin_Loader**>(this->get_data()) << ">";
+	strstr << "<Plugin_Loader object @ " << MDXX_GET(Plugin_Loader*, this) << ">";
 	data->plugin_loader_obj_id = strstr.str();
 	return data->plugin_loader_obj_id.c_str();
 }

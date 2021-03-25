@@ -5,9 +5,11 @@
 #include "sanitize_user_input.h"
 #include "mdxx_get.h"
 #include "html_manager.h"
+#include "mdxx_manager.h"
 #include <cstring>
 #include <stdexcept>
 #include <string>
+#include <iostream>
 #include <unordered_map>
 
 namespace mdxx {
@@ -442,7 +444,7 @@ Basic_String Tag_Handler::generate_tag() {
 }
 
 // First argument is the HTML_Manager*, second could be the inline, then href, then src
-char * img_link(Expansion_Base** args, size_t argc) {
+char * img_link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	static const std::string inline_check = "inline";
 	size_t args_offset = 2;
 	if (argc > 2 && inline_check != MDXX_GET(const char *, args[1])) {
@@ -459,7 +461,9 @@ char * img_link(Expansion_Base** args, size_t argc) {
 			error_message += args[i]->to_string();
 			error_message += "\n";
 		}
-		throw std::runtime_error(error_message);
+		std::cerr << error_message << std::flush;
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
 	Tag_Handler tl{args + args_offset, 1, "a", {""}, {"href"}};
 	Basic_String link_part = tl.generate_tag();
@@ -480,7 +484,8 @@ char * img_link(Expansion_Base** args, size_t argc) {
 	return c_string_copy(output);
 }
 
-char * img(Expansion_Base** args, size_t argc) {
+char * img(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	(void)mdxx;
 	static const std::string inline_check = "inline";
 	size_t args_offset = 2;
 	if (argc > 2 && inline_check != MDXX_GET(const char *, args[1])) {
@@ -498,7 +503,8 @@ char * img(Expansion_Base** args, size_t argc) {
 	return t.generate_tag().str;
 }
 
-char * link(Expansion_Base** args, size_t argc) {
+char * link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	(void)mdxx;
 	Tag_Handler t{
 		args,
 		argc,

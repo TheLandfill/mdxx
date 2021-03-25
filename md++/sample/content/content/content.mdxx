@@ -22,17 +22,14 @@ This is a test.
 \{This should be between normal curly braces.\}
 \{\{test\}\}\{\{test\}\}
 
-{{open raw-html}}<div>
-{{open raw-html}}{{mdpu}}<div>
-{{mdpu}}{{open terminal}}
+{{open terminal}}
 {{prompt ls -l}}
 file
 file file
 
 file file file
 
-</div>{{close terminal}}{{mdpo}}
-{{close raw-html}}{{mdpo}}</div>{{close raw-html}}
+{{close terminal}}
 
 {{open ol}}test
 

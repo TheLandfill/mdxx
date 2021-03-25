@@ -49,8 +49,8 @@ const char * Expansion<HTML_Manager*>::to_string();
 
 }
 
-extern "C" DLL_IMPORT_EXPORT char * MDXX_html_push(mdxx::Expansion_Base** args, size_t argc);
-extern "C" DLL_IMPORT_EXPORT char * MDXX_html_pop(mdxx::Expansion_Base** args, size_t argc);
+extern "C" DLL_IMPORT_EXPORT char * MDXX_html_push(mdxx::MDXX_Manager * md, mdxx::Expansion_Base** args, size_t argc);
+extern "C" DLL_IMPORT_EXPORT char * MDXX_html_pop(mdxx::MDXX_Manager * md, mdxx::Expansion_Base** args, size_t argc);
 
 extern "C" DLL_IMPORT_EXPORT void MDXX_html_add(mdxx::HTML_Manager* html, const char * line);
 extern "C" DLL_IMPORT_EXPORT void MDXX_html_add_pre(mdxx::HTML_Manager* html, const char * line);

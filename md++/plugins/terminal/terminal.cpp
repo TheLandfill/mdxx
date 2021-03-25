@@ -8,6 +8,7 @@
 #include "variable_map.h"
 #include "c_string_copy.h"
 #include "sanitize_user_input.h"
+#include "mdxx_get.h"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -61,36 +62,39 @@ public:
 		MDXX_html_add_pre(&html, "</pre>");
 		MDXX_html_add(&html, "</div>");
 	}
-	static std::string collect_args(mdxx::Expansion_Base** args, size_t argc) {
+	static std::string collect_args(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
+		(void)mdxx;
 		if (argc == 0) {
 			return "";
 		}
 		std::string command;
 		command.reserve(128);
 		for (size_t i = 0; i < argc; i++) {
-			command += *static_cast<const char **>(args[i]->get_data());
+			command += MDXX_GET(const char *, args[i]);
 			command += " ";
 		}
 		command.pop_back();
 		return command;
 	}
-	static char * prompt(mdxx::Expansion_Base** args, size_t argc) {
+	static char * prompt(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
 		if (argc == 0) {
 			std::cerr << "ERROR: First argument to prompt must be (self)." << std::endl;
-			exit(EXIT_FAILURE);
+			MDXX_print_current_line_and_exit(mdxx);
+			return nullptr;
 		}
-		Terminal * term = *static_cast<Terminal**>(args[0]->get_data());
-		MDXX_add_string_variable(term->variables, "command", mdxx::c_string_copy(collect_args(args + 1, argc - 1)));
+		Terminal * term = MDXX_GET(Terminal*, args[0]);
+		MDXX_add_string_variable(term->variables, "command", mdxx::c_string_copy(collect_args(mdxx, args + 1, argc - 1)));
 		const char * temp = "{{oneline}}{{user-and-comp}}:{{full-dir}}$ {{command}}</span>";
 		return mdxx::c_string_copy(temp);
 	}
-	static char * mac_prompt(mdxx::Expansion_Base** args, size_t argc) {
+	static char * mac_prompt(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args, size_t argc) {
 		if (argc == 0) {
 			std::cerr << "ERROR: First argument to mac-prompt must be (self)." << std::endl;
-			exit(EXIT_FAILURE);
+			MDXX_print_current_line_and_exit(mdxx);
+			return nullptr;
 		}
-		Terminal * term = *static_cast<Terminal**>(args[0]->get_data());
-		MDXX_add_string_variable(term->variables, "command", mdxx::c_string_copy(collect_args(args + 1, argc - 1)));
+		Terminal * term = MDXX_GET(Terminal*, args[0]);
+		MDXX_add_string_variable(term->variables, "command", mdxx::c_string_copy(collect_args(mdxx, args + 1, argc - 1)));
 		const char * temp = "{{oneline}}{{computer-name}}:{{mac-dir}} {{user}}$ {{command}}</span>";
 		return mdxx::c_string_copy(temp);
 	}

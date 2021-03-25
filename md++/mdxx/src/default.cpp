@@ -13,35 +13,23 @@
 
 namespace mdxx {
 
-char * print_expansion(Expansion_Base** args, size_t argc) {
-	if (argc < 1) {
-		throw std::runtime_error(
-"print_expansion requires an argument of MDXX_Manager*.\n"
-		);
-	}
-	MDXX_Manager* mdxx = (*static_cast<MDXX_Manager**>(args[0]->get_data()));
+char * print_expansion(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	(void)args;
+	(void)argc;
 	mdxx->print_expansion_flip();
 	return nullptr;
 }
 
-char * print_variables(Expansion_Base** args, size_t argc) {
-	if (argc < 1) {
-		throw std::runtime_error(
-"print_variables requires an argument of MDXX_Manager*.\n"
-		);
-	}
-	MDXX_Manager* mdxx = (*static_cast<MDXX_Manager**>(args[0]->get_data()));
+char * print_variables(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	(void)args;
+	(void)argc;
 	std::cout << mdxx->list_all_vars() << "\n";
 	return nullptr;
 }
 
-char * print_context(Expansion_Base** args, size_t argc) {
-	if (argc < 1) {
-		throw std::runtime_error(
-"print_context requires an argument of MDXX_Manager*.\n"
-		);
-	}
-	MDXX_Manager* mdxx = (*static_cast<MDXX_Manager**>(args[0]->get_data()));
+char * print_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	(void)args;
+	(void)argc;
 	std::cout << mdxx->list_context_stack() << "\n";
 	std::cout << mdxx->list_valid_contexts() << "\n";
 	return nullptr;
@@ -54,12 +42,9 @@ Default::Default(const char * n) : name(n), allow_autosubs(true) {
 	add_variable("gt", "&gt;");
 	add_variable("amp", "&amp;");
 	add_variable("nl", "\n");
-	add_variable("print-expansion", print_expansion);
-	add_variable("print-variables", print_variables);
-	add_variable("print-context", print_context);
-	add_variable("print", "{{print-expansion (mdxx)}}");
-	add_variable("print-vars", "{{print-variables (mdxx)}}");
-	add_variable("print-con", "{{print-context (mdxx)}}");
+	add_variable("print", print_expansion);
+	add_variable("print-vars", print_variables);
+	add_variable("print-con", print_context);
 	add_variable("pop", MDXX_html_pop);
 	add_variable("push", MDXX_html_push);
 	add_variable("mdpu", "{{push (html)}}");

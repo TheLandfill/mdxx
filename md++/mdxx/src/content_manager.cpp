@@ -22,6 +22,9 @@ void Content_Manager::process_content() {
 		mdxx.handle_context(html);
 	}
 	html.check_and_close_paragraph();
+	if (mdxx.had_error()) {
+		std::cerr << "ERROR DETECTED" << std::endl;
+	}
 }
 
 MDXX_Manager& Content_Manager::get_mdxx() {

@@ -1,42 +1,41 @@
 #include "dll_info.h"
 #include "plugin_loader.h"
 #include "expansion.h"
+#include "mdxx_get.h"
 #include <iostream>
 
 namespace mdxx {
 
-char * MDXX_set_plugin_dir(Expansion_Base** args, size_t argc) {
+char * MDXX_set_plugin_dir(MDXX_Manager* mdxx, Expansion_Base** args, size_t argc) {
 	if (argc < 2) {
 		std::cerr <<
-"MDXX_set_plugin_dir expects two arguments, an Expansion<Plugin_Loader*>* that\n"
+"MDXX_set_plugin_dir expects two arguments, an Plugin_Loader* that\n"
 "points to the main Plugin_Loader (should be {{plugin-obj}}) and an\n"
 "Expansion<char *>, which should be the path to the plugin directory."
 		<< std::endl;
-		exit(EXIT_FAILURE);
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
-	Plugin_Loader * pl = *static_cast<Plugin_Loader**>(args[0]->get_data());
-	std::string pd = static_cast<const char*>(args[1]->get_data());
+	Plugin_Loader * pl = MDXX_GET(Plugin_Loader*, args[0]);
+	std::string pd = MDXX_GET(const char *, args[1]);
 	pl->set_plugin_dir(pd + "/");
 	return nullptr;
 }
 
-char * MDXX_load_plugins(Expansion_Base** args, size_t argc) {
+char * MDXX_load_plugins(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	if (argc < 2) {
 		std::cerr <<
-"MDXX_load_plugins expects at least two arguments with the rest of the\n"
-"arguments being the plugins you want to load as Expansion<char *> or\n"
-"Expansion<const char *>. The first argument is the Plugin_Loader ad an\n"
-"Expansion<Plugin_Loader*>* (should be {{plugin-obj}}) and the second argument\n"
-"should be the MDXX_Manager as an Expansion<MDXX_Manager*>* (should be\n"
-"{{mdxx}})."
+"MDXX_load_plugins expects at least one argument with the rest of the arguments\n"
+"being the names of the plugins you want to load as text. The first\n"
+"argument should be a Plugin_Loader* (should be {{plugin-obj}})."
 		<< std::endl;
-		exit(EXIT_FAILURE);
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
-	Plugin_Loader * pl = *static_cast<Plugin_Loader**>(args[0]->get_data());
-	MDXX_Manager * mdxx = *static_cast<MDXX_Manager**>(args[1]->get_data());
-	for (size_t i = 2; i < argc; i++) {
-		std::string plugin_name = *static_cast<const char**>(args[i]->get_data());
-		pl->load_plugin(mdxx, plugin_name.c_str());
+	Plugin_Loader * pl = MDXX_GET(Plugin_Loader*, args[0]);
+	for (size_t i = 1; i < argc; i++) {
+		const char * plugin_name = MDXX_GET(const char *, args[i]);
+		pl->load_plugin(mdxx, plugin_name);
 	}
 	return nullptr;
 }

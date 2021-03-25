@@ -10,6 +10,7 @@
 #include "join.h"
 #include "c_string_copy.h"
 #include "sanitize_user_input.h"
+#include "mdxx_get.h"
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -98,13 +99,15 @@ std::string string_urlify(const std::string& str) {
 	return output;
 }
 
-char * get_author_description(mdxx::Expansion_Base** args, size_t argc) {
+char * get_author_description(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc < 3) {
 		std::cerr << "ERROR: Need to provide the path to the author descriptions, the author's name, and the total number of allowable characters.\n";
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
-	std::string author_directory = *static_cast<const char **>(args[0]->get_data());
-	std::string author_name = string_urlify(*static_cast<const char **>(args[1]->get_data()));
-	size_t description_length = strtoul(*static_cast<const char **>(args[2]->get_data()), nullptr, 10);
+	std::string author_directory = MDXX_GET(const char *, args[0]);
+	std::string author_name = string_urlify(MDXX_GET(const char *, args[1]));
+	size_t description_length = strtoul(MDXX_GET(const char *, args[2]), nullptr, 10);
 	const static std::string description = "description.txt";
 	std::string file = author_directory + author_name;
 	file += std::filesystem::path::preferred_separator;
@@ -112,7 +115,8 @@ char * get_author_description(mdxx::Expansion_Base** args, size_t argc) {
 	std::ifstream in{file};
 	if (!in.is_open()) {
 		std::cerr << "ERROR: Could not read the file `" << file << "`.\n";
-		exit(EXIT_FAILURE);
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
 	in.seekg(0, in.end);
 	size_t file_length = in.tellg();
@@ -128,29 +132,20 @@ char * get_author_description(mdxx::Expansion_Base** args, size_t argc) {
 	return output;
 }
 
-char * urlify(mdxx::Expansion_Base** args, size_t argc) {
-	if (argc == 0) {
-		std::cerr << "ERROR: Need to provide at least one argument\n";
-		exit(EXIT_FAILURE);
-	}
-	std::string pre_url = *static_cast<const char **>(args[0]->get_data());
-	std::string url_version = string_urlify(pre_url);
-	return mdxx::c_string_copy(url_version);
-}
-
-char * heading_to_section(mdxx::Expansion_Base** args, size_t argc) {
+char * heading_to_section(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc < 3) {
 		std::cerr <<
 "ERROR: heading_to_section requires (headings-do-not-touch), the heading text,\n"
 "and the heading size (any number from 1 - 6) as the arguments\n";
-		exit(EXIT_FAILURE);
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
-	Headings_Holder * hh = *static_cast<Headings_Holder**>(args[0]->get_data());
-	const char * heading_size_str = *static_cast<const char**>(args[1]->get_data());
+	Headings_Holder * hh = MDXX_GET(Headings_Holder*, args[0]);
+	const char * heading_size_str = MDXX_GET(const char *, args[1]);
 	std::string heading_text;
 	heading_text.reserve(1024);
 	for (size_t i = 2; i < argc; i++) {
-		heading_text += *static_cast<const char**>(args[i]->get_data());
+		heading_text += MDXX_GET(const char *, args[i]);
 	}
 	std::string heading_link = string_urlify(heading_text);
 	char heading_size = std::max(std::min((unsigned long)6, strtoul(heading_size_str, nullptr, 10)), (unsigned long)1);
@@ -169,13 +164,14 @@ char * heading_to_section(mdxx::Expansion_Base** args, size_t argc) {
 	return mdxx::c_string_copy(out);
 }
 
-char * sidenav(mdxx::Expansion_Base** args, size_t argc) {
+char * sidenav(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc < 2) {
 		std::cerr << "ERROR: sidenav requires (headings-do-not-touch) and (html) as the arguments.\n";
-		exit(EXIT_FAILURE);
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
-	Headings_Holder * hh = *static_cast<Headings_Holder**>(args[0]->get_data());
-	mdxx::HTML_Manager * html = *static_cast<mdxx::HTML_Manager**>(args[1]->get_data());
+	Headings_Holder * hh = MDXX_GET(Headings_Holder*, args[0]);
+	mdxx::HTML_Manager * html = MDXX_GET(mdxx::HTML_Manager*, args[1]);
 	MDXX_html_add(html, "<nav id=\"sidenav\">");
 	std::string dummy = "";
 	for (auto& heading : hh->headings) {
@@ -192,18 +188,19 @@ char * sidenav(mdxx::Expansion_Base** args, size_t argc) {
 	return nullptr;
 }
 
-char * prefix_suffix_loop_func(mdxx::Expansion_Base** args, size_t argc) {
+char * prefix_suffix_loop_func(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc < 3) {
 		std::cerr << "ERROR: Must provide the html manager, prefix, and suffix." << std::endl;
-		exit(EXIT_FAILURE);
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
 	std::string all_lines;
 	all_lines.reserve(8192);
-	mdxx::HTML_Manager* html = *static_cast<mdxx::HTML_Manager**>(args[0]->get_data());
-	const char * prefix = *static_cast<const char**>(args[1]->get_data());
-	const char * suffix = *static_cast<const char**>(args[2]->get_data());
+	mdxx::HTML_Manager* html = MDXX_GET(mdxx::HTML_Manager*, args[0]);
+	const char * prefix = MDXX_GET(const char *, args[1]);
+	const char * suffix = MDXX_GET(const char *, args[2]);
 	for (size_t i = 3; i < argc; i++) {
-		const char * arg = *static_cast<const char**>(args[i]->get_data());
+		const char * arg = MDXX_GET(const char *, args[i]);
 		auto sheets = mdxx::split(arg);
 		for (auto& sheet : sheets) {
 			MDXX_html_add_no_nl(html, prefix);
@@ -225,7 +222,6 @@ extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::
 	MDXX_add_string_variable_to_context(mdxx, "default", "h", "{{heading-to-section (headings-do-not-touch) [1:]}}");
 	MDXX_add_function_variable_to_context(mdxx, "template", "prefix-suffix-loop-func", prefix_suffix_loop_func);
 	MDXX_add_function_variable_to_context(mdxx, "default", "heading-to-section", heading_to_section);
-	MDXX_add_function_variable_to_context(mdxx, "default", "urlify", urlify);
 	MDXX_add_function_variable_to_context(mdxx, "template", "author-description", get_author_description);
 	MDXX_add_function_variable_to_context(mdxx, "template", "sidenav-func", sidenav);
 	MDXX_add_string_variable_to_context(mdxx, "template", "sidenav", "{{sidenav-func (headings-do-not-touch) (html)}}");

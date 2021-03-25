@@ -51,12 +51,14 @@ public:
 				<< std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 		pygments_wrapper = PyObject_GetAttrString(myModule,(char*)"hand_code_to_pygments");
 		if (pygments_wrapper == NULL) {
 			std::cerr << "ERROR: Could not find method \"hand_code_to_pygments\", which shouldn't happen.\nYou're on your own." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 	}
 
@@ -69,6 +71,7 @@ public:
 				"You can also remove line numbers by adding the argument `no-line-numbers` after the `code-block`." << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 		code_language = args[0];
 		new_code_block_initialization();
@@ -88,6 +91,7 @@ public:
 				<< "where \"trac\" is the preferred code-style."
 				<< std::endl;
 			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 		if (add_line_numbers) {
 			MDXX_html_add(&html, "<div class=\"code-blocktable\">");
@@ -114,6 +118,7 @@ public:
 	}
 
 	void close(mdxx::HTML_Manager& html) override {
+		bool valid = true;
 		#pragma omp critical
 		{
 		PyObject* py_lines_to_highlight = PyList_New(lines_to_highlight.size());
@@ -123,14 +128,17 @@ public:
 			std::cerr << std::flush;
 			std::cout << std::flush;
 			MDXX_print_current_line_and_exit(md);
+			valid = false;
 		}
-		for (size_t i = 0; i < lines_to_highlight.size(); i++) {
+		for (size_t i = 0; i < lines_to_highlight.size() && valid; i++) {
 			PyObject* py_current_line = PyLong_FromUnsignedLong(lines_to_highlight[i]);
 			if (py_current_line == NULL) {
 				std::cerr << "ERROR: Could not convert lines_to_highlight[" << i << "] to a PyLong. I have no idea why.\n";
 				std::cerr << "\tlines_to_highlight[" << i << "]:\t" << lines_to_highlight[i] << std::endl;
 				PyErr_Print();
 				MDXX_print_current_line_and_exit(md);
+				valid = false;
+				continue;
 			}
 			if (PyList_SetItem(py_lines_to_highlight, i, py_current_line) == -1) {
 				std::cerr << "ERROR: Tried to insert object at index " << i << ", which is out of bounds for the list.\n"
@@ -138,62 +146,90 @@ public:
 				std::cerr << "Size of list should be " << lines_to_highlight.size() << "." << std::endl;
 				PyErr_Print();
 				MDXX_print_current_line_and_exit(md);
+				valid = false;
 			}
 		}
-		PyObject* py_code_block = PyUnicode_FromString(code_block.c_str());
-		if (py_code_block == NULL) {
-			std::cerr << "ERROR: Could not convert code_block to python string. code_block is `" << code_block.c_str() << "`" << std::endl;
-			PyErr_Print();
-			MDXX_print_current_line_and_exit(md);
+		PyObject* py_code_block;
+		if (valid) {
+			py_code_block = PyUnicode_FromString(code_block.c_str());
+			if (py_code_block == NULL) {
+				std::cerr << "ERROR: Could not convert code_block to python string. code_block is `" << code_block.c_str() << "`" << std::endl;
+				PyErr_Print();
+				MDXX_print_current_line_and_exit(md);
+				valid = false;
+			}
 		}
-		PyObject* py_code_language = PyUnicode_FromString(code_language.c_str());
-		if (py_code_language == NULL) {
-			std::cerr << "ERROR: Could not convert code_language to python string. code_language is `" << code_language.c_str() << "`" << std::endl;
-			PyErr_Print();
-			MDXX_print_current_line_and_exit(md);
+		PyObject* py_code_language;
+		if (valid) {
+			py_code_language = PyUnicode_FromString(code_language.c_str());
+			if (py_code_language == NULL) {
+				std::cerr << "ERROR: Could not convert code_language to python string. code_language is `" << code_language.c_str() << "`" << std::endl;
+				PyErr_Print();
+				MDXX_print_current_line_and_exit(md);
+				valid = false;
+			}
 		}
-		PyObject* py_code_style = PyUnicode_FromString(code_style.c_str());
-		if (py_code_style == NULL) {
-			std::cerr << "ERROR: Could not convert code_style to python string. code_style is `" << code_style.c_str() << "`" << std::endl;
-			PyErr_Print();
-			MDXX_print_current_line_and_exit(md);
+		PyObject* py_code_style;
+		if (valid) {
+			py_code_style = PyUnicode_FromString(code_style.c_str());
+			if (py_code_style == NULL) {
+				std::cerr << "ERROR: Could not convert code_style to python string. code_style is `" << code_style.c_str() << "`" << std::endl;
+				PyErr_Print();
+				MDXX_print_current_line_and_exit(md);
+				valid = false;
+			}
 		}
-		PyObject* py_add_line_numbers = PyBool_FromLong(add_line_numbers);
-		if (py_add_line_numbers == NULL) {
-			std::cerr << "ERROR: Could not convert add_line_numbers to python bool. add_line_numbers is `" << add_line_numbers << "`" << std::endl;
-			PyErr_Print();
-			MDXX_print_current_line_and_exit(md);
+		PyObject * py_add_line_numbers;
+		if (valid) {
+			py_add_line_numbers = PyBool_FromLong(add_line_numbers);
+			if (py_add_line_numbers == NULL) {
+				std::cerr << "ERROR: Could not convert add_line_numbers to python bool. add_line_numbers is `" << add_line_numbers << "`" << std::endl;
+				PyErr_Print();
+				MDXX_print_current_line_and_exit(md);
+				valid = false;
+			}
 		}
-		PyObject* args = PyTuple_Pack(5, py_code_block, py_code_language, py_add_line_numbers, py_code_style, py_lines_to_highlight);
-		if (args == NULL) {
-			std::cerr << "ERROR: Could not pack the arguments to hand_code_to_pygments." << std::endl;
-			std::cerr << "\t" << code_block.c_str()
-				<< "\n\t" << code_language.c_str()
-				<< "\n\t" << add_line_numbers
-				<< "\n\t" << code_style.c_str()
-				<< "\n\t" << py_lines_to_highlight
-				<< std::endl;
-			PyErr_Print();
-			MDXX_print_current_line_and_exit(md);
+		PyObject * args;
+		if (valid) {
+			args = PyTuple_Pack(5, py_code_block, py_code_language, py_add_line_numbers, py_code_style, py_lines_to_highlight);
+			if (args == NULL) {
+				std::cerr << "ERROR: Could not pack the arguments to hand_code_to_pygments." << std::endl;
+				std::cerr << "\t" << code_block.c_str()
+					<< "\n\t" << code_language.c_str()
+					<< "\n\t" << add_line_numbers
+					<< "\n\t" << code_style.c_str()
+					<< "\n\t" << py_lines_to_highlight
+					<< std::endl;
+				PyErr_Print();
+				MDXX_print_current_line_and_exit(md);
+				valid = false;
+			}
 		}
-		PyObject* myResult = PyObject_CallObject(pygments_wrapper, args);
-		if (myResult == NULL) {
-			std::cerr << "ERROR: hand_code_to_pygments was unable to produce output." << std::endl;
-			PyErr_Print();
-			MDXX_print_current_line_and_exit(md);
+		PyObject* myResult;
+		if (valid) {
+			myResult = PyObject_CallObject(pygments_wrapper, args);
+			if (myResult == NULL) {
+				std::cerr << "ERROR: hand_code_to_pygments was unable to produce output." << std::endl;
+				PyErr_Print();
+				MDXX_print_current_line_and_exit(md);
+				valid = false;
+			}
 		}
 		Py_ssize_t size;
-		const char *ptr = PyUnicode_AsUTF8AndSize(myResult, &size);
-		if (ptr == NULL) {
-			std::cerr << "ERROR: pygments returned something that could not be written in UTF8. The output of pygments is `" << ptr << "`" << std::endl;
-			PyErr_Print();
-			MDXX_print_current_line_and_exit(md);
+		if (valid) {
+			const char *ptr = PyUnicode_AsUTF8AndSize(myResult, &size);
+			if (ptr == NULL) {
+				std::cerr << "ERROR: pygments returned something that could not be written in UTF8. The output of pygments is `" << ptr << "`" << std::endl;
+				PyErr_Print();
+				MDXX_print_current_line_and_exit(md);
+			} else {
+				MDXX_html_write(&html, ptr);
+				MDXX_html_add(&html, "");
+				if (add_line_numbers) {
+					MDXX_html_add(&html, "</div>");
+				}
+			}
 		}
-		MDXX_html_write(&html, ptr);
-		}
-		MDXX_html_add(&html, "");
-		if (add_line_numbers) {
-			MDXX_html_add(&html, "</div>");
 		}
 	}
 

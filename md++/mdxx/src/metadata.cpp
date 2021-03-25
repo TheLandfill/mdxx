@@ -4,6 +4,7 @@
 #include "mdxx_manager.h"
 #include "metadata.h"
 #include "sanitize_user_input.h"
+#include "mdxx_get.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -34,25 +35,24 @@ void list_required_fields(const std::vector<std::string>& fields) {
 	std::cerr << "}\n\n";
 }
 
-extern "C" char * MDXX_read_metadata_file(Expansion_Base** args, size_t argc) {
-	if (argc < 3) {
+extern "C" char * MDXX_read_metadata_file(mdxx::MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	if (argc < 2) {
 		std::cerr <<
-"read_metadata_file expects at least three arguments: the MDXX_Manager as an\n"
-"Expansion<MDXX_Manager*>, the filename as an Expansion<char *>, and the\n"
-"context as an Expansion<char *>. The rest of the arguments are the fields\n"
-"you want to see in the json file, e.g. title, author, etc."
+"read_metadata_file expects at least two arguments: the filename as text and the\n"
+"context as text. The rest of the arguments are the fields you want to see in\n"
+"the json file, e.g. title, author, etc."
 		<< std::endl;
-		exit(EXIT_FAILURE);
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
 	}
-	MDXX_Manager * mdxx = *static_cast<MDXX_Manager**>(args[0]->get_data());
-	std::string filename = std::string(*static_cast<const char **>(args[1]->get_data()));
-	std::string context = std::string(*static_cast<const char **>(args[2]->get_data()));
+	std::string filename = std::string(MDXX_GET(const char *, args[0]));
+	std::string context = std::string(MDXX_GET(const char *, args[1]));
 	std::vector<std::string> fields;
 	fields.reserve(argc);
-	for (size_t i = 3; i < argc; i++) {
+	for (size_t i = 2; i < argc; i++) {
 		// If emplace_back doesn't work, revert it to
 		// fields.push_back(std::string(*static_cast<const char **>(args[i]->get_data())));
-		fields.emplace_back(*static_cast<const char **>(args[i]->get_data()));
+		fields.emplace_back(MDXX_GET(const char *, args[i]));
 	}
 	std::ifstream reader(filename);
 	if (!reader.good()) {
