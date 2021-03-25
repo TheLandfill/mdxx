@@ -57,10 +57,8 @@ public:
 	std::string mdxx_object_id;
 private:
 	void variable_definition(std::string& line);
-	//void function_import(std::string& line);
 	void immediate_substitution(std::string& line);
 	void check_variable_dependency(const Context& c);
-
 	std::string find_context_with_variable(const std::string& var);
 	long convert_string_to_long(const std::string& str);
 	void check_if_index_in_range(long index, size_t size);

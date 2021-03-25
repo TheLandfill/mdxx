@@ -216,7 +216,7 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 	static const RE2 variable_regex("\\{\\{([^{}]+)\\}\\}");
 	re2::StringPiece current_sub;
 	re2::StringPiece re_line = line;
-	while (RE2::PartialMatch(re_line, variable_regex, &current_sub)) {
+	while (RE2::PartialMatch(re_line, variable_regex, &current_sub) && !caused_error) {
 		if (print_expansion) {
 			std::cout << complete_line << line << "\n";
 		}

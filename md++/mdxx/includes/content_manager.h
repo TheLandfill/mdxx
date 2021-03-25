@@ -9,7 +9,7 @@ namespace mdxx {
 
 class Content_Manager {
 public:
-	Content_Manager(HTML_Manager& html, MDXX_Manager& mdxx);
+	Content_Manager(HTML_Manager& html, MDXX_Manager& mdxx, std::string infile);
 	void process_content();
 	MDXX_Manager& get_mdxx();
 public:
@@ -17,6 +17,7 @@ public:
 private:
 	HTML_Manager& html;
 	MDXX_Manager& mdxx;
+	std::string infile;
 };
 
 std::shared_ptr<Content_Manager> get_content_manager(HTML_Manager& html, MDXX_Manager& mdxx);

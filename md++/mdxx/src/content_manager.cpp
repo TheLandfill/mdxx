@@ -1,5 +1,6 @@
 #include "content_manager.h"
 #include "sanitize_user_input.h"
+#include "clear_line.h"
 #include <memory>
 #include <sstream>
 #include <vector>
@@ -7,7 +8,7 @@
 
 namespace mdxx {
 
-Content_Manager::Content_Manager(HTML_Manager& h, MDXX_Manager& m) : html(h), mdxx(m) {
+Content_Manager::Content_Manager(HTML_Manager& h, MDXX_Manager& m, std::string in) : html(h), mdxx(m), infile(in) {
 	mdxx.set_context({ "default" });
 }
 
@@ -23,7 +24,9 @@ void Content_Manager::process_content() {
 	}
 	html.check_and_close_paragraph();
 	if (mdxx.had_error()) {
-		std::cerr << "ERROR DETECTED" << std::endl;
+		std::cerr << MDXX_CLEAR_LINE << "ERROR DETECTED in\n\t" << infile << "\nOutput will be deleted.\n"
+		"--------------------------------------------------------------------------------" << std::endl;
+		html.delete_outfile();
 	}
 }
 

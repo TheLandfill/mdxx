@@ -65,7 +65,7 @@ public:
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
 		(void)html;
 		std::vector<std::string> args = mdxx::split(arg_ptr);
-		if (args.size() < 1) {
+		if (args.size() < 2) {
 			std::cerr << "ERROR: Need to specify the programming language for the code-block context. Proper usage would be\n"
 				"\t{{open code-block c++}}\n"
 				"You can also remove line numbers by adding the argument `no-line-numbers` after the `code-block`." << std::endl;
@@ -194,12 +194,12 @@ public:
 			args = PyTuple_Pack(5, py_code_block, py_code_language, py_add_line_numbers, py_code_style, py_lines_to_highlight);
 			if (args == NULL) {
 				std::cerr << "ERROR: Could not pack the arguments to hand_code_to_pygments." << std::endl;
-				std::cerr << "\t" << code_block.c_str()
-					<< "\n\t" << code_language.c_str()
-					<< "\n\t" << add_line_numbers
-					<< "\n\t" << code_style.c_str()
-					<< "\n\t" << py_lines_to_highlight
-					<< std::endl;
+				std::cerr << "\t`" << code_block.c_str()
+					<< "`\n\t`" << code_language.c_str()
+					<< "`\n\t`" << add_line_numbers
+					<< "`\n\t`" << code_style.c_str()
+					<< "`\n\t`" << py_lines_to_highlight
+					<< "`" << std::endl;
 				PyErr_Print();
 				MDXX_print_current_line_and_exit(md);
 				valid = false;
@@ -210,6 +210,12 @@ public:
 			myResult = PyObject_CallObject(pygments_wrapper, args);
 			if (myResult == NULL) {
 				std::cerr << "ERROR: hand_code_to_pygments was unable to produce output." << std::endl;
+				std::cerr << "\t`" << code_block.c_str()
+					<< "`\n\t`" << code_language.c_str()
+					<< "`\n\t`" << add_line_numbers
+					<< "`\n\t`" << code_style.c_str()
+					<< "`\n\t`" << py_lines_to_highlight
+					<< "`" << std::endl;
 				PyErr_Print();
 				MDXX_print_current_line_and_exit(md);
 				valid = false;

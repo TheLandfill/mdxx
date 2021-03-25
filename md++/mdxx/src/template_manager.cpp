@@ -41,7 +41,7 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 	mdxx.add_variable_to_context("default", "mdxx", &mdxx);
 	mdxx.add_variable_to_context("default", "open-func", MDXX_Manager::open_context);
 	mdxx.add_variable_to_context("default", "close-func", MDXX_Manager::close_context);
-	mdxx.add_variable_to_context("default", "open", "{{open-func [1] (html) [1:]}}");
+	mdxx.add_variable_to_context("default", "open", "{{open-func [1] (html) [2:]}}");
 	mdxx.add_variable_to_context("default", "close", "{{close-func [1] (html)}}");
 	mdxx.add_variable_to_context("default", "metadata", MDXX_read_metadata_file);
 	template_mdxx.set_context({"default", "template"});

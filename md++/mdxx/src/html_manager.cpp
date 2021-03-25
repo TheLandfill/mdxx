@@ -6,16 +6,13 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
+#include <cstdio>
 
 namespace mdxx {
 
 std::string empty_str = "\u0007";
 
-HTML_Manager::HTML_Manager(std::ofstream& o) : out(o) {
-	tab_level.reserve(32);
-}
-
-HTML_Manager::HTML_Manager(std::ofstream&& o) : out(o) {
+HTML_Manager::HTML_Manager(std::string str) : outfile_name(str), out(str) {
 	tab_level.reserve(32);
 }
 
@@ -52,7 +49,9 @@ void HTML_Manager::add_no_nl(const char * line) {
 }
 
 void HTML_Manager::write(std::string str) {
-	out << str << std::flush;
+	if (valid) {
+		out << str << std::flush;
+	}
 }
 
 void HTML_Manager::write_empty(std::string str) {
@@ -88,6 +87,12 @@ void HTML_Manager::pop() {
 
 void HTML_Manager::open_paragraph() {
 	need_to_close_paragraph = true;
+}
+
+void HTML_Manager::delete_outfile() {
+	valid = false;
+	out.close();
+	remove(outfile_name.c_str());
 }
 
 template<>

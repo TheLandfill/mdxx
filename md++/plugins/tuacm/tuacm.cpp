@@ -132,6 +132,17 @@ char * get_author_description(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** 
 	return output;
 }
 
+char * urlify(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args, size_t argc) {
+	if (argc == 0) {
+		std::cerr << "ERROR: Need to provide at least one argument\n";
+		MDXX_print_current_line_and_exit(mdxx);
+		return nullptr;
+	}
+	std::string pre_url = *static_cast<const char **>(args[0]->get_data());
+	std::string url_version = string_urlify(pre_url);
+	return mdxx::c_string_copy(url_version);
+}
+
 char * heading_to_section(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc < 3) {
 		std::cerr <<
@@ -222,6 +233,7 @@ extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::
 	MDXX_add_string_variable_to_context(mdxx, "default", "h", "{{heading-to-section (headings-do-not-touch) [1:]}}");
 	MDXX_add_function_variable_to_context(mdxx, "template", "prefix-suffix-loop-func", prefix_suffix_loop_func);
 	MDXX_add_function_variable_to_context(mdxx, "default", "heading-to-section", heading_to_section);
+	MDXX_add_function_variable_to_context(mdxx, "default", "urlify", urlify);
 	MDXX_add_function_variable_to_context(mdxx, "template", "author-description", get_author_description);
 	MDXX_add_function_variable_to_context(mdxx, "template", "sidenav-func", sidenav);
 	MDXX_add_string_variable_to_context(mdxx, "template", "sidenav", "{{sidenav-func (headings-do-not-touch) (html)}}");

@@ -11,8 +11,7 @@ namespace mdxx {
 
 class HTML_Manager {
 public:
-	HTML_Manager(std::ofstream& o);
-	HTML_Manager(std::ofstream&& o);
+	HTML_Manager(std::string filename);
 	void add(std::string& line);
 	void add_pre(std::string& line);
 	void add_no_nl(std::string& line);
@@ -26,6 +25,7 @@ public:
 	void push();
 	void pop();
 	void open_paragraph();
+	void delete_outfile();
 	HTML_Manager(const HTML_Manager& html) = delete;
 	HTML_Manager& operator=(const HTML_Manager& html) = delete;
 	HTML_Manager(const HTML_Manager&& html) = delete;
@@ -34,8 +34,10 @@ public:
 	std::string html_object_id;
 private:
 	std::string tab_level = "";
-	std::ofstream& out;
+	std::string outfile_name;
+	std::ofstream out;
 	bool need_to_close_paragraph = false;
+	bool valid = true;
 };
 
 template<>

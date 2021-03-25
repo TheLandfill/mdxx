@@ -51,9 +51,8 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		MDXX_Manager mdxx = MDXX_Manager(in);
 		fs::path outfile = infile;
 		outfile.replace_extension(".html");
-		std::ofstream out{outfile};
-		HTML_Manager html{out};
-		std::shared_ptr<Content_Manager> content = std::make_shared<Content_Manager>(html, mdxx);
+		HTML_Manager html{outfile};
+		std::shared_ptr<Content_Manager> content = std::make_shared<Content_Manager>(html, mdxx, infile);
 		std::string template_file = template_path.string() + mdxx.next_line_no_nl();
 		Template_Manager template_reader(html, content, template_file);
 		fs::path metafile = infile;
@@ -63,14 +62,14 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		template_reader.process_template();
 		#pragma omp critical
 		{
-			finished_webpages++;
+			finished_webpages += !mdxx.had_error();
 			std::cout << MDXX_CLEAR_LINE << finished_webpages << "/" << argc - 2 << " finished." << std::flush;
 		}
 	}
 	std::cout << std::endl;
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
-	std::cout << "Generated " << argc - 2 << " webpages in " << total_time << " ms\n";
+	std::cout << "Generated " << finished_webpages << " webpages in " << total_time << " ms\n";
 	std::cout << "Average time per webpage was " << total_time / (argc - 2) << " ms\n";
 	MDXX_py_finalize();
 	return 0;
