@@ -24,7 +24,7 @@ void Content_Manager::process_content() {
 	}
 	html.check_and_close_paragraph();
 	if (mdxx.had_error()) {
-		std::cerr << MDXX_CLEAR_LINE << "ERROR DETECTED in\n\t" << infile << "\nOutput will be deleted.\n"
+		std::cerr << MDXX_CLEAR_LINE << "\nERROR DETECTED in\n\t" << infile << "\nOutput will be deleted.\n"
 		"--------------------------------------------------------------------------------" << std::endl;
 		html.delete_outfile();
 	}

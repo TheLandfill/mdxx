@@ -57,7 +57,7 @@ void Template_Manager::process_template() {
 		template_mdxx.handle_context(html);
 	}
 	if (template_mdxx.had_error()) {
-		std::cerr << MDXX_CLEAR_LINE << "ERROR DETECTED in\n\t" << content->get_infile() << "\nOutput will be deleted.\n"
+		std::cerr << MDXX_CLEAR_LINE << "\nERROR DETECTED in\n\t" << content->get_infile() << "\nOutput will be deleted.\n"
 			"--------------------------------------------------------------------------------" << std::endl;
 		html.delete_outfile();
 	}

@@ -39,6 +39,7 @@ const char * mdxx::Expansion<Headings_Holder*>::to_string() {
 }
 
 std::string url_to_lower(std::string str) {
+#ifdef WIN32
 	static std::locale loc{ "en_US.UTF-8" };
 	std::transform(
 		str.begin(),
@@ -48,6 +49,16 @@ std::string url_to_lower(std::string str) {
 			return std::tolower(c, loc);
 		}
 	);
+#else
+	std::transform(
+		str.begin(),
+		str.end(),
+		str.begin(),
+		[](unsigned char c){
+			return std::tolower(c);
+		}
+	);
+#endif
 	return str;
 }
 
