@@ -42,7 +42,7 @@ public:
 		if (myModule == NULL) {
 			std::cerr
 				<< "ERROR: Could not load `code_block.py`. It should be in the directory\n\n\t`"
-				<< std::string(fs::absolute(mdxx::main_program_dir))
+				<< fs::absolute(MDXX_get_main_program_dir())
 				<< "plugins`\n\n"
 				   "If you aren't building from source, then you can find it at\n\n"
 				   "\thttps://josephmellor.xyz/mdxx/\n\n"

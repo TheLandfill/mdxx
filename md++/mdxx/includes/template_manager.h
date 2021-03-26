@@ -13,6 +13,7 @@ class Template_Manager {
 public:
 	Template_Manager(HTML_Manager& html, std::shared_ptr<Content_Manager> content, std::string template_file);
 	void process_template();
+	bool had_error();
 public:
 	std::string template_object_id;
 private:

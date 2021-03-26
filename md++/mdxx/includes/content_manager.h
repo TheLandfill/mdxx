@@ -12,6 +12,7 @@ public:
 	Content_Manager(HTML_Manager& html, MDXX_Manager& mdxx, std::string infile);
 	void process_content();
 	MDXX_Manager& get_mdxx();
+	std::string get_infile();
 public:
 	std::string content_object_id;
 private:

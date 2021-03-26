@@ -2,6 +2,10 @@
 #include <Python.h>
 #include <iostream>
 
+namespace mdxx {
+	extern const char * main_program_dir;
+}
+
 static bool python_has_been_initialized = false;
 
 extern "C" DLL_IMPORT_EXPORT void MDXX_py_init() {
@@ -25,4 +29,8 @@ void MDXX_py_finalize() {
 				<< std::endl;
 		}
 	}
+}
+
+extern "C" DLL_IMPORT_EXPORT const char * MDXX_get_main_program_dir() {
+	return mdxx::main_program_dir;
 }

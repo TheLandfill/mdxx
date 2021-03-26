@@ -34,6 +34,10 @@ MDXX_Manager& Content_Manager::get_mdxx() {
 	return mdxx;
 }
 
+std::string Content_Manager::get_infile() {
+	return infile;
+}
+
 template<>
 const char * Expansion<Content_Manager*>::to_string() {
 	std::stringstream output;

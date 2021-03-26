@@ -3,6 +3,7 @@
 #include "html_lists.h"
 #include "metadata.h"
 #include "mdxx_get.h"
+#include "clear_line.h"
 #include <sstream>
 #include <memory>
 #include <iostream>
@@ -55,8 +56,17 @@ void Template_Manager::process_template() {
 		}
 		template_mdxx.handle_context(html);
 	}
+	if (template_mdxx.had_error()) {
+		std::cerr << MDXX_CLEAR_LINE << "ERROR DETECTED in\n\t" << content->get_infile() << "\nOutput will be deleted.\n"
+			"--------------------------------------------------------------------------------" << std::endl;
+		html.delete_outfile();
+	}
 	template_mdxx.destroy_contexts();
 	mdxx.destroy_contexts();
+}
+
+bool Template_Manager::had_error() {
+	return template_mdxx.had_error();
 }
 
 char * process_content(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {

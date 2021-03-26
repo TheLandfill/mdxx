@@ -51,8 +51,8 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		MDXX_Manager mdxx = MDXX_Manager(in);
 		fs::path outfile = infile;
 		outfile.replace_extension(".html");
-		HTML_Manager html{outfile};
-		std::shared_ptr<Content_Manager> content = std::make_shared<Content_Manager>(html, mdxx, infile);
+		HTML_Manager html{outfile.string()};
+		std::shared_ptr<Content_Manager> content = std::make_shared<Content_Manager>(html, mdxx, infile.string());
 		std::string template_file = template_path.string() + mdxx.next_line_no_nl();
 		Template_Manager template_reader(html, content, template_file);
 		fs::path metafile = infile;
@@ -62,7 +62,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		template_reader.process_template();
 		#pragma omp critical
 		{
-			finished_webpages += !mdxx.had_error();
+			finished_webpages += (!mdxx.had_error() && !template_reader.had_error());
 			std::cout << MDXX_CLEAR_LINE << finished_webpages << "/" << argc - 2 << " finished." << std::flush;
 		}
 	}

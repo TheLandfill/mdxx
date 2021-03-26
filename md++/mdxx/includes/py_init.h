@@ -3,9 +3,6 @@
 #include "dll_info.h"
 
 extern "C" DLL_IMPORT_EXPORT void MDXX_py_init();
-
-namespace mdxx {
-	extern const char * main_program_dir;
-}
+extern "C" DLL_IMPORT_EXPORT const char * MDXX_get_main_program_dir();
 
 #endif
