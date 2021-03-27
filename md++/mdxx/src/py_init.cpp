@@ -3,7 +3,7 @@
 #include <iostream>
 
 namespace mdxx {
-	extern const char * main_program_dir;
+	extern char * main_program_dir;
 }
 
 static bool python_has_been_initialized = false;

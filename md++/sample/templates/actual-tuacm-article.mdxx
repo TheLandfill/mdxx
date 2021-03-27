@@ -1,6 +1,7 @@
 {{root}}="https://tuacm.com/"
 {{css}}="{{root}}css/"
 {{js}}="{{root}}js/"
+{{author-dir}}="/home/joseph/dev/tuacm-website/authors/"
 
 {{metadata (metafile) default title author date tagline description stylesheets scripts tags}}<!doctype html>{{t-plugin tuacm}}
 <html lang="en-US">
@@ -48,9 +49,7 @@ gtag('config', 'UA-146716017-1');
 {{switch_to_content}}<div id="author-description-local">
 {{mdpu}}<img src="{{author-image}}" id="author-description-image" alt="A picture of {{author}}, the author.">
 <div id="author-description-text">
-{{mdpu}}<p>This is some dummy text since I don't have a way to easily configure
-the directory of every author on every computer and I don't want to download
-from the internet.
+{{mdpu}}<p>{{author-description (author-dir) (author) 330}}
 </p>
 {{mdpo}}</div>
 {{mdpo}}</div>

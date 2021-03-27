@@ -9,6 +9,38 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#if WIN32
+#include <Windows.h>
+#define MDXX_GET_EXE_LOCATION unsigned long long num_bytes_in_file = GetModuleFileLocation(NULL, main_program_dir, main_program_dir_buff_size); \
+if (num_bytes_in_file == 0) { \
+	 std::cerr << "ERROR: Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
+}
+#else
+#include <unistd.h>
+#include <sys/stat.h>
+#define MDXX_GET_EXE_LOCATION \
+struct stat sb; \
+if (lstat(argv[1], &sb) == -1) { \
+	std::cerr << "ERROR: The executable could not find the path to itself in you system.\nI don't know what you did to your file system, but you have bigger problems to deal with." << std::endl; \
+	exit(EXIT_FAILURE); \
+} \
+try { \
+	main_program_dir = new char[sb.st_size + 1]; \
+} catch (std::bad_alloc& e) { \
+	std::cerr << "ERROR: Insufficient memory. You need at least " << sb.st_size + 1 << " bytes of RAM for\nthe dependency resolution to work properly. Even if you fix that, I don't like\nyour odds of getting the full program running." << std::endl;\
+	exit(EXIT_FAILURE); \
+} \
+long num_bytes_in_filename = readlink("/proc/self/exe", main_program_dir, sb.st_size + 1); \
+if (num_bytes_in_filename < 0) { \
+	std::cerr << "ERROR: Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
+	exit(EXIT_FAILURE); \
+} \
+if (num_bytes_in_filename > sb.st_size) { \
+	std::cerr << "ERROR: Somehow, the path to the executable changed size while the program was running." << std::endl;\
+	exit(EXIT_FAILURE); \
+} \
+main_program_dir[sb.st_size] = '\0';
+#endif
 #if __has_include(<filesystem>)
   #include <filesystem>
   namespace fs = std::filesystem;
@@ -21,7 +53,7 @@
 #include <chrono>
 
 namespace mdxx {
-	const char * main_program_dir;
+	char * main_program_dir;
 }
 
 void MDXX_py_finalize();
@@ -34,12 +66,12 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		usage_message(argv[0]);
 		return 1;
 	}
-	std::string main_dir = fs::path(argv[0]).parent_path().string();
-	if (!(main_dir == "" || main_dir == "./")) {
-		main_dir += fs::path::preferred_separator;
-		main_dir += fs::path::preferred_separator;
-	}
-	main_program_dir = main_dir.c_str();
+	MDXX_GET_EXE_LOCATION
+	std::string main_dir = main_program_dir;
+	delete[] main_program_dir;
+	main_dir.erase(main_dir.find_last_of(fs::path::preferred_separator));
+	main_dir += fs::path::preferred_separator;
+	main_program_dir = c_string_copy(main_dir);
 	Plugin_Loader pl;
 	pl.set_plugin_dir(main_dir);
 	fs::path template_path(argv[1]);
@@ -72,6 +104,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	std::cout << "Generated " << finished_webpages << " webpages in " << total_time << " ms\n";
 	std::cout << "Average time per webpage was " << total_time / (argc - 2) << " ms\n";
 	MDXX_py_finalize();
+	delete[] main_program_dir;
 	return 0;
 }
 

@@ -19,10 +19,8 @@ add_compile_options(
 )
 add_link_options(
 	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
-	"-Wl,-rpath='${CMAKE_BINARY_DIR}/lib'"
-	"-L'${CMAKE_BINARY_DIR}/lib'"
-	"-Wl,-rpath='${CMAKE_BINARY_DIR}/out'"
-	"-L'${CMAKE_BINARY_DIR}/out'"
+	"-Wl,-rpath='${ORIGIN}/lib'"
+	"-L'${ORIGIN}/lib'"
 )
 add_link_options(
 	-ldl -pthread -fopenmp
