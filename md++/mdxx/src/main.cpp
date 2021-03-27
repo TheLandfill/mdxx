@@ -17,29 +17,19 @@ if (num_bytes_in_file == 0) { \
 }
 #else
 #include <unistd.h>
-#include <sys/stat.h>
 #define MDXX_GET_EXE_LOCATION \
-struct stat sb; \
-if (lstat(argv[1], &sb) == -1) { \
-	std::cerr << "ERROR: The executable could not find the path to itself in you system.\nI don't know what you did to your file system, but you have bigger problems to deal with." << std::endl; \
-	exit(EXIT_FAILURE); \
-} \
 try { \
-	main_program_dir = new char[sb.st_size + 1]; \
+	main_program_dir = new char[main_program_dir_buff_size + 1]; \
 } catch (std::bad_alloc& e) { \
-	std::cerr << "ERROR: Insufficient memory. You need at least " << sb.st_size + 1 << " bytes of RAM for\nthe dependency resolution to work properly. Even if you fix that, I don't like\nyour odds of getting the full program running." << std::endl;\
+	std::cerr << "ERROR: Insufficient memory. You need at least " << main_program_dir_buff_size + 1 << " bytes of RAM for\nthe dependency resolution to work properly. Even if you fix that, I don't like\nyour odds of getting the full program running." << std::endl;\
 	exit(EXIT_FAILURE); \
 } \
-long num_bytes_in_filename = readlink("/proc/self/exe", main_program_dir, sb.st_size + 1); \
+long num_bytes_in_filename = readlink("/proc/self/exe", main_program_dir, main_program_dir_buff_size + 1); \
 if (num_bytes_in_filename < 0) { \
 	std::cerr << "ERROR: Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
 	exit(EXIT_FAILURE); \
 } \
-if (num_bytes_in_filename > sb.st_size) { \
-	std::cerr << "ERROR: Somehow, the path to the executable changed size while the program was running." << std::endl;\
-	exit(EXIT_FAILURE); \
-} \
-main_program_dir[sb.st_size] = '\0';
+main_program_dir[num_bytes_in_filename] = '\0';
 #endif
 #if __has_include(<filesystem>)
   #include <filesystem>
@@ -54,6 +44,7 @@ main_program_dir[sb.st_size] = '\0';
 
 namespace mdxx {
 	char * main_program_dir;
+	size_t main_program_dir_buff_size = 8192;
 }
 
 void MDXX_py_finalize();

@@ -19,8 +19,10 @@ add_compile_options(
 )
 add_link_options(
 	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
-	"-Wl,-rpath='${ORIGIN}/lib'"
-	"-L'${ORIGIN}/lib'"
+	"-Wl,-rpath='${ORIGIN}/lib/'"
+	"-L'${ORIGIN}/lib/'"
+	"-Wl,-rpath='${ORIGIN}/../lib/'"
+	"-L'${ORIGIN}/../lib/'"
 )
 add_link_options(
 	-ldl -pthread -fopenmp

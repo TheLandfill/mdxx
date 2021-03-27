@@ -169,6 +169,10 @@ char * heading_to_section(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args,
 	heading_text.reserve(1024);
 	for (size_t i = 2; i < argc; i++) {
 		heading_text += MDXX_GET(const char *, args[i]);
+		heading_text += " ";
+	}
+	if (!heading_text.empty()) {
+		heading_text.pop_back();
 	}
 	std::string heading_link = string_urlify(heading_text);
 	char heading_size = std::max(std::min((unsigned long)6, strtoul(heading_size_str, nullptr, 10)), (unsigned long)1);
