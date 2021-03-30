@@ -48,13 +48,13 @@ namespace mdxx {
 }
 
 void MDXX_py_finalize();
-void usage_message(char * program_name);
+void usage_message(const char * program_name);
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
 	using namespace mdxx;
 	if (argc < 3) {
-		usage_message(argv[0]);
+		usage_message("md++");
 		return 1;
 	}
 	MDXX_GET_EXE_LOCATION
@@ -99,6 +99,6 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	return 0;
 }
 
-void usage_message(char * program_name) {
-	std::cerr << program_name << " template_location mdxx_file\n";
+void usage_message(const char * program_name) {
+	std::cerr << program_name << " template_location mdxx_file[s]\n";
 }

@@ -28,7 +28,7 @@ public:
 		const std::vector<std::string>& attribute_list,
 		const std::vector<std::string>& required_url_attribute_list
 	);
-	Basic_String generate_tag();
+	Basic_String generate_tag(bool use_url_as_text = false);
 private:
 	bool catch_bad_urls(std::string url);
 	std::vector<std::string> get_url_attribute_value_list();

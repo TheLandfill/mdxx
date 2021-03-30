@@ -96,6 +96,9 @@ void MDXX_Manager::handle_context(HTML_Manager& html) {
 		cur_line_count--;
 	} else {
 		line_data.line = expand_line(line);
+		if (cur_context()->can_allow_autosubs()) {
+			handle_curly_braces(&line_data.line, *MDXX_GET(HTML_Manager*, get_var("html")), *this);
+		}
 		cur_context()->process(html, line_data.line.c_str(), line_data.num_lines);
 		cur_line_count = 0;
 	}
@@ -212,13 +215,13 @@ std::string MDXX_Manager::find_and_return_next_content_line() {
 }
 
 std::string MDXX_Manager::expand_line(std::string& line) {
-	std::string complete_line = line + " --> ";
+	std::string complete_line = line + " --> \n\t";
 	static const RE2 variable_regex("\\{\\{([^{}]+)\\}\\}");
 	re2::StringPiece current_sub;
 	re2::StringPiece re_line = line;
 	while (RE2::PartialMatch(re_line, variable_regex, &current_sub) && !caused_error) {
 		if (print_expansion) {
-			std::cout << complete_line << line << "\n";
+			std::cout << complete_line << line << "\n\n";
 		}
 		std::vector<std::string> var_args = split(current_sub.as_string());
 		std::string var = var_args.front();
@@ -270,10 +273,7 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		re_line = line;
 	}
 	if (print_expansion) {
-		std::cout << complete_line << line << "\n";
-	}
-	if (cur_context()->can_allow_autosubs()) {
-		handle_curly_braces(&line, *MDXX_GET(HTML_Manager*, get_var("html")), *this);
+		std::cout << complete_line << line << "\n\n";
 	}
 	return line;
 }

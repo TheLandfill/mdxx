@@ -42,6 +42,7 @@ public:
 		MDXX_add_general_variable(variables, "self", new mdxx::Expansion<Terminal*>(this));
 	}
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
+		not_first_line = true;
 		std::string args(arg_ptr);
 		mdxx::remove_all_html_chars(args);
 		std::string opening;
@@ -53,12 +54,13 @@ public:
 		MDXX_html_add_no_nl(&html, opening.c_str());
 	}
 	void process(mdxx::HTML_Manager& html, const char * line, size_t num_lines) override {
-		for (size_t i = 1; i < num_lines; i++) {
+		for (size_t i = 1; not_first_line && std::string(line) != "" && i < num_lines; i++) {
 			MDXX_html_add_pre(&html, "");
 		}
 		MDXX_html_add_pre(&html, line);
 	}
 	void close(mdxx::HTML_Manager& html) override {
+		not_first_line = false;
 		MDXX_html_add_pre(&html, "</pre>");
 		MDXX_html_add(&html, "</div>");
 	}
@@ -107,6 +109,7 @@ public:
 private:
 	mdxx::Plugin_Loader * pl;
 	mdxx::MDXX_Manager * md;
+	bool not_first_line = false;
 };
 
 MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(Terminal)

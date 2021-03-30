@@ -68,7 +68,9 @@ public:
 		if (args.size() < 2) {
 			std::cerr << "ERROR: Need to specify the programming language for the code-block context. Proper usage would be\n"
 				"\t{{open code-block c++}}\n"
-				"You can also remove line numbers by adding the argument `no-line-numbers` after the `code-block`." << std::endl;
+				"You can also remove line numbers by adding the argument `no-line-numbers` after the `code-block`.\n" <<
+				"Also, make sure that the code style is the last argument or else you'll get an error saying\n"
+				"something like `pygments.util.ClassNotFound: no lexer for alias 'code-style' found`" << std::endl;
 			PyErr_Print();
 			MDXX_print_current_line_and_exit(md);
 			return;

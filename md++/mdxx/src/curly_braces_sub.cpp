@@ -69,7 +69,7 @@ void handle_curly_braces(std::string* line, HTML_Manager& html, MDXX_Manager& md
 	handle_autosubs(line, right_autosub, html, mdxx);
 	static const RE2 escaped_left_bracket("\\\\{");
 	RE2::GlobalReplace(line, escaped_left_bracket, MDXX_GET(const char *, mdxx.get_var("\\{")));
-	static const RE2 escaped_right_bracket("\\\\}");
+	static const RE2 escaped_right_bracket("}\\\\");
 	RE2::GlobalReplace(line, escaped_right_bracket, MDXX_GET(const char *, mdxx.get_var("}\\")));
 }
 

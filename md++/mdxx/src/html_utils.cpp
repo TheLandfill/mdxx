@@ -277,8 +277,9 @@ const static bool valid_url_chars[256] = {
 
 static const std::string attribute_prefix = "mdxx-";
 
+std::vector<std::string> valid_protocols{ "http://", "https://", "ftp://", "mailto:" };
+
 bool Tag_Handler::catch_bad_urls(std::string url) {
-	std::vector<std::string> valid_protocols{ "http://", "https://", "ftp://", "mailto:" };
 	for (unsigned char c : url) {
 		if (!valid_url_chars[c]) {
 			std::string error_message;
@@ -389,19 +390,20 @@ std::vector<std::string> Tag_Handler::get_url_attribute_value_list() {
 	std::vector<std::string> url_attribute_value_list;
 	url_attribute_value_list.reserve(required_url_attribute_list.size());
 	check_and_throw_error_missing_urls(tag, required_url_attribute_list, argc);
+	std::string actual_url;
+	actual_url.reserve(10);
 	for (size_t i = 0; i < required_url_attribute_list.size(); i++) {
 		const char * cur_url = MDXX_GET(const char *, args[i]);
-		std::string actual_url;
-		actual_url.reserve(10);
 		if (!catch_bad_urls(cur_url)) {
-			actual_url += "http://";
+			actual_url = "http://";
 		}
 		url_attribute_value_list.emplace_back(actual_url + cur_url);
+		actual_url.clear();
 	}
 	return url_attribute_value_list;
 }
 
-Basic_String Tag_Handler::generate_tag() {
+Basic_String Tag_Handler::generate_tag(bool use_url_as_text) {
 	std::vector<std::string> url_attribute_value_list = get_url_attribute_value_list();
 	std::vector<std::string> user_input = organize_user_input();
 	std::unordered_map<std::string, std::string> attributes = create_attribute_map();
@@ -436,6 +438,25 @@ Basic_String Tag_Handler::generate_tag() {
 	output += ">";
 	if (attributes["mdxx-text"] != "") {
 		output += attributes["mdxx-text"];
+		output += "</";
+		output += tag;
+		output += ">";
+	} else if (use_url_as_text) {
+		size_t protocol_end = 0;
+		std::string url = url_attribute_value_list[0];
+		for (char c : url) {
+			if (c == '.' || c == '/') {
+				break;
+			}
+			protocol_end++;
+			if (c == ':') {
+				break;
+			}
+		}
+		while (url[protocol_end] && url[protocol_end] == '/') {
+			protocol_end++;
+		}
+		output += url.substr(protocol_end);
 		output += "</";
 		output += tag;
 		output += ">";
@@ -512,7 +533,7 @@ char * link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 		{"text", "title", "alt", "id", "class"},
 		{"href"}
 	};
-	return t.generate_tag().str;
+	return t.generate_tag(true).str;
 }
 
 Tag_Handler::Tag_Handler(

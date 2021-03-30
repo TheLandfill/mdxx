@@ -19,7 +19,8 @@ void HTML_List::open(HTML_Manager& html, const char * args) {
 }
 
 void HTML_List::process(HTML_Manager& html, const char * line_ptr, size_t num_lines) {
-	if (list_first_element) {
+	bool non_empty_line = std::string(line_ptr) != "";
+	if (list_first_element && non_empty_line) {
 		html.add_no_nl("<li>");
 		html.add_pre(line_ptr);
 		html.push();
@@ -27,11 +28,15 @@ void HTML_List::process(HTML_Manager& html, const char * line_ptr, size_t num_li
 		return;
 	}
 	if (num_lines > 1) {
-		html.pop();
-		html.add("</li>");
-		html.add_no_nl("<li>");
-		html.add_pre(line_ptr);
-		html.push();
+		if (non_empty_line) {
+			html.pop();
+			if (!list_first_element) {
+				html.add("</li>");
+			}
+			html.add_no_nl("<li>");
+			html.add_pre(line_ptr);
+			html.push();
+		}
 	} else {
 		html.add(line_ptr);
 	}

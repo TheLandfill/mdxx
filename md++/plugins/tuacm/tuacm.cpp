@@ -11,6 +11,7 @@
 #include "c_string_copy.h"
 #include "sanitize_user_input.h"
 #include "mdxx_get.h"
+#include "re2/re2.h"
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -207,6 +208,10 @@ char * sidenav(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t ar
 		MDXX_html_write(html, "\" style=\"padding-left: ");
 		MDXX_html_write(html, std::to_string(heading.size * 12).c_str());
 		MDXX_html_write(html, "px;\">");
+		static const RE2 left_autosub("([!v^~ibBqQc1-6]{)");
+		static const RE2 right_autosub("(}[!v^~ibBqQc1-6])");
+		RE2::GlobalReplace(&heading.heading_text, left_autosub, "");
+		RE2::GlobalReplace(&heading.heading_text, right_autosub, "");
 		MDXX_html_write(html, heading.heading_text.c_str());
 		MDXX_html_add_pre(html, "</a>");
 	}

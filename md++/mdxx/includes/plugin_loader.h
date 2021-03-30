@@ -48,7 +48,6 @@ private:
 template<>
 const char * Expansion<Plugin_Loader*>::to_string();
 
-extern "C" DLL_IMPORT_EXPORT char * MDXX_set_plugin_dir(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 extern "C" DLL_IMPORT_EXPORT char * MDXX_load_plugins(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 
 }

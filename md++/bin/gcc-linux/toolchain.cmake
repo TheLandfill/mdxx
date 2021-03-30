@@ -17,12 +17,11 @@ add_compile_options(
 	"$<$<CONFIG:DEBUG>:-g>"
 	"-fopenmp"
 )
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+SET(CMAKE_INSTALL_RPATH "$\{ORIGIN\}/lib/;$\{ORIGIN\}/../lib/")
 add_link_options(
 	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
-	"-Wl,-rpath='${ORIGIN}/lib/'"
-	"-L'${ORIGIN}/lib/'"
-	"-Wl,-rpath='${ORIGIN}/../lib/'"
-	"-L'${ORIGIN}/../lib/'"
 )
 add_link_options(
 	-ldl -pthread -fopenmp
