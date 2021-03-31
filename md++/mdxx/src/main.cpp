@@ -64,7 +64,11 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	main_dir += fs::path::preferred_separator;
 	main_program_dir = c_string_copy(main_dir);
 	Plugin_Loader pl;
+	#ifdef WIN32
 	pl.set_plugin_dir(main_dir);
+	#else
+	pl.set_plugin_dir("/usr/lib/md++-git");
+	#endif
 	fs::path template_path(argv[1]);
 	int finished_webpages = 0;
 	#pragma omp parallel for schedule(dynamic)
