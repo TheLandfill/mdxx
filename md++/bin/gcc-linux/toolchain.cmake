@@ -19,7 +19,7 @@ add_compile_options(
 )
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-SET(CMAKE_INSTALL_RPATH "$\{ORIGIN\}/lib/;$\{ORIGIN\}/../lib/")
+SET(CMAKE_INSTALL_RPATH "$\{ORIGIN\}/lib/;$\{ORIGIN\}/../lib/;/usr/lib/md++-git/")
 add_link_options(
 	"$<$<CONFIG:RELEASE>:-Wl,--gc-sections>"
 )
