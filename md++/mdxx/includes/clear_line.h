@@ -2,11 +2,10 @@
 #define MDXX_CLEAR_LINE_H
 
 #ifdef WIN32
-#define MDXX_ESC "\x1b"
+#define MDXX_CLEAR_LINE "\r\x1b[K"
 #else
-#define MDXX_ESC "\033"
+#define MDXX_CLEAR_LINE "\r\033[K"
 #endif
 
-#define MDXX_CLEAR_LINE "\r" MDXX_ESC "[K"
 
 #endif
