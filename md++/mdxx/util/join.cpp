@@ -1,4 +1,5 @@
 #include "join.h"
+#include "thread_safe_print.h"
 #include <vector>
 #include <string>
 
@@ -6,7 +7,8 @@ namespace mdxx {
 
 std::string join(const std::vector<std::string>& strings, std::string connector) {
 	if (strings.size() == 0) {
-		return "ERROR: You didn't put any strings in the vector.";
+		MDXX_warn("join was called with an empty vector of strings. Returning an empty string.");
+		return "";
 	}
 	std::string out;
 	size_t final_size = join_length(strings, connector) + 1;

@@ -11,7 +11,7 @@ T MDXX_get(mdxx::Expansion_Base * exp) {
 	} else {
 		std::string error_message;
 		error_message.reserve(2048);
-		error_message += "ERROR: Someone has passed in an argument of type\n\t`";
+		error_message += "Someone has passed in an argument of type\n\t`";
 		error_message += exp->get_type();
 		error_message += "`\nwhen the expected type was\n\t`";
 		error_message += typeid(T).name();

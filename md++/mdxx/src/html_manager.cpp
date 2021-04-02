@@ -1,6 +1,7 @@
 #include "html_manager.h"
 #include "default.h"
 #include "re2/re2.h"
+#include "thread_safe_print.h"
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -81,7 +82,10 @@ void HTML_Manager::pop() {
 	if (tab_level.length() > 0) {
 		tab_level.pop_back();
 	} else {
-		std::cerr << "WARNING: You popped the tab_level when it was at zero!\n";
+		MDXX_warn(
+"You popped the tab_level when it was at zero! Check the html file in\na text "
+"editor and see if the indentation is correct.\n"
+		);
 	}
 }
 
@@ -105,7 +109,7 @@ const char * Expansion<HTML_Manager*>::to_string() {
 
 template<>
 Expansion_Base* Expansion<HTML_Manager>::make_deep_copy() {
-	throw std::logic_error("ERROR: HTML_Manager should not be copied!");
+	throw std::logic_error("HTML_Manager was copied at some point, which should never happen!");
 }
 
 }

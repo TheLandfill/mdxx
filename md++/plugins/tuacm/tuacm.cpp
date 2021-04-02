@@ -11,6 +11,7 @@
 #include "c_string_copy.h"
 #include "sanitize_user_input.h"
 #include "mdxx_get.h"
+#include "thread_safe_print.h"
 #include "re2/re2.h"
 #include <iostream>
 #include <algorithm>
@@ -114,8 +115,7 @@ std::string string_urlify(const std::string& str) {
 
 char * get_author_description(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc < 3) {
-		std::cerr << "ERROR: Need to provide the path to the author descriptions, the author's name, and the total number of allowable characters.\n";
-		MDXX_print_current_line_and_exit(mdxx);
+		MDXX_error(mdxx, "Need to provide the path to the author descriptions, the author's name, and the total number of allowable characters.\n");
 		return nullptr;
 	}
 	std::string author_directory = MDXX_GET(const char *, args[0]);
@@ -127,8 +127,12 @@ char * get_author_description(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** 
 	file += description;
 	std::ifstream in{file};
 	if (!in.is_open()) {
-		std::cerr << "ERROR: Could not read the file `" << file << "`.\n";
-		MDXX_print_current_line_and_exit(mdxx);
+		std::string error_message;
+		error_message.reserve(1024);
+		error_message = "Could not read the file\n\t";
+		error_message += file;
+		error_message += "\n";
+		MDXX_error(mdxx, error_message.c_str());
 		return nullptr;
 	}
 	in.seekg(0, in.end);
@@ -147,8 +151,7 @@ char * get_author_description(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** 
 
 char * urlify(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc == 0) {
-		std::cerr << "ERROR: Need to provide at least one argument\n";
-		MDXX_print_current_line_and_exit(mdxx);
+		MDXX_error(mdxx, "Need to provide at least one argument\n");
 		return nullptr;
 	}
 	std::string pre_url = *static_cast<const char **>(args[0]->get_data());
@@ -158,10 +161,8 @@ char * urlify(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args, size_t argc
 
 char * heading_to_section(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc < 3) {
-		std::cerr <<
-"ERROR: heading_to_section requires (headings-do-not-touch), the heading text,\n"
-"and the heading size (any number from 1 - 6) as the arguments\n";
-		MDXX_print_current_line_and_exit(mdxx);
+		MDXX_error(mdxx, "heading_to_section requires (headings-do-not-touch), the heading text,\n"
+"and the heading size (any number from 1 - 6) as the arguments\n");
 		return nullptr;
 	}
 	Headings_Holder * hh = MDXX_GET(Headings_Holder*, args[0]);
@@ -194,8 +195,7 @@ char * heading_to_section(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args,
 
 char * sidenav(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
 	if (argc < 2) {
-		std::cerr << "ERROR: sidenav requires (headings-do-not-touch) and (html) as the arguments.\n";
-		MDXX_print_current_line_and_exit(mdxx);
+		MDXX_error(mdxx, "sidenav requires (headings-do-not-touch) and (html) as the arguments.\n");
 		return nullptr;
 	}
 	Headings_Holder * hh = MDXX_GET(Headings_Holder*, args[0]);
@@ -221,9 +221,9 @@ char * sidenav(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t ar
 }
 
 char * prefix_suffix_loop_func(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
+	static const RE2 dot_dot_sub("\\.\\.");
 	if (argc < 3) {
-		std::cerr << "ERROR: Must provide the html manager, prefix, and suffix." << std::endl;
-		MDXX_print_current_line_and_exit(mdxx);
+		MDXX_error(mdxx, "Must provide the html manager, prefix, and suffix.");
 		return nullptr;
 	}
 	std::string all_lines;
@@ -236,6 +236,7 @@ char * prefix_suffix_loop_func(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base**
 		auto sheets = mdxx::split(arg);
 		for (auto& sheet : sheets) {
 			MDXX_html_add_no_nl(html, prefix);
+			RE2::GlobalReplace(&sheet, dot_dot_sub, "");
 			MDXX_html_write(html, sheet.c_str());
 			MDXX_html_add_pre(html, suffix);
 		}

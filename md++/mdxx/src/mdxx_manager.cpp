@@ -7,6 +7,7 @@
 #include "c_string_copy.h"
 #include "curly_braces_sub.h"
 #include "mdxx_get.h"
+#include "thread_safe_print.h"
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
@@ -99,7 +100,9 @@ void MDXX_Manager::handle_context(HTML_Manager& html) {
 		if (cur_context()->can_allow_autosubs()) {
 			handle_curly_braces(&line_data.line, *MDXX_GET(HTML_Manager*, get_var("html")), *this);
 		}
-		cur_context()->process(html, line_data.line.c_str(), line_data.num_lines);
+		if (line_data.line != "") {
+			cur_context()->process(html, line_data.line.c_str(), line_data.num_lines);
+		}
 		cur_line_count = 0;
 	}
 }
@@ -125,8 +128,7 @@ void MDXX_Manager::immediate_substitution(std::string& line) {
 
 char * MDXX_Manager::open_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	if (argc < 2) {
-		throw std::runtime_error(
-"open_context (the implicit function) requires two arguments: the line as\n"
+		MDXX_error(mdxx, "open_context (the implicit function) requires two arguments: the line as\n"
 "text and the HTML_Manager*. If you are not doing something weird with the code\n"
 "or changing the variables, you probably forgot the name of the context and you\n"
 "don't need to worry about the previous sentence."
@@ -148,7 +150,7 @@ char * MDXX_Manager::open_context(MDXX_Manager * mdxx, Expansion_Base** args, si
 
 char * MDXX_Manager::close_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	if (argc < 2) {
-		throw std::runtime_error(
+		MDXX_error(mdxx,
 "close_context (the implicit function) requires two arguments: the line as\n"
 "text and the HTML_Manager as HTML_Manager*. If you are not doing something\n"
 "weird with the code or changing the variables, you probably forgot the name\n"
@@ -161,13 +163,11 @@ char * MDXX_Manager::close_context(MDXX_Manager * mdxx, Expansion_Base** args, s
 		mdxx->cur_context()->close(html);
 		mdxx->context.pop_back();
 	} else {
-		std::string error_message = "ERROR: ";
+		std::string error_message;
 		error_message.reserve(2048);
 		error_message += line;
 		error_message += " was not opened but it was closed.";
-		error_message += "\nLine that caused the problem:\n";
-		error_message += mdxx->print_line();
-		throw std::runtime_error(error_message);
+		MDXX_error(mdxx, error_message.c_str());
 	}
 	return nullptr;
 }
@@ -289,12 +289,10 @@ std::string MDXX_Manager::find_context_with_variable(const std::string& var) {
 			return *cur_context;
 		}
 	}
-	std::string error_message = "ERROR: ";
+	std::string error_message;
 	error_message.reserve(8192);
 	error_message += var;
 	error_message += " is not a variable in the current context stack.\n";
-	error_message += "\nLine that caused the problem:\n";
-	error_message += print_line();
 	error_message += "\n";
 	error_message += list_context_stack();
 	error_message += "\n\n";
@@ -304,13 +302,11 @@ std::string MDXX_Manager::find_context_with_variable(const std::string& var) {
 
 void MDXX_Manager::throw_exception_if_context_not_found(const std::string& con) {
 	if (context_dict->count(con) == 0) {
-		std::string error_message = "ERROR: ";
+		std::string error_message;
 		error_message.reserve(2048);
 		error_message += con;
 		error_message += " is not a defined context.\n\n";
 		error_message += list_valid_contexts();
-		error_message += "\nLine that caused the problem:\n";
-		error_message += print_line();
 		throw std::runtime_error(error_message);
 	}
 }
@@ -397,21 +393,17 @@ long MDXX_Manager::convert_string_to_long(const std::string& str) {
 		(void)e;
 		std::string error_message;
 		error_message.reserve(2048);
-		error_message += "ERROR: Could not convert ";
+		error_message += "Could not convert ";
 		error_message += str;
-		error_message += " to a long int.\n\n";
-		error_message += "\nLine that caused the problem:\n";
-		error_message += print_line();
+		error_message += " to a long int.\n";
 		throw std::invalid_argument(error_message);
 	} catch (const std::out_of_range& e) {
 		(void)e;
 		std::string error_message;
 		error_message.reserve(2048);
-		error_message += "ERROR: Could not fit ";
+		error_message += "Could not fit ";
 		error_message += str;
-		error_message += " into a long int.\n\n";
-		error_message += "\nLine that caused the problem:\n";
-		error_message += print_line();
+		error_message += " into a long int.\n";
 		throw std::invalid_argument(error_message);
 	}
 }
@@ -422,12 +414,11 @@ void MDXX_Manager::check_if_index_in_range(long index, size_t size) {
 	) {
 		std::string error_message;
 		error_message.reserve(2048);
-		error_message += "ERROR: Index ";
+		error_message += "Index ";
 		error_message += index;
 		error_message += " out of range ";
 		error_message += size;
-		error_message += "\n\n\nLine that caused the problem:\n";
-		error_message += print_line();
+		error_message += "\n";
 		throw std::runtime_error(error_message);
 	}
 }

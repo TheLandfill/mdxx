@@ -1,6 +1,7 @@
 #ifndef MDXX_HTML_UTILS_H
 #define MDXX_HTML_UTILS_H
 #include "expansion.h"
+#include "mdxx_manager.h"
 #include <vector>
 #include <unordered_map>
 
@@ -22,6 +23,7 @@ struct Basic_String {
 class Tag_Handler {
 public:
 	Tag_Handler(
+		MDXX_Manager * md,
 		Expansion_Base** args,
 		size_t argc,
 		const char * tag,
@@ -35,6 +37,7 @@ private:
 	std::vector<std::string> organize_user_input();
 	str_map create_attribute_map();
 private:
+	MDXX_Manager* md;
 	Expansion_Base** args;
 	size_t argc;
 	const char * tag;

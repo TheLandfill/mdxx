@@ -55,24 +55,24 @@ public:
 		if (myModule == NULL) {
 			std::string error_message;
 			error_message.reserve(2048);
-			error_message += "ERROR: Could not load `code_block.py`. It should be in the directory\n\n\t`";
+			error_message += "Could not load `code_block.py`. It should be in the directory\n\n\t`";
 			error_message += fs::absolute(MDXX_get_main_program_dir()).c_str();
 			error_message += "plugins`\n\n"
 				"If you aren't building from source, then you can find it at\n\n"
 				"\thttps://josephmellor.xyz/mdxx/\n\n"
 				"Download the file and copy or move it to the directory listed above.\n"
 				"If building from source, build the install target. On Linux, type\n\n\t`$ make install`\n\nin the same directory you typed `make`. On Windows, build target INSTALL.\n";
-			MDXX_thread_safe_print(stderr, error_message.c_str());
+			MDXX_error(md, error_message.c_str());
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		#pragma omp critical(python)
 		pygments_wrapper = PyObject_GetAttrString(myModule,(char*)"hand_code_to_pygments");
 		if (pygments_wrapper == NULL) {
-			MDXX_thread_safe_print(stderr, "ERROR: Could not find method \"hand_code_to_pygments\", which shouldn't happen.\nYou're on your own.\n");
+			MDXX_error(md,
+			"Could not find method \"hand_code_to_pygments\", which"
+			"shouldn't happen.\nYou're on your own.\n");
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 	}
@@ -81,14 +81,13 @@ public:
 		(void)html;
 		std::vector<std::string> args = mdxx::split(arg_ptr);
 		if (args.size() < 2) {
-			MDXX_thread_safe_print(stderr,
-				"ERROR: Need to specify the programming language for the code-block context. Proper usage would be\n"
+			MDXX_error(md,
+				"Need to specify the programming language for the code-block context. Proper usage would be\n"
 				"\t{{open code-block c++}}\n"
 				"You can also remove line numbers by adding the argument `no-line-numbers` after the `code-block`.\n"
 				"Also, make sure that the code style is the last argument or else you'll get an error saying\n"
 				"something like `pygments.util.ClassNotFound: no lexer for alias 'code-style' found`");
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		code_language = args[0];
@@ -103,12 +102,11 @@ public:
 			}
 		}
 		if (code_style == "") {
-			MDXX_thread_safe_print(stderr,
-				"ERROR: You must specify the desired code style when you first open a code-block.\n"
+			MDXX_error(md,
+				"You must specify the desired code style when you first open a code-block.\n"
 				"Example:\n"
 				"\t{{open code-block c++ trac}}\n"
 				"where \"trac\" is the preferred code-style.");
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		if (add_line_numbers) {
@@ -140,9 +138,9 @@ public:
 		#pragma omp critical(python)
 		py_lines_to_highlight = PyList_New(lines_to_highlight.size());
 		if (py_lines_to_highlight == NULL) {
-			MDXX_thread_safe_print(stderr, "ERROR: Could not create python list. I have no idea why.");
+			MDXX_error(md,
+				"Could not create python list. I have no idea why.");
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		for (size_t i = 0; i < lines_to_highlight.size(); i++) {
@@ -152,7 +150,7 @@ public:
 			if (py_current_line == NULL) {
 				std::string error_message;
 				error_message.reserve(2048);
-				error_message += "ERROR: Could not convert lines_to_highlight[";
+				error_message += "Could not convert lines_to_highlight[";
 				error_message += std::to_string(i);
 				error_message += "] to a PyLong. I have no idea why.\n";
 				error_message += "\tlines_to_highlight[";
@@ -160,9 +158,8 @@ public:
 				error_message += "]:\t";
 				error_message += lines_to_highlight[i];
 				error_message += "\n";
-				MDXX_thread_safe_print(stderr, error_message.c_str());
+				MDXX_error(md, error_message.c_str());
 				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
 				return;
 			}
 			int py_list_err_code;
@@ -171,16 +168,15 @@ public:
 			if (py_list_err_code == -1) {
 				std::string error_message;
 				error_message.reserve(2048);
-				error_message += "ERROR: Tried to insert object at index ";
+				error_message += "Tried to insert object at index ";
 				error_message += std::to_string(i);
 				error_message += ", which is out of bounds for the list.\n"
 				"This shouldn't happen, but it might be something I could solve.\n"
 				"Size of list should be ";
 				error_message += std::to_string(lines_to_highlight.size());
 				error_message += ".\n";
-				MDXX_thread_safe_print(stderr, error_message.c_str());
+				MDXX_error(md, error_message.c_str());
 				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
 				return;
 			}
 		}
@@ -190,12 +186,11 @@ public:
 		if (py_code_block == NULL) {
 			std::string error_message;
 			error_message.reserve(code_block.length() + 100);
-			error_message += "ERROR: Could not convert code_block to python string. code_block is `";
+			error_message += "Could not convert code_block to python string. code_block is `";
 			error_message += code_block;
 			error_message += "`\n";
-			MDXX_thread_safe_print(stderr, error_message.c_str());
+			MDXX_error(md, error_message.c_str());
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		PyObject* py_code_language;
@@ -204,12 +199,11 @@ public:
 		if (py_code_language == NULL) {
 			std::string error_message;
 			error_message.reserve(1024);
-			error_message += "ERROR: Could not convert code_language to python string. code_language is `";
+			error_message += "Could not convert code_language to python string. code_language is `";
 			error_message += code_language;
 			error_message += "`\n";
-			MDXX_thread_safe_print(stderr, error_message.c_str());
+			MDXX_error(md, error_message.c_str());
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		PyObject* py_code_style;
@@ -218,12 +212,11 @@ public:
 		if (py_code_style == NULL) {
 			std::string error_message;
 			error_message.reserve(1024);
-			error_message += "ERROR: Could not convert code_style to python string. code_style is `";
+			error_message += "Could not convert code_style to python string. code_style is `";
 			error_message += code_style.c_str();
 			error_message += "`\n";
-			MDXX_thread_safe_print(stderr, error_message.c_str());
+			MDXX_error(md, error_message.c_str());
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		PyObject * py_add_line_numbers;
@@ -232,12 +225,11 @@ public:
 		if (py_add_line_numbers == NULL) {
 			std::string error_message;
 			error_message.reserve(1024);
-			error_message += "ERROR: Could not convert add_line_numbers to python bool. add_line_numbers is `";
+			error_message += "Could not convert add_line_numbers to python bool. add_line_numbers is `";
 			error_message += add_line_numbers;
 			error_message += "`\n";
-			MDXX_thread_safe_print(stderr, error_message.c_str());
+			MDXX_error(md, error_message.c_str());
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		PyObject * args;
@@ -245,16 +237,15 @@ public:
 		args = PyTuple_Pack(5, py_code_block, py_code_language, py_add_line_numbers, py_code_style, py_lines_to_highlight);
 		if (args == NULL) {
 			std::stringstream strstr;
-			strstr << "ERROR: Could not pack the arguments to hand_code_to_pygments." << std::endl;
+			strstr << "Could not pack the arguments to hand_code_to_pygments." << std::endl;
 			strstr << "\t`" << code_block
 				<< "`\n\t`" << code_language
 				<< "`\n\t`" << add_line_numbers
 				<< "`\n\t`" << code_style
 				<< "`\n\t`" << py_lines_to_highlight
 				<< "`" << std::endl;
-			MDXX_thread_safe_print(stderr, strstr.str().c_str());
+			MDXX_error(md, strstr.str().c_str());
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 		PyObject* myResult;
@@ -262,16 +253,15 @@ public:
 		myResult = PyObject_CallObject(pygments_wrapper, args);
 		if (myResult == NULL) {
 			std::stringstream strstr;
-			strstr << "ERROR: hand_code_to_pygments was unable to produce output." << std::endl;
+			strstr << "hand_code_to_pygments was unable to produce output." << std::endl;
 			strstr << "\t`" << code_block
 				<< "`\n\t`" << code_language
 				<< "`\n\t`" << add_line_numbers
 				<< "`\n\t`" << code_style
 				<< "`\n\t`" << py_lines_to_highlight
 				<< "`" << std::endl;
-			MDXX_thread_safe_print(stderr, strstr.str().c_str());
+			MDXX_error(md, strstr.str().c_str());
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 			return;
 		}
 
@@ -282,12 +272,11 @@ public:
 		if (ptr == NULL) {
 			std::string error_message;
 			error_message.reserve(1024);
-			error_message += "ERROR: pygments returned something that could not be written in UTF8. The output of pygments is `";
+			error_message += "pygments returned something that could not be written in UTF8. The output of pygments is `";
 			error_message += ptr;
 			error_message += "`\n";
-			MDXX_thread_safe_print(stderr, error_message.c_str());
+			MDXX_error(md, error_message.c_str());
 			thread_safe_py_err_print();
-			MDXX_print_current_line_and_exit(md);
 		} else {
 			MDXX_html_write(&html, ptr);
 			MDXX_html_add(&html, "");

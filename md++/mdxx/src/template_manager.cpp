@@ -4,6 +4,7 @@
 #include "metadata.h"
 #include "mdxx_get.h"
 #include "clear_line.h"
+#include "thread_safe_print.h"
 #include <sstream>
 #include <memory>
 #include <iostream>
@@ -57,8 +58,7 @@ void Template_Manager::process_template() {
 			template_mdxx.handle_context(html);
 		}
 	} catch (std::runtime_error& e) {
-		template_mdxx.error_exit();
-		std::cerr << e.what() << std::endl;
+		MDXX_error(&template_mdxx, e.what());
 	}
 	if (template_mdxx.had_error()) {
 		std::cerr << MDXX_CLEAR_LINE << "\nERROR DETECTED in\n\t" << content->get_infile() << "\nOutput will be deleted.\n"
@@ -75,13 +75,10 @@ bool Template_Manager::had_error() {
 
 char * process_content(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
-		std::cerr <<
-"process_content requires the a Content_Manager as its argument."
-		<< std::endl;
-		MDXX_print_current_line_and_exit(mdxx);
-		return nullptr;
+		MDXX_error(mdxx, "process_content requires the a Content_Manager as its argument.");
+	} else {
+		MDXX_get<std::shared_ptr<Content_Manager>>(args[0])->process_content();
 	}
-	(*static_cast<std::shared_ptr<Content_Manager>*>(args[0]->get_data()))->process_content();
 	return nullptr;
 }
 

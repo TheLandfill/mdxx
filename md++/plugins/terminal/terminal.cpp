@@ -9,6 +9,7 @@
 #include "c_string_copy.h"
 #include "sanitize_user_input.h"
 #include "mdxx_get.h"
+#include "thread_safe_print.h"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -80,8 +81,7 @@ public:
 	}
 	static char * prompt(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** args, size_t argc) {
 		if (argc == 0) {
-			std::cerr << "ERROR: First argument to prompt must be (self)." << std::endl;
-			MDXX_print_current_line_and_exit(mdxx);
+			MDXX_error(mdxx, "First argument to prompt must be (self).");
 			return nullptr;
 		}
 		Terminal * term = MDXX_GET(Terminal*, args[0]);
@@ -91,8 +91,7 @@ public:
 	}
 	static char * mac_prompt(mdxx::MDXX_Manager* mdxx, mdxx::Expansion_Base** args, size_t argc) {
 		if (argc == 0) {
-			std::cerr << "ERROR: First argument to mac-prompt must be (self)." << std::endl;
-			MDXX_print_current_line_and_exit(mdxx);
+			MDXX_error(mdxx, "First argument to mac-prompt must be (self).");
 			return nullptr;
 		}
 		Terminal * term = MDXX_GET(Terminal*, args[0]);

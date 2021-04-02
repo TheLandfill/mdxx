@@ -6,6 +6,7 @@
 #include "mdxx_get.h"
 #include "html_manager.h"
 #include "mdxx_manager.h"
+#include "thread_safe_print.h"
 #include <cstring>
 #include <stdexcept>
 #include <string>
@@ -284,7 +285,7 @@ bool Tag_Handler::catch_bad_urls(std::string url) {
 		if (!valid_url_chars[c]) {
 			std::string error_message;
 			error_message.reserve(1024);
-			error_message += "ERROR: The url\n\n\t<";
+			error_message += "The url\n\n\t<";
 			error_message += url;
 			error_message += ">\n\nis using the illegal character `";
 			error_message +=  c;
@@ -306,7 +307,7 @@ bool Tag_Handler::catch_bad_urls(std::string url) {
 		if (c == ':') {
 			std::string error_message;
 			error_message.reserve(1024);
-			error_message += "ERROR: The url\n\n\t<";
+			error_message += "The url\n\n\t<";
 			error_message += url;
 			error_message += ">\n\nis using an invalid protocol. Valid protocols are\n";
 			for (auto& protocol : valid_protocols) {
@@ -476,20 +477,20 @@ char * img_link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	if (args_offset >= argc) {
 		std::string error_message;
 		error_message.reserve(1024);
-		error_message += "ERROR: Not enough arguments provided to img-a. Arguments provided were\n\n";
+		error_message += "Not enough arguments provided to img-a. Arguments provided were\n\n";
 		for (size_t i = 0; i < argc; i++) {
 			error_message += "\t";
 			error_message += args[i]->to_string();
 			error_message += "\n";
 		}
-		std::cerr << error_message << std::flush;
-		MDXX_print_current_line_and_exit(mdxx);
+		MDXX_error(mdxx, error_message.c_str());
 		return nullptr;
 	}
-	Tag_Handler tl{args + args_offset, 1, "a", {""}, {"href"}};
+	Tag_Handler tl{mdxx, args + args_offset, 1, "a", {""}, {"href"}};
 	Basic_String link_part = tl.generate_tag();
 	args_offset += 1;
 	Tag_Handler t{
+		mdxx,
 		args + args_offset,
 		argc - args_offset,
 		"img",
@@ -515,6 +516,7 @@ char * img(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 		args_offset -= 1;
 	}
 	Tag_Handler t{
+		mdxx,
 		args + args_offset,
 		argc - args_offset,
 		"img",
@@ -527,6 +529,7 @@ char * img(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 char * link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	(void)mdxx;
 	Tag_Handler t{
+		mdxx,
 		args,
 		argc,
 		"a",
@@ -537,12 +540,14 @@ char * link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 }
 
 Tag_Handler::Tag_Handler(
+	MDXX_Manager * md_c,
 	Expansion_Base** args_c,
 	size_t argc_c,
 	const char * tag_c,
 	const std::vector<std::string>& a,
 	const std::vector<std::string>& r
 ) :
+	md(md_c),
 	args(args_c),
 	argc(argc_c),
 	tag(tag_c),

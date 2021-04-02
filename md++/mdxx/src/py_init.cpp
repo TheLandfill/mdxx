@@ -1,4 +1,5 @@
 #include "py_init.h"
+#include "thread_safe_print.h"
 #include <Python.h>
 #include <iostream>
 
@@ -26,9 +27,9 @@ extern "C" DLL_IMPORT_EXPORT void MDXX_py_init() {
 void MDXX_py_finalize() {
 	if (python_has_been_initialized) {
 		if (Py_FinalizeEx() < 0) {
-			std::cerr <<
-				"ERROR: Python had trouble closing for some reason.\n"
-				<< "It shouldn't be a big deal since the program is about to exit anyway."
+			std::cerr << MDXX_ERROR_PREFIX
+"Python had trouble closing for some reason. It shouldn't be a big deal\n"
+"since the program is about to exit anyway."
 				<< std::endl;
 		}
 	}
