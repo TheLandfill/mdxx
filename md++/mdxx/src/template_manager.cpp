@@ -48,12 +48,17 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 }
 
 void Template_Manager::process_template() {
-	while (true) {
-		std::string line = template_mdxx.find_and_return_next_content_line();
-		if (template_mdxx.at_end_of_file()) {
-			break;
+	try {
+		while (true) {
+			std::string line = template_mdxx.find_and_return_next_content_line();
+			if (template_mdxx.at_end_of_file()) {
+				break;
+			}
+			template_mdxx.handle_context(html);
 		}
-		template_mdxx.handle_context(html);
+	} catch (std::runtime_error& e) {
+		template_mdxx.error_exit();
+		std::cerr << e.what() << std::endl;
 	}
 	if (template_mdxx.had_error()) {
 		std::cerr << MDXX_CLEAR_LINE << "\nERROR DETECTED in\n\t" << content->get_infile() << "\nOutput will be deleted.\n"

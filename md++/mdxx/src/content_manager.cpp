@@ -3,6 +3,7 @@
 #include "clear_line.h"
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 #include <iostream>
 

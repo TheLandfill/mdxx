@@ -4,8 +4,15 @@
 
 namespace mdxx {
 
+template<>
+Expansion<char *>::Expansion(char * d) : data(d), type(typeid(const char *).name()) {}
+
 const char * Expansion<gen_func>::to_string() {
 	return full_name.c_str();
+}
+
+const char * Expansion<gen_func>::get_type() {
+	return type.c_str();
 }
 
 Expansion<std::string>::Expansion(std::string d) : data(d) {}
@@ -16,6 +23,10 @@ void * Expansion<std::string>::get_data() {
 
 const char * Expansion<std::string>::to_string() {
 	return data.c_str();
+}
+
+const char * Expansion<std::string>::get_type() {
+	return type.c_str();
 }
 
 Expansion_Base* Expansion<std::string>::make_deep_copy() {
@@ -42,10 +53,7 @@ const char * Expansion<const char *>::to_string() {
 
 template<>
 const char * Expansion<char *>::to_string() {
-	std::stringstream strstr;
-	strstr << data;
-	to_str = strstr.str();
-	return to_str.c_str();
+	return data;
 }
 
 template<>

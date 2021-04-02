@@ -1,0 +1,6 @@
+article.mdxx
+
+{{html}}="text"
+{{print-vars}}
+
+{{img tuacm.com/authors/joseph-mellor/large.jpg text}}

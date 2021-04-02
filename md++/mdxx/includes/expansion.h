@@ -14,6 +14,7 @@ struct Expansion_Base {
 	virtual void * get_data() = 0;
 	virtual const char * to_string() = 0;
 	virtual Expansion_Base* make_deep_copy() = 0;
+	virtual const char * get_type() = 0;
 };
 
 class MDXX_Manager;
@@ -31,16 +32,19 @@ struct Expansion : Expansion_Base {
 	}
 	const char * to_string() override;
 	Expansion_Base* make_deep_copy() override;
+	const char * get_type() override;
 	~Expansion() {}
 };
 
 template<>
 struct Expansion<std::string> : Expansion_Base {
 	std::string data;
+	std::string type = typeid(std::string).name();
 	Expansion(std::string d);
 	void * get_data() override;
 	const char * to_string() override;
 	Expansion_Base* make_deep_copy() override;
+	const char * get_type() override;
 };
 
 template <typename T>
@@ -48,12 +52,13 @@ struct Expansion<T *> : Expansion_Base {
 	T * data;
 	std::string to_str;
 	std::string type;
-	Expansion(T * d) : data(d), type(typeid(T).name()) {}
+	Expansion(T * d) : data(d), type(typeid(T*).name()) {}
 	void * get_data() override {
 		return &data;
 	}
 	const char * to_string() override;
 	Expansion_Base* make_deep_copy() override;
+	const char * get_type() override;
 	~Expansion() {}
 };
 
@@ -61,11 +66,13 @@ template<>
 struct Expansion<gen_func> : Expansion_Base {
 	gen_func func;
 	std::string name;
+	std::string type = typeid(gen_func).name();
 	std::string full_name;
 	Expansion(gen_func function, std::string name);
 	void * get_data() override;
 	const char * to_string() override;
 	Expansion_Base* make_deep_copy() override;
+	const char * get_type() override;
 };
 
 template<typename T>
@@ -75,12 +82,25 @@ const char * Expansion<T>::to_string() {
 }
 
 template<typename T>
+const char * Expansion<T>::get_type() {
+	return type.c_str();
+}
+
+template<typename T>
 const char * Expansion<T*>::to_string() {
 	std::stringstream strstr;
 	strstr << std::string(*data) << " (Pointer) @ " << data;
 	to_str = strstr.str();
 	return to_str.c_str();
 }
+
+template<typename T>
+const char * Expansion<T*>::get_type() {
+	return type.c_str();
+}
+
+template<>
+Expansion<char *>::Expansion(char * data);
 
 template<>
 const char * Expansion<char *>::to_string();
