@@ -90,7 +90,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		#pragma omp critical
 		{
 			finished_webpages += (!mdxx.had_error() && !template_reader.had_error());
-			std::cout << MDXX_CLEAR_LINE << finished_webpages << "/" << argc - 2 << " finished." << std::flush << "\r";
+			std::cout << MDXX_CLEAR_LINE << finished_webpages << "/" << argc - 2 << " finished." << std::flush << MDXX_CLEAR_LINE;
 		}
 	}
 	std::cout << std::endl;
