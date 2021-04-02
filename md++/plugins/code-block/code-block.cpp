@@ -27,6 +27,7 @@
 void thread_safe_py_err_print() {
 	#pragma omp critical(thread_safe_printing)
 	{
+		#pragma omp critical(python)
 		PyErr_Print();
 	}
 }
@@ -39,6 +40,7 @@ const char * mdxx::Expansion<Code_Block*>::to_string();
 class Code_Block : public mdxx::Context {
 public:
 	Code_Block(const char * n, mdxx::Plugin_Loader * p, mdxx::MDXX_Manager * m) : name(n), pl(p), md(m) {
+		#pragma omp critical(python)
 		MDXX_py_init();
 		variables = MDXX_get_variable_map(pl, this);
 		add_variable("{", "{");
@@ -47,7 +49,9 @@ public:
 		add_variable("lt", "<");
 		add_variable("gt", ">");
 		add_variable("amp", "&");
-		PyObject* myModule = PyImport_ImportModule("code_block");
+		PyObject * myModule = NULL;
+		#pragma omp critical(python)
+		myModule = PyImport_ImportModule("code_block");
 		if (myModule == NULL) {
 			std::string error_message;
 			error_message.reserve(2048);
@@ -63,6 +67,7 @@ public:
 			MDXX_print_current_line_and_exit(md);
 			return;
 		}
+		#pragma omp critical(python)
 		pygments_wrapper = PyObject_GetAttrString(myModule,(char*)"hand_code_to_pygments");
 		if (pygments_wrapper == NULL) {
 			MDXX_thread_safe_print(stderr, "ERROR: Could not find method \"hand_code_to_pygments\", which shouldn't happen.\nYou're on your own.\n");
@@ -131,18 +136,19 @@ public:
 	}
 
 	void close(mdxx::HTML_Manager& html) override {
-		bool valid = true;
-		#pragma omp critical(code_block_close)
-		{
-		PyObject* py_lines_to_highlight = PyList_New(lines_to_highlight.size());
+		PyObject* py_lines_to_highlight = NULL;
+		#pragma omp critical(python)
+		py_lines_to_highlight = PyList_New(lines_to_highlight.size());
 		if (py_lines_to_highlight == NULL) {
 			MDXX_thread_safe_print(stderr, "ERROR: Could not create python list. I have no idea why.");
 			thread_safe_py_err_print();
 			MDXX_print_current_line_and_exit(md);
-			valid = false;
+			return;
 		}
-		for (size_t i = 0; i < lines_to_highlight.size() && valid; i++) {
-			PyObject* py_current_line = PyLong_FromUnsignedLong(lines_to_highlight[i]);
+		for (size_t i = 0; i < lines_to_highlight.size(); i++) {
+			PyObject* py_current_line;
+			#pragma omp critical(python)
+			py_current_line = PyLong_FromUnsignedLong(lines_to_highlight[i]);
 			if (py_current_line == NULL) {
 				std::string error_message;
 				error_message.reserve(2048);
@@ -157,10 +163,12 @@ public:
 				MDXX_thread_safe_print(stderr, error_message.c_str());
 				thread_safe_py_err_print();
 				MDXX_print_current_line_and_exit(md);
-				valid = false;
-				continue;
+				return;
 			}
-			if (PyList_SetItem(py_lines_to_highlight, i, py_current_line) == -1) {
+			int py_list_err_code;
+			#pragma omp critical(python)
+			py_list_err_code = PyList_SetItem(py_lines_to_highlight, i, py_current_line);
+			if (py_list_err_code == -1) {
 				std::string error_message;
 				error_message.reserve(2048);
 				error_message += "ERROR: Tried to insert object at index ";
@@ -173,125 +181,119 @@ public:
 				MDXX_thread_safe_print(stderr, error_message.c_str());
 				thread_safe_py_err_print();
 				MDXX_print_current_line_and_exit(md);
-				valid = false;
+				return;
 			}
 		}
 		PyObject* py_code_block;
-		if (valid) {
-			py_code_block = PyUnicode_FromString(code_block.c_str());
-			if (py_code_block == NULL) {
-				std::string error_message;
-				error_message.reserve(code_block.length() + 100);
-				error_message += "ERROR: Could not convert code_block to python string. code_block is `";
-				error_message += code_block;
-				error_message += "`\n";
-				MDXX_thread_safe_print(stderr, error_message.c_str());
-				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
-				valid = false;
-			}
+		#pragma omp critical(python)
+		py_code_block = PyUnicode_FromString(code_block.c_str());
+		if (py_code_block == NULL) {
+			std::string error_message;
+			error_message.reserve(code_block.length() + 100);
+			error_message += "ERROR: Could not convert code_block to python string. code_block is `";
+			error_message += code_block;
+			error_message += "`\n";
+			MDXX_thread_safe_print(stderr, error_message.c_str());
+			thread_safe_py_err_print();
+			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 		PyObject* py_code_language;
-		if (valid) {
-			py_code_language = PyUnicode_FromString(code_language.c_str());
-			if (py_code_language == NULL) {
-				std::string error_message;
-				error_message.reserve(1024);
-				error_message += "ERROR: Could not convert code_language to python string. code_language is `";
-				error_message += code_language;
-				error_message += "`\n";
-				MDXX_thread_safe_print(stderr, error_message.c_str());
-				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
-				valid = false;
-			}
+		#pragma omp critical(python)
+		py_code_language = PyUnicode_FromString(code_language.c_str());
+		if (py_code_language == NULL) {
+			std::string error_message;
+			error_message.reserve(1024);
+			error_message += "ERROR: Could not convert code_language to python string. code_language is `";
+			error_message += code_language;
+			error_message += "`\n";
+			MDXX_thread_safe_print(stderr, error_message.c_str());
+			thread_safe_py_err_print();
+			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 		PyObject* py_code_style;
-		if (valid) {
-			py_code_style = PyUnicode_FromString(code_style.c_str());
-			if (py_code_style == NULL) {
-				std::string error_message;
-				error_message.reserve(1024);
-				error_message += "ERROR: Could not convert code_style to python string. code_style is `";
-				error_message += code_style.c_str();
-				error_message += "`\n";
-				MDXX_thread_safe_print(stderr, error_message.c_str());
-				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
-				valid = false;
-			}
+		#pragma omp critical(python)
+		py_code_style = PyUnicode_FromString(code_style.c_str());
+		if (py_code_style == NULL) {
+			std::string error_message;
+			error_message.reserve(1024);
+			error_message += "ERROR: Could not convert code_style to python string. code_style is `";
+			error_message += code_style.c_str();
+			error_message += "`\n";
+			MDXX_thread_safe_print(stderr, error_message.c_str());
+			thread_safe_py_err_print();
+			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 		PyObject * py_add_line_numbers;
-		if (valid) {
-			py_add_line_numbers = PyBool_FromLong(add_line_numbers);
-			if (py_add_line_numbers == NULL) {
-				std::string error_message;
-				error_message.reserve(1024);
-				error_message += "ERROR: Could not convert add_line_numbers to python bool. add_line_numbers is `";
-				error_message += add_line_numbers;
-				error_message += "`\n";
-				MDXX_thread_safe_print(stderr, error_message.c_str());
-				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
-				valid = false;
-			}
+		#pragma omp critical(python)
+		py_add_line_numbers = PyBool_FromLong(add_line_numbers);
+		if (py_add_line_numbers == NULL) {
+			std::string error_message;
+			error_message.reserve(1024);
+			error_message += "ERROR: Could not convert add_line_numbers to python bool. add_line_numbers is `";
+			error_message += add_line_numbers;
+			error_message += "`\n";
+			MDXX_thread_safe_print(stderr, error_message.c_str());
+			thread_safe_py_err_print();
+			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 		PyObject * args;
-		if (valid) {
-			args = PyTuple_Pack(5, py_code_block, py_code_language, py_add_line_numbers, py_code_style, py_lines_to_highlight);
-			if (args == NULL) {
-				std::stringstream strstr;
-				strstr << "ERROR: Could not pack the arguments to hand_code_to_pygments." << std::endl;
-				strstr << "\t`" << code_block.c_str()
-					<< "`\n\t`" << code_language.c_str()
-					<< "`\n\t`" << add_line_numbers
-					<< "`\n\t`" << code_style.c_str()
-					<< "`\n\t`" << py_lines_to_highlight
-					<< "`" << std::endl;
-				MDXX_thread_safe_print(stderr, strstr.str().c_str());
-				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
-				valid = false;
-			}
+		#pragma omp critical(python)
+		args = PyTuple_Pack(5, py_code_block, py_code_language, py_add_line_numbers, py_code_style, py_lines_to_highlight);
+		if (args == NULL) {
+			std::stringstream strstr;
+			strstr << "ERROR: Could not pack the arguments to hand_code_to_pygments." << std::endl;
+			strstr << "\t`" << code_block
+				<< "`\n\t`" << code_language
+				<< "`\n\t`" << add_line_numbers
+				<< "`\n\t`" << code_style
+				<< "`\n\t`" << py_lines_to_highlight
+				<< "`" << std::endl;
+			MDXX_thread_safe_print(stderr, strstr.str().c_str());
+			thread_safe_py_err_print();
+			MDXX_print_current_line_and_exit(md);
+			return;
 		}
 		PyObject* myResult;
-		if (valid) {
-			myResult = PyObject_CallObject(pygments_wrapper, args);
-			if (myResult == NULL) {
-				std::stringstream strstr;
-				strstr << "ERROR: hand_code_to_pygments was unable to produce output." << std::endl;
-				strstr << "\t`" << code_block.c_str()
-					<< "`\n\t`" << code_language.c_str()
-					<< "`\n\t`" << add_line_numbers
-					<< "`\n\t`" << code_style.c_str()
-					<< "`\n\t`" << py_lines_to_highlight
-					<< "`" << std::endl;
-				MDXX_thread_safe_print(stderr, strstr.str().c_str());
-				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
-				valid = false;
-			}
+		#pragma omp critical(python)
+		myResult = PyObject_CallObject(pygments_wrapper, args);
+		if (myResult == NULL) {
+			std::stringstream strstr;
+			strstr << "ERROR: hand_code_to_pygments was unable to produce output." << std::endl;
+			strstr << "\t`" << code_block
+				<< "`\n\t`" << code_language
+				<< "`\n\t`" << add_line_numbers
+				<< "`\n\t`" << code_style
+				<< "`\n\t`" << py_lines_to_highlight
+				<< "`" << std::endl;
+			MDXX_thread_safe_print(stderr, strstr.str().c_str());
+			thread_safe_py_err_print();
+			MDXX_print_current_line_and_exit(md);
+			return;
 		}
+
 		Py_ssize_t size;
-		if (valid) {
-			const char *ptr = PyUnicode_AsUTF8AndSize(myResult, &size);
-			if (ptr == NULL) {
-				std::string error_message;
-				error_message.reserve(1024);
-				error_message += "ERROR: pygments returned something that could not be written in UTF8. The output of pygments is `";
-				error_message += ptr;
-				error_message += "`\n";
-				MDXX_thread_safe_print(stderr, error_message.c_str());
-				thread_safe_py_err_print();
-				MDXX_print_current_line_and_exit(md);
-			} else {
-				MDXX_html_write(&html, ptr);
-				MDXX_html_add(&html, "");
-				if (add_line_numbers) {
-					MDXX_html_add(&html, "</div>");
-				}
+		const char *ptr;
+		#pragma omp critical(python)
+		ptr = PyUnicode_AsUTF8AndSize(myResult, &size);
+		if (ptr == NULL) {
+			std::string error_message;
+			error_message.reserve(1024);
+			error_message += "ERROR: pygments returned something that could not be written in UTF8. The output of pygments is `";
+			error_message += ptr;
+			error_message += "`\n";
+			MDXX_thread_safe_print(stderr, error_message.c_str());
+			thread_safe_py_err_print();
+			MDXX_print_current_line_and_exit(md);
+		} else {
+			MDXX_html_write(&html, ptr);
+			MDXX_html_add(&html, "");
+			if (add_line_numbers) {
+				MDXX_html_add(&html, "</div>");
 			}
-		}
 		}
 	}
 

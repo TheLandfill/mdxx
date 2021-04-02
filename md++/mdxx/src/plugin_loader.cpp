@@ -68,7 +68,7 @@ static std::string lib_prefix = LIB_PREFIX;
 static std::string lib_suffix = LIB_SUFFIX;
 
 void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_library_name) {
-	#pragma omp critical
+	#pragma omp critical(first_plugin)
 	{
 		static bool first_plugin_loaded = true;
 		if (first_plugin_loaded) {
@@ -77,7 +77,7 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 			first_plugin_loaded = false;
 		}
 	}
-	#pragma omp critical
+	#pragma omp critical(load_plugin)
 	{
 		std::string full_library_name = plugin_dir + lib_prefix + shared_library_name + lib_suffix;
 		std::cout << "Attempting to load " << full_library_name << "." << std::flush;
