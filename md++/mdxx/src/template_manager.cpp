@@ -77,7 +77,7 @@ char * process_content(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) 
 	if (argc < 1) {
 		MDXX_error(mdxx, "process_content requires the a Content_Manager as its argument.");
 	} else {
-		MDXX_get<std::shared_ptr<Content_Manager>>(args[0])->process_content();
+		MDXX_get<Content_Manager*>(args[0])->process_content();
 	}
 	return nullptr;
 }
