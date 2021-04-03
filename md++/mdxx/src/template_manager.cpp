@@ -86,7 +86,7 @@ template<>
 const char * Expansion<Template_Manager*>::to_string() {
 	std::stringstream strstr;
 	Template_Manager* tm = MDXX_GET(Template_Manager*, this);
-	strstr << "<Template_Manager object @ " << tm << ">";
+	strstr << "Template_Manager @ " << tm << MDXX_FUNC_COLOR << "(object)" << MDXX_RESET;
 	tm->template_object_id = strstr.str();
 	return tm->template_object_id.c_str();
 }

@@ -102,7 +102,7 @@ void HTML_Manager::delete_outfile() {
 template<>
 const char * Expansion<HTML_Manager*>::to_string() {
 	std::stringstream strstr;
-	strstr << "<HTML_Manager object @ " << this->get_data() << ">";
+	strstr << "HTML_Manager @ "  << this->get_data() << MDXX_FUNC_COLOR << "(object)" << MDXX_RESET;
 	data->html_object_id = strstr.str();
 	return data->html_object_id.c_str();
 }

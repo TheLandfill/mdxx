@@ -473,7 +473,7 @@ MDXX_Manager::~MDXX_Manager() {
 template<>
 const char * Expansion<MDXX_Manager*>::to_string() {
 	std::stringstream strstr;
-	strstr << "<MDXX_Manager object @ " << data << ">";
+	strstr << "MDXX_Manager @ " << data << MDXX_FUNC_COLOR << "(object)" << MDXX_RESET;
 	data->mdxx_object_id = strstr.str();
 	return data->mdxx_object_id.c_str();
 }

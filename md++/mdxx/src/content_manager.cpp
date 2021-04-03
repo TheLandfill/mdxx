@@ -42,7 +42,7 @@ std::string Content_Manager::get_infile() {
 template<>
 const char * Expansion<Content_Manager*>::to_string() {
 	std::stringstream output;
-	output << "<Content_Manager @ " << data << ">";
+	output << "Content_Manager @ " << data << MDXX_FUNC_COLOR << "(object)" << MDXX_RESET;
 	data->content_object_id = output.str();
 	return data->content_object_id.c_str();
 }

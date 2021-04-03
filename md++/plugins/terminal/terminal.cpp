@@ -124,7 +124,7 @@ extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {
 template<>
 const char * mdxx::Expansion<Terminal*>::to_string() {
 	std::stringstream strstr;
-	strstr << "<Terminal object @ " << data << ">";
+	strstr << "Terminal @ " << data << MDXX_FUNC_COLOR << "(object)" << MDXX_RESET;
 	data->term_object_id = strstr.str();
 	return data->term_object_id.c_str();
 }
