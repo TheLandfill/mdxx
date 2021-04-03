@@ -30,11 +30,11 @@ const char * MDXX_list_vars(mdxx::variable_map* variables, std::string& all_vars
 		all_vars_as_text += MDXX_RESET;
 		all_vars_as_text += std::string(25 - vars_in_context.first.length(), ' ');
 		all_vars_as_text += "  ┃  ";
+		all_vars_as_text += "\"";
 		all_vars_as_text += MDXX_VAL_COLOR;
-		all_vars_as_text += "\"";
 		all_vars_as_text += vars_in_context.second->to_string();
-		all_vars_as_text += "\"";
 		all_vars_as_text += MDXX_RESET;
+		all_vars_as_text += "\"";
 		all_vars_as_text += "\n";
 	}
 	return all_vars_as_text.c_str();
