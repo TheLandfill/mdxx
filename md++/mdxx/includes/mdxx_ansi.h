@@ -8,6 +8,7 @@ extern const char * MDXX_RESET_COLOR;
 extern const char * MDXX_RESET_FORMATTING;
 extern const char * MDXX_CONTEXT_COLOR;
 extern const char * MDXX_LINE_COLOR;
+extern const char * MDXX_FILE_COLOR;
 extern const char * MDXX_ERROR_COLOR;
 extern const char * MDXX_ERROR_PREFIX;
 extern const char * MDXX_WARNING_COLOR;
