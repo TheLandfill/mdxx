@@ -350,10 +350,14 @@ std::string MDXX_Manager::list_all_vars() {
 	std::string output;
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
 		throw_exception_if_context_not_found(*cur_context);
+		output += "                                ";
+		output = output.substr(0, output.length() - (cur_context->length() / 2));
+		output += MDXX_CONTEXT_COLOR;
 		output += *cur_context;
-		output += " variables:\n";
+		output += MDXX_RESET;
+		output += "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";\
 		output += context_dict->at(*cur_context)->list_variables_as_text();
-		output += "\n";
+		output +=   "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 	}
 	return output;
 }

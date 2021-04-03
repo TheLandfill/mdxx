@@ -15,10 +15,12 @@ namespace mdxx {
 #define MDXX_VAR_COLOR "\x1b[38;2;128;255;200m"
 #define MDXX_VAL_COLOR "\x1b[38;2;255;153;255m"
 #define MDXX_RESET "\x1b[m"
+#define MDXX_CONTEXT_COLOR "\x1b[1m\x1b[38;2;159;135;255m"
 #else
 #define MDXX_VAR_COLOR "\033[38;2;128;255;200m"
 #define MDXX_VAL_COLOR "\033[38;2;255;153;255m"
 #define MDXX_RESET "\033[m"
+#define MDXX_CONTEXT_COLOR "\033[1m\033[38;2;159;135;255m"
 #endif
 
 #ifdef MDXX_EXTERNAL_CONTEXT
@@ -53,8 +55,8 @@ void X::add_variable(const char * variable, const char * value) {\
 \
 const char * X::list_variables_as_text() { \
 	all_vars_as_text.clear(); \
-	all_vars_as_text += "           Variable            ┃            Value\n"; \
-	all_vars_as_text += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";\
+	all_vars_as_text += "           Variable            ┃                        Value\n"; \
+	all_vars_as_text += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";\
 	for (auto& vars_in_context : *variables) { \
 		all_vars_as_text += "    "; \
 		all_vars_as_text += MDXX_VAR_COLOR; \
@@ -105,8 +107,8 @@ void X::add_variable(const char * variable, const char * value) {\
 \
 const char * X::list_variables_as_text() { \
 	all_vars_as_text.clear(); \
-	all_vars_as_text += "           Variable            ┃            Value\n"; \
-	all_vars_as_text += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";\
+	all_vars_as_text += "           Variable            ┃                        Value\n"; \
+	all_vars_as_text += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";\
 	for (auto& vars_in_context : variables) { \
 		all_vars_as_text += "    "; \
 		all_vars_as_text += MDXX_VAR_COLOR; \
