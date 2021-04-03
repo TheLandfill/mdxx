@@ -9,8 +9,8 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	output += "\n";
 	output += MDXX_ERROR_COLOR;
 	output += MDXX_ERROR_PREFIX;
-	output += MDXX_RESET;
-	output += MDXX_ERROR_COLOR;
+	output += MDXX_RESET_FORMATTING;
+	output += " ";
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
@@ -24,8 +24,8 @@ void MDXX_warn(const char * str) {
 	output += "\n";
 	output += MDXX_WARNING_COLOR;
 	output += MDXX_WARNING_PREFIX;
-	output += MDXX_RESET;
-	output += MDXX_WARNING_COLOR;
+	output += MDXX_RESET_FORMATTING;
+	output += " ";
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
