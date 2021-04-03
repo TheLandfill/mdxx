@@ -329,7 +329,7 @@ extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {
 template<>
 const char * mdxx::Expansion<Code_Block*>::to_string() {
 	std::stringstream strstr;
-	strstr << "Code_Block @ " << data << MDXX_FUNC_COLOR << "(object)" << MDXX_RESET;
+	strstr << "Code_Block @ " << data << MDXX_FUNC_COLOR << " (object)" << MDXX_RESET;
 	data->code_block_object_id = strstr.str();
 	return data->code_block_object_id.c_str();
 }

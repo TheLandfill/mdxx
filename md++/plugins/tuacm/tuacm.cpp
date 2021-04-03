@@ -35,7 +35,7 @@ struct Headings_Holder {
 template<>
 const char * mdxx::Expansion<Headings_Holder*>::to_string() {
 	std::stringstream strstr;
-	strstr << "Headings_Holder @ " << this->get_data() << MDXX_FUNC_COLOR << "(object)" << MDXX_RESET;
+	strstr << "Headings_Holder @ " << this->get_data() << MDXX_FUNC_COLOR << " (object)" << MDXX_RESET;
 	data->headings_object_id = strstr.str();
 	return data->headings_object_id.c_str();
 }

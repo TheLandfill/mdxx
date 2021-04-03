@@ -142,7 +142,7 @@ Plugin_Loader::~Plugin_Loader() {
 template<>
 const char * Expansion<Plugin_Loader*>::to_string() {
 	std::stringstream strstr;
-	strstr << "Plugin_Loader @ " << MDXX_GET(Plugin_Loader*, this) << MDXX_FUNC_COLOR << "(object)" << MDXX_RESET;
+	strstr << "Plugin_Loader @ " << MDXX_GET(Plugin_Loader*, this) << MDXX_FUNC_COLOR << " (object)" << MDXX_RESET;
 	data->plugin_loader_obj_id = strstr.str();
 	return data->plugin_loader_obj_id.c_str();
 }
