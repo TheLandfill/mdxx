@@ -46,7 +46,7 @@ const char * X::list_variables_as_text() { \
 	for (auto& vars_in_context : *variables) { \
 		all_vars_as_text += "\t"; \
 		all_vars_as_text += vars_in_context.first; \
-		all_vars_as_text += std::string(40 - vars_in_context.first.length(), ' ') \
+		all_vars_as_text += std::string(40 - vars_in_context.first.length(), ' '); \
 		all_vars_as_text += "  -->  "; \
 		all_vars_as_text += vars_in_context.second->to_string(); \
 		all_vars_as_text += "\n"; \
