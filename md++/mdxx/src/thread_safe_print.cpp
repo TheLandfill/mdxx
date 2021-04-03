@@ -6,6 +6,7 @@
 void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	std::string output;
 	output.reserve(strlen(str) + 128);
+	output += "\n";
 	output += MDXX_ERROR_PREFIX;
 	output += str;
 	output += "\n";
@@ -17,6 +18,7 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 void MDXX_warn(const char * str) {
 	std::string output;
 	output.reserve(strlen(str) + 128);
+	output += "\n";
 	output += MDXX_WARNING_PREFIX;
 	output += str;
 	output += MDXX_RESET;
