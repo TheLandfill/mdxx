@@ -1,5 +1,6 @@
 #include "expansion.h"
 #include "c_string_copy.h"
+#include "mdxx_ansi.h"
 #include <memory>
 
 namespace mdxx {
@@ -35,7 +36,7 @@ Expansion_Base* Expansion<std::string>::make_deep_copy() {
 
 Expansion<gen_func>::Expansion(gen_func function, std::string n) : func(function),
 	name(n),
-	full_name(name + " (function)")
+	full_name(((name + MDXX_FILE_COLOR) + " (function)") + MDXX_RESET)
 {}
 
 Expansion_Base* Expansion<gen_func>::make_deep_copy() {
