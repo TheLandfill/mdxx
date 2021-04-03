@@ -5,7 +5,7 @@
 #include "template_manager.h"
 #include "plugin_loader.h"
 #include "metadata.h"
-#include "clear_line.h"
+#include "mdxx_ansi.h"
 #include "thread_safe_print.h"
 #include <fstream>
 #include <iostream>
@@ -14,7 +14,7 @@
 #include <Windows.h>
 #define MDXX_GET_EXE_LOCATION unsigned long long num_bytes_in_file = GetModuleFileLocation(NULL, main_program_dir, main_program_dir_buff_size); \
 if (num_bytes_in_file == 0) { \
-	 std::cerr << MDXX_ERROR_PREFIX "Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
+	 std::cerr << MDXX_ERROR_PREFIX << "Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
 }
 #else
 #include <unistd.h>
@@ -22,12 +22,12 @@ if (num_bytes_in_file == 0) { \
 try { \
 	main_program_dir = new char[main_program_dir_buff_size + 1]; \
 } catch (std::bad_alloc& e) { \
-	std::cerr << MDXX_ERROR_PREFIX "Insufficient memory. You need at least " << main_program_dir_buff_size + 1 << " bytes of RAM for\nthe dependency resolution to work properly. Even if you fix that, I don't like\nyour odds of getting the full program running." << std::endl;\
+	std::cerr << MDXX_ERROR_PREFIX << "Insufficient memory. You need at least " << main_program_dir_buff_size + 1 << " bytes of RAM for\nthe dependency resolution to work properly. Even if you fix that, I don't like\nyour odds of getting the full program running." << std::endl;\
 	exit(EXIT_FAILURE); \
 } \
 long num_bytes_in_filename = readlink("/proc/self/exe", main_program_dir, main_program_dir_buff_size + 1); \
 if (num_bytes_in_filename < 0) { \
-	std::cerr << MDXX_ERROR_PREFIX "Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
+	std::cerr << MDXX_ERROR_PREFIX << "Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
 	exit(EXIT_FAILURE); \
 } \
 main_program_dir[num_bytes_in_filename] = '\0';

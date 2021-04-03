@@ -3,6 +3,7 @@
 #include "html_manager.h"
 #include "process_html.h"
 #include "variable_map.h"
+#include "mdxx_ansi.h"
 
 namespace mdxx {
 

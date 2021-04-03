@@ -79,8 +79,8 @@ std::string MDXX_Manager::next_line_no_nl() {
 
 std::string MDXX_Manager::print_line() {
 	std::stringstream strstr;
-	strstr << "\tLine " << std::setfill('0') << std::setw(5) << line_number;
-	strstr << ":\t" << line_data.line << "\n";
+	strstr << MDXX_LINE_COLOR << "\tLine " << std::setfill('0') << std::setw(5) << line_number;
+	strstr << ":\t" << MDXX_RESET << line_data.line << "\n";
 	return strstr.str();
 }
 
@@ -357,7 +357,7 @@ std::string MDXX_Manager::list_all_vars() {
 		output += MDXX_RESET;
 		output += "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";\
 		output += context_dict->at(*cur_context)->list_variables_as_text();
-		output +=   "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+		output +=   "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
 	}
 	return output;
 }

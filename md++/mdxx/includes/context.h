@@ -11,18 +11,6 @@
 
 namespace mdxx {
 
-#ifdef WIN32
-#define MDXX_VAR_COLOR "\x1b[38;2;128;255;200m"
-#define MDXX_VAL_COLOR "\x1b[38;2;255;153;255m"
-#define MDXX_RESET "\x1b[m"
-#define MDXX_CONTEXT_COLOR "\x1b[1m\x1b[38;2;159;135;255m"
-#else
-#define MDXX_VAR_COLOR "\033[38;2;128;255;200m"
-#define MDXX_VAL_COLOR "\033[38;2;255;153;255m"
-#define MDXX_RESET "\033[m"
-#define MDXX_CONTEXT_COLOR "\033[1m\033[38;2;159;135;255m"
-#endif
-
 #ifdef MDXX_EXTERNAL_CONTEXT
 #define MDXX_VARIABLE_MAP mdxx::variable_map* variables;
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \

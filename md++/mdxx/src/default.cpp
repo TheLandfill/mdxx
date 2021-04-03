@@ -5,6 +5,7 @@
 #include "variable_map.h"
 #include "html_utils.h"
 #include "curly_braces_sub.h"
+#include "mdxx_ansi.h"
 #include <algorithm>
 #include <memory>
 #include <stdexcept>

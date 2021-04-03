@@ -27,7 +27,7 @@ extern "C" DLL_IMPORT_EXPORT void MDXX_py_init() {
 void MDXX_py_finalize() {
 	if (python_has_been_initialized) {
 		if (Py_FinalizeEx() < 0) {
-			std::cerr << MDXX_ERROR_PREFIX
+			std::cerr << MDXX_ERROR_PREFIX <<
 "Python had trouble closing for some reason. It shouldn't be a big deal\n"
 "since the program is about to exit anyway."
 				<< std::endl;
