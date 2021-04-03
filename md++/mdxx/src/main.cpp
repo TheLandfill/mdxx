@@ -53,9 +53,11 @@ void usage_message(const char * program_name);
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
+	std::cout << MDXX_RESET;
 	using namespace mdxx;
 	if (argc < 3) {
 		usage_message("md++");
+		std::cout << "\x1b[0m";
 		return 1;
 	}
 	MDXX_GET_EXE_LOCATION
@@ -98,6 +100,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	std::cout << "Average time per webpage was " << total_time / (argc - 2) << " ms\n";
 	MDXX_py_finalize();
 	delete[] main_program_dir;
+	std::cout << "\x1b[0m";
 	return 0;
 }
 
