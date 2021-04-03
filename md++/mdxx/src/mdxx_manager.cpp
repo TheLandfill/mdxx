@@ -352,7 +352,7 @@ std::string MDXX_Manager::list_all_vars() {
 	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
 		throw_exception_if_context_not_found(*cur_context);
 		output += "                                ";
-		output = output.substr(0, output.length() - (cur_context->length() / 2));
+		output = output.substr(0, output.length() - ((cur_context->length() + 1) / 2));
 		output += MDXX_CONTEXT_COLOR;
 		output += *cur_context;
 		output += MDXX_RESET;
