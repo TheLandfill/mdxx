@@ -30,8 +30,8 @@ void Content_Manager::process_content() {
 	}
 	html.check_and_close_paragraph();
 	if (mdxx.had_error()) {
-		std::cerr << MDXX_CLEAR_LINE << "\nERROR DETECTED in\n\t" << infile << "\nOutput will be deleted.\n"
-		"--------------------------------------------------------------------------------" << std::endl;
+		std::cerr << MDXX_CLEAR_LINE << MDXX_ERROR_COLOR << "\nERROR DETECTED" << MDXX_RESET << " in\n\t" << MDXX_FILE_COLOR << infile << MDXX_RESET << "\nOutput will be deleted.\n"
+		"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" << std::endl;
 		html.delete_outfile();
 	}
 }

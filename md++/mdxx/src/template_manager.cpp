@@ -60,7 +60,7 @@ void Template_Manager::process_template() {
 	} catch (std::runtime_error& e) {
 		MDXX_error(&template_mdxx, e.what());
 	}
-	if (template_mdxx.had_error()) {
+	if (template_mdxx.had_error() && !mdxx.had_error()) {
 		std::cerr << MDXX_CLEAR_LINE << MDXX_ERROR_COLOR << "\nERROR DETECTED" << MDXX_RESET << " in\n\t" << MDXX_FILE_COLOR << content->get_infile() << MDXX_RESET << "\nOutput will be deleted.\n"
 			"--------------------------------------------------------------------------------" << std::endl;
 		html.delete_outfile();
