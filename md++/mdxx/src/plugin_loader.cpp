@@ -83,8 +83,6 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 	#pragma omp critical(load_plugin)
 	{
 		std::string full_library_name = plugin_dir + lib_prefix + shared_library_name + lib_suffix;
-		#pragma omp critical(thread_safe_printing)
-		std::cout << "Attempting to load " << full_library_name << "." << std::flush << MDXX_CLEAR_LINE;
 		import_func_ptr import_plugin_func = NULL;
 		if (plugins.count(full_library_name) == 0) {
 			auto plugin_handle = OPEN_SHARED_LIBRARY(full_library_name.c_str());
