@@ -1,5 +1,6 @@
 #include "thread_safe_print.h"
 #include "mdxx_manager.h"
+#include "mdxx_ansi.h"
 #include <string>
 #include <cstring>
 

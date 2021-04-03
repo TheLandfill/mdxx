@@ -1,6 +1,5 @@
 #ifndef MDXX_THREAD_SAFE_PRINT_H
 #define MDXX_THREAD_SAFE_PRINT_H
-#include "clear_line.h"
 #include <cstdio>
 
 namespace mdxx {

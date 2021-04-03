@@ -5,6 +5,7 @@
 #include "split.h"
 #include "re2/re2.h"
 #include "c_string_copy.h"
+#include "mdxx_ansi.h"
 #include "curly_braces_sub.h"
 #include "mdxx_get.h"
 #include "thread_safe_print.h"
@@ -293,7 +294,7 @@ std::string MDXX_Manager::find_context_with_variable(const std::string& var) {
 	error_message.reserve(8192);
 	error_message += var;
 	error_message += " is not a variable in the current context stack.\n";
-	error_message += "\n";
+	error_message += "\t";
 	error_message += list_context_stack();
 	error_message += "\n\n";
 	error_message += list_all_vars();
@@ -364,7 +365,7 @@ std::string MDXX_Manager::list_all_vars() {
 
 std::string MDXX_Manager::list_context_stack() {
 	std::string output = "Current context: { ";
-	for (auto cur_context = context.rbegin(); cur_context != context.rend(); cur_context++) {
+	for (auto cur_context = context.begin(); cur_context != context.end(); cur_context++) {
 		output += *cur_context;
 		output += " ";
 	}
