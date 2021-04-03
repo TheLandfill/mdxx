@@ -1,6 +1,7 @@
 #include "content_manager.h"
 #include "sanitize_user_input.h"
 #include "clear_line.h"
+#include "thread_safe_print.h"
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -14,14 +15,18 @@ Content_Manager::Content_Manager(HTML_Manager& h, MDXX_Manager& m, std::string i
 }
 
 void Content_Manager::process_content() {
-	while (true) {
-		mdxx.find_next_content_line();
-		mdxx.replace_angle_brackets_in_line();
-		mdxx.sanitize_ampersands();
-		if (mdxx.at_end_of_file()) {
-			break;
+	try {
+		while (true) {
+			mdxx.find_next_content_line();
+			mdxx.replace_angle_brackets_in_line();
+			mdxx.sanitize_ampersands();
+			if (mdxx.at_end_of_file()) {
+				break;
+			}
+			mdxx.handle_context(html);
 		}
-		mdxx.handle_context(html);
+	} catch (std::runtime_error& e) {
+		MDXX_error(&mdxx, e.what());
 	}
 	html.check_and_close_paragraph();
 	if (mdxx.had_error()) {
