@@ -7,10 +7,13 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	std::string output;
 	output.reserve(strlen(str) + 128);
 	output += "\n";
+	output += MDXX_ERROR_COLOR;
 	output += MDXX_ERROR_PREFIX;
-	output += str;
-	output += "\n";
 	output += MDXX_RESET;
+	output += MDXX_ERROR_COLOR;
+	output += str;
+	output += MDXX_RESET;
+	output += "\n";
 	MDXX_thread_safe_print(stderr, output.c_str());
 	MDXX_print_current_line_and_exit(md);
 }
@@ -19,7 +22,10 @@ void MDXX_warn(const char * str) {
 	std::string output;
 	output.reserve(strlen(str) + 128);
 	output += "\n";
+	output += MDXX_WARNING_COLOR;
 	output += MDXX_WARNING_PREFIX;
+	output += MDXX_RESET;
+	output += MDXX_WARNING_COLOR;
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
