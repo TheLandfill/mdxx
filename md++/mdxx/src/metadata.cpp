@@ -63,9 +63,9 @@ extern "C" char * MDXX_read_metadata_file(mdxx::MDXX_Manager * mdxx, Expansion_B
 	std::ifstream reader(filename);
 	if (!reader.good()) {
 		std::stringstream ss;
-		ss << "Warning: Missing required metadata file \"" << filename << "\".\n";
+		ss << "Missing required metadata file \"" << filename << "\".\n";
 		ss << list_required_fields(fields);
-		MDXX_thread_safe_print(stderr, ss.str().c_str());
+		MDXX_warn(ss.str().c_str());
 		return nullptr;
 	}
 	json j;
@@ -84,8 +84,8 @@ extern "C" char * MDXX_read_metadata_file(mdxx::MDXX_Manager * mdxx, Expansion_B
 			mdxx->add_variable_to_context(context.c_str(), field.c_str(), mdxx::c_string_copy(replace_double_quotes(value)));
 		} else {
 			std::stringstream ss;
-			ss << "Warning: Field \"" << field << "\" is missing and will be filled with a default value in the output.\n";
-			MDXX_thread_safe_print(stderr, ss.str().c_str());
+			ss << "Field \"" << field << "\" is missing and will be filled with a default value in the output.\n";
+			MDXX_warn(ss.str().c_str());
 		}
 	}
 	return nullptr;
