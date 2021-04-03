@@ -4,6 +4,7 @@
 #include "dll_info.h"
 #include "variable_map_definition.h"
 #include "c_string_copy.h"
+#include "mdxx_ansi.h"
 #include <memory>
 #include <unordered_map>
 #include <vector>

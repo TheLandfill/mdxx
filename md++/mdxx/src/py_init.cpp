@@ -1,5 +1,6 @@
 #include "py_init.h"
 #include "thread_safe_print.h"
+#include "mdxx_ansi.h"
 #include <Python.h>
 #include <iostream>
 
