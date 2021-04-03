@@ -11,6 +11,16 @@
 
 namespace mdxx {
 
+#ifdef WIN32
+#define MDXX_VAR_COLOR "\x1b[38;2;128;255;200m"
+#define MDXX_VAL_COLOR "\x1b[38;2;255;153;255m"
+#define MDXX_RESET "\x1b[m"
+#else
+#define MDXX_VAR_COLOR "\033[38;2;128;255;200m"
+#define MDXX_VAL_COLOR "\033[38;2;255;153;255m"
+#define MDXX_RESET "\033[m"
+#endif
+
 #ifdef MDXX_EXTERNAL_CONTEXT
 #define MDXX_VARIABLE_MAP mdxx::variable_map* variables;
 #define MDXX_CONTEXT_COMMON_FUNCTIONALITY_DEFINITION(X) \
@@ -43,12 +53,21 @@ void X::add_variable(const char * variable, const char * value) {\
 \
 const char * X::list_variables_as_text() { \
 	all_vars_as_text.clear(); \
+	all_vars_as_text += "           Variable            ┃            Value\n"; \
+	all_vars_as_text += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";\
 	for (auto& vars_in_context : *variables) { \
-		all_vars_as_text += "\t"; \
-		all_vars_as_text += vars_in_context.first; \
-		all_vars_as_text += std::string(40 - vars_in_context.first.length(), ' '); \
-		all_vars_as_text += "  -->  "; \
+		all_vars_as_text += "    "; \
+		all_vars_as_text += MDXX_VAR_COLOR; \
+		all_vars_as_text += vars_in_context.first.substr(0, 22); \
+		if (vars_in_context.first.length() > 22) { \
+			all_vars_as_text += "..."; \
+		} \
+		all_vars_as_text += MDXX_RESET \
+		all_vars_as_text += std::string(25 - vars_in_context.first.length(), ' '); \
+		all_vars_as_text += "  ┃  "; \
+		all_vars_as_text += MDXX_VAL_COLOR; \
 		all_vars_as_text += vars_in_context.second->to_string(); \
+		all_vars_as_text += MDXX_RESET; \
 		all_vars_as_text += "\n"; \
 	} \
 	return all_vars_as_text.c_str(); \
@@ -86,12 +105,21 @@ void X::add_variable(const char * variable, const char * value) {\
 \
 const char * X::list_variables_as_text() { \
 	all_vars_as_text.clear(); \
+	all_vars_as_text += "           Variable            ┃            Value\n"; \
+	all_vars_as_text += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";\
 	for (auto& vars_in_context : variables) { \
-		all_vars_as_text += "\t"; \
-		all_vars_as_text += vars_in_context.first; \
-		all_vars_as_text += std::string(40 - vars_in_context.first.length(), ' '); \
-		all_vars_as_text += "  -->  "; \
+		all_vars_as_text += "    "; \
+		all_vars_as_text += MDXX_VAR_COLOR; \
+		all_vars_as_text += vars_in_context.first.substr(0, 22); \
+		if (vars_in_context.first.length() > 22) { \
+			all_vars_as_text += "..."; \
+		} \
+		all_vars_as_text += MDXX_RESET \
+		all_vars_as_text += std::string(25 - vars_in_context.first.length(), ' '); \
+		all_vars_as_text += "  ┃  "; \
+		all_vars_as_text += MDXX_VAL_COLOR; \
 		all_vars_as_text += vars_in_context.second->to_string(); \
+		all_vars_as_text += MDXX_RESET; \
 		all_vars_as_text += "\n"; \
 	} \
 	return all_vars_as_text.c_str(); \
