@@ -114,7 +114,7 @@ const char * X::list_variables_as_text() { \
 		if (vars_in_context.first.length() > 22) { \
 			all_vars_as_text += "..."; \
 		} \
-		all_vars_as_text += MDXX_RESET \
+		all_vars_as_text += MDXX_RESET; \
 		all_vars_as_text += std::string(25 - vars_in_context.first.length(), ' '); \
 		all_vars_as_text += "  ┃  "; \
 		all_vars_as_text += MDXX_VAL_COLOR; \
