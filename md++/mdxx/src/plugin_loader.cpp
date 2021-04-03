@@ -72,16 +72,19 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 	{
 		static bool first_plugin_loaded = true;
 		if (first_plugin_loaded) {
+			#pragma omp critical(thread_safe_printing)
+			{
 			std::cout << "ABI info below. If md++ has a problem, check to make sure compiler versions are compatible.\n\n";
 			std::cout << "md++:\t\t" << MDXX_COMPILATION_INFO << ".\n";
+			}
 			first_plugin_loaded = false;
 		}
 	}
 	#pragma omp critical(load_plugin)
 	{
 		std::string full_library_name = plugin_dir + lib_prefix + shared_library_name + lib_suffix;
-		std::cout << "Attempting to load " << full_library_name << "." << std::flush;
-		std::cout << MDXX_CLEAR_LINE;
+		#pragma omp critical(thread_safe_printing)
+		std::cout << "Attempting to load " << full_library_name << "." << std::flush << MDXX_CLEAR_LINE;
 		import_func_ptr import_plugin_func = NULL;
 		if (plugins.count(full_library_name) == 0) {
 			auto plugin_handle = OPEN_SHARED_LIBRARY(full_library_name.c_str());
@@ -91,7 +94,6 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 					plugin_load_error("import_plugin");
 				}
 			} else {
-				std::cerr << "\n";
 				std::string error_message = "Plugin ";
 				error_message += shared_library_name;
 				error_message += " does not exist.";

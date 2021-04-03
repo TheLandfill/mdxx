@@ -88,7 +88,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		mdxx.add_variable_to_context("default", "metafile", c_string_copy(metafile.string().c_str()));
 		mdxx.add_variable_to_context<Plugin_Loader*>("default", "plugin-obj", &pl);
 		template_reader.process_template();
-		#pragma omp critical
+		#pragma omp critical(thread_safe_printing)
 		{
 			finished_webpages += (!mdxx.had_error() && !template_reader.had_error());
 			std::cout << MDXX_CLEAR_LINE << finished_webpages << "/" << argc - 2 << " finished." << std::flush << MDXX_CLEAR_LINE;
