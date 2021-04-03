@@ -11,6 +11,7 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	output += MDXX_ERROR_PREFIX;
 	output += MDXX_RESET_FORMATTING;
 	output += " ";
+	output += MDXX_ERROR_COLOR;
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
@@ -26,6 +27,7 @@ void MDXX_warn(const char * str) {
 	output += MDXX_WARNING_PREFIX;
 	output += MDXX_RESET_FORMATTING;
 	output += " ";
+	output += MDXX_WARNING_COLOR;
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
