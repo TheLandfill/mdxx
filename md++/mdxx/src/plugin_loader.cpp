@@ -75,7 +75,7 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 			#pragma omp critical(thread_safe_printing)
 			{
 			std::cout << "ABI info below. If md++ has a problem, check to make sure compiler versions are compatible.\n\n";
-			std::cout << "md++:\t\t" << MDXX_COMPILATION_INFO << ".\n";
+			std::cout << MDXX_BOLD << MDXX_VAR_COLOR << "md++:\t\t" << MDXX_COMPILATION_INFO << ".\n" << MDXX_RESET;
 			}
 			first_plugin_loaded = false;
 		}
@@ -98,7 +98,9 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 				throw std::runtime_error(error_message);
 			}
 			plugins[full_library_name] = Plugin_Info{plugin_handle, import_plugin_func};
+			std::cout << MDXX_CONTEXT_COLOR;
 			PRINT_COMPILATION_INFO(plugin_handle, "print_compilation_info");
+			std::cout << MDXX_RESET;
 		}
 		plugins[full_library_name].import_plugin(this, mdxx_ptr);
 	}

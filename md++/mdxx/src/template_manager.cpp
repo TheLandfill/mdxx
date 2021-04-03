@@ -50,7 +50,7 @@ Template_Manager::Template_Manager(HTML_Manager& h, std::shared_ptr<Content_Mana
 
 void Template_Manager::process_template() {
 	try {
-		while (true) {
+		while (!(mdxx.had_error() || template_mdxx.had_error())) {
 			std::string line = template_mdxx.find_and_return_next_content_line();
 			if (template_mdxx.at_end_of_file()) {
 				break;
