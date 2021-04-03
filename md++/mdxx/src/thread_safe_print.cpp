@@ -8,6 +8,7 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	output.reserve(strlen(str) + 128);
 	output = MDXX_ERROR_PREFIX;
 	output += str;
+	output += "\n";
 	MDXX_thread_safe_print(stderr, output.c_str());
 	MDXX_print_current_line_and_exit(md);
 }
@@ -17,6 +18,7 @@ void MDXX_warn(const char * str) {
 	output.reserve(strlen(str) + 128);
 	output = MDXX_WARNING_PREFIX;
 	output += str;
+	output += "\n";
 	MDXX_thread_safe_print(stderr, output.c_str());
 }
 
