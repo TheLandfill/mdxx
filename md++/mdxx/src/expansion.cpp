@@ -36,7 +36,7 @@ Expansion_Base* Expansion<std::string>::make_deep_copy() {
 
 Expansion<gen_func>::Expansion(gen_func function, std::string n) : func(function),
 	name(n),
-	full_name(((name + MDXX_FILE_COLOR) + " (function)") + MDXX_RESET)
+	full_name(((name + MDXX_FUNC_COLOR) + " (function)") + MDXX_RESET)
 {}
 
 Expansion_Base* Expansion<gen_func>::make_deep_copy() {
