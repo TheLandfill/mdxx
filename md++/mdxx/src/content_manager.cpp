@@ -29,11 +29,6 @@ void Content_Manager::process_content() {
 		MDXX_error(&mdxx, e.what());
 	}
 	html.check_and_close_paragraph();
-	if (mdxx.had_error()) {
-		std::cerr << MDXX_CLEAR_LINE << MDXX_ERROR_COLOR << "\nERROR DETECTED" << MDXX_RESET << " in\n\t" << MDXX_FILE_COLOR << infile << MDXX_RESET << "\nOutput will be deleted.\n"
-		"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" << std::endl;
-		html.delete_outfile();
-	}
 }
 
 MDXX_Manager& Content_Manager::get_mdxx() {
