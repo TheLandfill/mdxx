@@ -3,6 +3,7 @@
 
 extern const char * MDXX_VAR_COLOR;
 extern const char * MDXX_VAL_COLOR;
+extern const char * MDXX_BOLD;
 extern const char * MDXX_RESET;
 extern const char * MDXX_RESET_COLOR;
 extern const char * MDXX_RESET_FORMATTING;

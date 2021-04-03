@@ -3,6 +3,7 @@
 #ifdef WIN32
 const char * MDXX_VAR_COLOR = "\x1b[38;2;128;255;200m";
 const char * MDXX_VAL_COLOR = "\x1b[38;2;255;153;255m";
+const char * MDXX_BOLD = "\x1b[1m";
 const char * MDXX_RESET = "\x1b[0m";
 const char * MDXX_RESET_COLOR = "\x1b[39m";
 const char * MDXX_RESET_FORMATTING = "\x1b[0m";
@@ -17,6 +18,7 @@ const char * MDXX_CLEAR_LINE = "\r\x1b[K";
 #else
 const char * MDXX_VAR_COLOR = "\033[38;2;128;255;200m";
 const char * MDXX_VAL_COLOR = "\033[38;2;255;153;255m";
+const char * MDXX_BOLD = "\033[1m";
 const char * MDXX_RESET = "\033[0m";
 const char * MDXX_RESET_COLOR = "\033[39m";
 const char * MDXX_RESET_FORMATTING = "\033[0m";

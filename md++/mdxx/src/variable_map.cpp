@@ -1,6 +1,7 @@
 #include "dll_info.h"
 #include "variable_map.h"
 #include "plugin_loader.h"
+#include "variable_map_definition.h"
 
 using namespace mdxx;
 
