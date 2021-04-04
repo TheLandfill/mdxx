@@ -1,3 +1,19 @@
+// md++: a fast, easy to use, and extensible static site generator.
+// Copyright (C) 2021  Joseph Mellor
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include "html_utils.h"
 #include "expansion.h"
 #include "join.h"
@@ -278,7 +294,7 @@ const static bool valid_url_chars[256] = {
 
 static const std::string attribute_prefix = "mdxx-";
 
-std::vector<std::string> valid_protocols{ "http://", "https://", "ftp://", "mailto:" };
+std::vector<std::string> valid_protocols{ "http://", "https://", "ftp://", "mailto:", "#" };
 
 bool Tag_Handler::catch_bad_urls(std::string url) {
 	for (unsigned char c : url) {
