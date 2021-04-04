@@ -278,7 +278,7 @@ const static bool valid_url_chars[256] = {
 
 static const std::string attribute_prefix = "mdxx-";
 
-std::vector<std::string> valid_protocols{ "http://", "https://", "ftp://", "mailto:" };
+std::vector<std::string> valid_protocols{ "http://", "https://", "ftp://", "mailto:", "#" };
 
 bool Tag_Handler::catch_bad_urls(std::string url) {
 	for (unsigned char c : url) {
