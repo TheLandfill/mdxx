@@ -249,7 +249,7 @@ extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::
 	MDXX_add_string_variable_to_context(mdxx, "template", "css-prefix", "<link rel=\"stylesheet\" href=\"{{css}}", true);
 	MDXX_add_string_variable_to_context(mdxx, "template", "css-suffix", ".css\">");
 	MDXX_add_string_variable_to_context(mdxx, "template", "js-prefix", "<script src=\"{{js}}", true);
-	MDXX_add_string_variable_to_context(mdxx, "template", "js-suffix", "\".js></script>");
+	MDXX_add_string_variable_to_context(mdxx, "template", "js-suffix", ".js\"></script>");
 	MDXX_add_string_variable_to_context(mdxx, "template", "style", "{{prefix-suffix-loop-func (html) (css-prefix) (css-suffix) (stylesheets)}}");
 	MDXX_add_string_variable_to_context(mdxx, "template", "write-scripts", "{{prefix-suffix-loop-func (html) (js-prefix) (js-suffix) (scripts)}}");
 	MDXX_add_string_variable_to_context(mdxx, "default", "h", "{{heading-to-section (headings-do-not-touch) [1:]}}");

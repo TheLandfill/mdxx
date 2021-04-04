@@ -5,8 +5,8 @@
 namespace mdxx {
 
 const Autosub curly_autosubs[] = {
-	{ "!{", "<span class=\"spoiler\">"},
-	{"}!", "</span>"},
+	{ "!{", "<span><span class=\"spoiler\"><span class=\"content\">"},
+	{"}!", "</span></span></span>"},
 	{ "v{", "<sub>"},
 	{"}v", "</sub>"},
 	{ "^{", "<sup>"},
