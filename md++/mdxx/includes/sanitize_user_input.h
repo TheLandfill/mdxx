@@ -17,6 +17,8 @@
 #ifndef MDXX_SANITIZE_USER_INPUT_H
 #define MDXX_SANITIZE_USER_INPUT_H
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace mdxx {
 
@@ -31,6 +33,10 @@ void remove_double_quotes(std::string& str);
 std::string replace_quotes(const std::string& str);
 
 void remove_quotes(std::string& str);
+
+void remove_chars(std::string& str, const std::unordered_set<char>& rem);
+
+std::string replace_chars(const std::string& str, const std::unordered_map<char, std::string>& rep);
 
 // Replaces everything with the html entity version except ampersands
 std::string replace_all_html_chars(const std::string& str);
