@@ -105,4 +105,42 @@ char * link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	return t.generate_tag(true).str;
 }
 
+char * span(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	(void)mdxx;
+	Tag_Handler t{
+		args,
+		argc,
+		"span",
+		{"class"},
+		{}
+	};
+	return t.generate_tag().str;
+}
+
+char * div(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
+	if (argc >= 1) {
+		HTML_Manager * html = MDXX_GET(HTML_Manager*, args[0]);
+		html->check_and_close_paragraph();
+	} else {
+		std::string error_message;
+		error_message.reserve(1024);
+		error_message += "Not enough arguments provided to div. Arguments provided were\n\n";
+		for (size_t i = 0; i < argc; i++) {
+			error_message += "\t";
+			error_message += args[i]->to_string();
+			error_message += "\n";
+		}
+		MDXX_error(mdxx, error_message.c_str());
+		return nullptr;
+	}
+	Tag_Handler t{
+		args + 1,
+		argc - 1,
+		"div",
+		{"class"},
+		{}
+	};
+	return t.generate_tag().str;
+}
+
 }

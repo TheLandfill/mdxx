@@ -435,7 +435,7 @@ Basic_String Tag_Handler::generate_tag(bool use_url_as_text) {
 		std::string cur_css_property = attribute_prefix + css_properties[i];
 		if (attributes[cur_css_property] != "") {
 			if (!any_style_options) {
-				output += "style=\"";
+				output += " style=\"";
 				any_style_options = true;
 			}
 			std::string& cur_css_val = attributes[cur_css_property];

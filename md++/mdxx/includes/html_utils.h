@@ -27,6 +27,10 @@ char * img(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 
 char * img_link(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
 
+char * span(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
+
+char * div(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
+
 }
 
 #endif
