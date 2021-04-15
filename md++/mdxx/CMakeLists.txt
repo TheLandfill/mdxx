@@ -7,9 +7,9 @@ if (WIN32)
 set_property(TARGET py PROPERTY IMPORTED_LOCATION_DEBUG "${PYTHON_DEBUG_LIBRARY}")
 endif()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUT_DIR}/lib")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUT_DIR}/lib")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUT_DIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUT_DIR}/lib$<0:>")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUT_DIR}/lib$<0:>")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUT_DIR}$<0:>")
 
 include_directories(
 	"${CMAKE_SOURCE_DIR}/${project}/includes/"
@@ -41,6 +41,3 @@ endif (NOT WIN32)
 add_executable("${project}" "${SOURCES}")
 target_link_libraries("${project}" mdxx_interface)
 target_compile_definitions(mdxx_interface PRIVATE MDXX_INTERFACE_DLL)
-if (WIN32)
-	install(TARGETS "${project}" mdxx_interface DESTINATION "${OUT_DIR}")
-endif (WIN32)

@@ -131,8 +131,8 @@ public:
 			std::string error_message;
 			error_message.reserve(2048);
 			error_message += "Could not load `code_block.py`. It should be in the directory\n\n\t`";
-			error_message += fs::absolute(MDXX_get_main_program_dir()).c_str();
-			error_message += "plugins`\n\n"
+			error_message += (fs::absolute(MDXX_get_main_program_dir()) / "plugins").string();
+			error_message += "`\n\n"
 				"If you aren't building from source, then you can find it at\n\n"
 				"\thttps://josephmellor.xyz/mdxx/\n\n"
 				"Download the file and copy or move it to the directory listed above.\n"

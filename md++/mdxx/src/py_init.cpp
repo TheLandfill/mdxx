@@ -31,7 +31,7 @@ extern "C" DLL_IMPORT_EXPORT void MDXX_py_init() {
 		Py_Initialize();
 		std::string py_plugin_path_load = "import sys;import os;sys.path.append(r'";
 		py_plugin_path_load += mdxx::main_program_dir;
-		py_plugin_path_load += "' + 'plugins');";
+		py_plugin_path_load += "plugins');";
 		#ifndef WIN32
 		py_plugin_path_load += "sys.path.append(r'/usr/lib/md++-git/plugins');";
 		#endif
