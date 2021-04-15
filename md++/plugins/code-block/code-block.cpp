@@ -56,8 +56,6 @@ const char * mdxx::Expansion<Code_Block*>::to_string();
 class Code_Block : public mdxx::Context {
 public:
 	Code_Block(const char * n, mdxx::Plugin_Loader * p, mdxx::MDXX_Manager * m) : name(n), pl(p), md(m) {
-		#pragma omp critical(python)
-		MDXX_py_init();
 		variables = MDXX_get_variable_map(pl, this);
 		add_variable("{", "{");
 		add_variable("}", "}");
@@ -65,32 +63,6 @@ public:
 		add_variable("lt", "<");
 		add_variable("gt", ">");
 		add_variable("amp", "&");
-		PyObject * myModule = NULL;
-		#pragma omp critical(python)
-		myModule = PyImport_ImportModule("code_block");
-		if (myModule == NULL) {
-			std::string error_message;
-			error_message.reserve(2048);
-			error_message += "Could not load `code_block.py`. It should be in the directory\n\n\t`";
-			error_message += fs::absolute(MDXX_get_main_program_dir()).c_str();
-			error_message += "plugins`\n\n"
-				"If you aren't building from source, then you can find it at\n\n"
-				"\thttps://josephmellor.xyz/mdxx/\n\n"
-				"Download the file and copy or move it to the directory listed above.\n"
-				"If building from source, build the install target. On Linux, type\n\n\t`$ make install`\n\nin the same directory you typed `make`. On Windows, build target INSTALL.\n";
-			MDXX_error(md, error_message.c_str());
-			thread_safe_py_err_print();
-			return;
-		}
-		#pragma omp critical(python)
-		pygments_wrapper = PyObject_GetAttrString(myModule,(char*)"hand_code_to_pygments");
-		if (pygments_wrapper == NULL) {
-			MDXX_error(md,
-			"Could not find method \"hand_code_to_pygments\", which"
-			"shouldn't happen.\nYou're on your own.\n");
-			thread_safe_py_err_print();
-			return;
-		}
 	}
 
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
@@ -150,6 +122,36 @@ public:
 	}
 
 	void close(mdxx::HTML_Manager& html) override {
+		#pragma omp critical(python)
+		MDXX_py_init();
+		PyObject * myModule = NULL;
+		#pragma omp critical(python)
+		myModule = PyImport_ImportModule("code_block");
+		if (myModule == NULL) {
+			std::string error_message;
+			error_message.reserve(2048);
+			error_message += "Could not load `code_block.py`. It should be in the directory\n\n\t`";
+			error_message += (fs::absolute(MDXX_get_main_program_dir()) / "plugins").string();
+			error_message += "`\n\n"
+				"If you aren't building from source, then you can find it at\n\n"
+				"\thttps://josephmellor.xyz/mdxx/\n\n"
+				"Download the file and copy or move it to the directory listed above.\n"
+				"If building from source, build the install target. On Linux, type\n\n\t`$ make install`\n\nin the same directory you typed `make`. On Windows, build target INSTALL.\n";
+			MDXX_error(md, error_message.c_str());
+			thread_safe_py_err_print();
+			return;
+		}
+		if (pygments_wrapper == NULL) {
+			#pragma omp critical(python)
+			pygments_wrapper = PyObject_GetAttrString(myModule, (char*)"hand_code_to_pygments");
+		}
+		if (pygments_wrapper == NULL) {
+			MDXX_error(md,
+			"Could not find method \"hand_code_to_pygments\", which"
+			"shouldn't happen.\nYou're on your own.\n");
+			thread_safe_py_err_print();
+			return;
+		}
 		PyObject* py_lines_to_highlight = NULL;
 		#pragma omp critical(python)
 		py_lines_to_highlight = PyList_New(lines_to_highlight.size());

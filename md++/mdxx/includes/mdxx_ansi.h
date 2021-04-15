@@ -17,19 +17,20 @@
 #ifndef MDXX_ANSI_H
 #define MDXX_ANSI_H
 
-extern const char * MDXX_VAR_COLOR;
-extern const char * MDXX_VAL_COLOR;
-extern const char * MDXX_BOLD;
-extern const char * MDXX_RESET;
-extern const char * MDXX_RESET_COLOR;
-extern const char * MDXX_RESET_FORMATTING;
-extern const char * MDXX_CONTEXT_COLOR;
-extern const char * MDXX_LINE_COLOR;
-extern const char * MDXX_FILE_COLOR;
-extern const char * MDXX_FUNC_COLOR;
-extern const char * MDXX_ERROR_COLOR;
-extern const char * MDXX_ERROR_PREFIX;
-extern const char * MDXX_WARNING_COLOR;
-extern const char * MDXX_WARNING_PREFIX;
-extern const char * MDXX_CLEAR_LINE;
+#define MDXX_VAR_COLOR "\x1b[38;2;128;255;200m"
+#define MDXX_VAL_COLOR "\x1b[38;2;255;153;255m"
+#define MDXX_BOLD "\x1b[1m"
+#define MDXX_RESET "\x1b[0m\x1b[38;2;255;38;92m"
+#define MDXX_RESET_COLOR "\x1b[39m\x1b[38;2;255;38;92m"
+#define MDXX_RESET_FORMATTING MDXX_RESET;
+#define MDXX_CONTEXT_COLOR "\x1b[1m\x1b[38;2;159;135;255m"
+#define MDXX_LINE_COLOR "\x1b[1m\x1b[38;2;254;217;255m"
+#define MDXX_FILE_COLOR "\x1b[38;2;170;196;255m"
+#define MDXX_FUNC_COLOR "\x1b[38;2;175;234;255m"
+#define MDXX_ERROR_COLOR "\x1b[38;2;255;121;0m"
+#define MDXX_ERROR_PREFIX "\x1b[1m\x1b[4mERROR:"
+#define MDXX_WARNING_COLOR "\x1b[38;2;255;250;205m"
+#define MDXX_WARNING_PREFIX "\x1b[1m\x1b[4mWARNING:"
+#define MDXX_CLEAR_LINE "\r\x1b[K"
+
 #endif

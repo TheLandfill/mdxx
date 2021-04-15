@@ -59,6 +59,7 @@ Default::Default(const char * n) : name(n), allow_autosubs(true) {
 	add_variable("gt", "&gt;");
 	add_variable("amp", "&amp;");
 	add_variable("nl", "\n");
+	add_variable("hr", "<hr>");
 	add_variable("print", print_expansion);
 	add_variable("print-vars", print_variables);
 	add_variable("print-con", print_context);
@@ -66,12 +67,16 @@ Default::Default(const char * n) : name(n), allow_autosubs(true) {
 	add_variable("push", MDXX_html_push);
 	add_variable("mdpu", "{{push (html)}}");
 	add_variable("mdpo", "{{pop (html)}}");
-	add_variable("link-func", link);
 	add_variable("img-func", img);
 	add_variable("img-a-func", img_link);
-	add_variable("a", "{{link-func [1:]}}");
+	add_variable("a", link);
 	add_variable("img", "{{img-func (html) [1:]}}");
 	add_variable("img-a", "{{img-a-func (html) [1:]}}");
+	add_variable("span", span);
+	add_variable("/span", "</span>");
+	add_variable("div-func", div);
+	add_variable("div", "{{div-func (html) [1:]}}");
+	add_variable("/div", "</div>");
 	const Autosub * a = curly_autosubs;
 	while (a->var != nullptr) {
 		add_variable(a->var, a->value);

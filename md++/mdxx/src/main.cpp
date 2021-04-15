@@ -28,9 +28,21 @@
 #include <memory>
 #if WIN32
 #include <Windows.h>
-#define MDXX_GET_EXE_LOCATION unsigned long long num_bytes_in_file = GetModuleFileLocation(NULL, main_program_dir, main_program_dir_buff_size); \
-if (num_bytes_in_file == 0) { \
-	 std::cerr << MDXX_ERROR_PREFIX << "Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
+#define MDXX_GET_EXE_LOCATION \
+try { \
+	main_program_dir = new char[main_program_dir_buff_size + 1]; \
+} catch (std::bad_alloc& e) { \
+	std::cerr << MDXX_ERROR_PREFIX << "Insufficient memory. You need at least " << MDXX_FUNC_COLOR << main_program_dir_buff_size + 1 << MDXX_ERROR_COLOR << " bytes of RAM for\nthe dependency resolution to work properly. Even if you fix that, I don't like\nyour odds of getting the full program running." << MDXX_RESET << std::endl;\
+	exit(EXIT_FAILURE); \
+} \
+unsigned long long num_bytes_in_filename = GetModuleFileName(NULL, main_program_dir, main_program_dir_buff_size + 1); \
+if (num_bytes_in_filename == 0) { \
+	std::cerr << MDXX_ERROR_PREFIX << "Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << MDXX_RESET << std::endl;\
+	exit(EXIT_FAILURE); \
+} \
+if (num_bytes_in_filename == (main_program_dir_buff_size + 1)) { \
+	std::cerr << MDXX_ERROR_PREFIX << "Program is in a path that has too many characters:\n\t" << MDXX_FILE_COLOR << main_program_dir << MDXX_RESET << "\n"; \
+	exit(EXIT_FAILURE); \
 }
 #else
 #include <unistd.h>
@@ -38,12 +50,12 @@ if (num_bytes_in_file == 0) { \
 try { \
 	main_program_dir = new char[main_program_dir_buff_size + 1]; \
 } catch (std::bad_alloc& e) { \
-	std::cerr << MDXX_ERROR_PREFIX << "Insufficient memory. You need at least " << main_program_dir_buff_size + 1 << " bytes of RAM for\nthe dependency resolution to work properly. Even if you fix that, I don't like\nyour odds of getting the full program running." << std::endl;\
+	std::cerr << MDXX_ERROR_PREFIX << "Insufficient memory. You need at least " << MDXX_FUNC_COLOR << main_program_dir_buff_size + 1 << MDXX_ERROR_COLOR << " bytes of RAM for\nthe dependency resolution to work properly. Even if you fix that, I don't like\nyour odds of getting the full program running." << MDXX_RESET << std::endl;\
 	exit(EXIT_FAILURE); \
 } \
 long num_bytes_in_filename = readlink("/proc/self/exe", main_program_dir, main_program_dir_buff_size + 1); \
 if (num_bytes_in_filename < 0) { \
-	std::cerr << MDXX_ERROR_PREFIX << "Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << std::endl;\
+	std::cerr << MDXX_ERROR_PREFIX << "Program could not be found, which is really weird since you're running it.\nI have no idea how this happened." << MDXX_RESET << std::endl;\
 	exit(EXIT_FAILURE); \
 } \
 main_program_dir[num_bytes_in_filename] = '\0';

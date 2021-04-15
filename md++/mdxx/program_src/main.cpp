@@ -23,7 +23,7 @@ void setup_ansi_terminal() {
 	DWORD l_mode;
 	HANDLE hstd = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (hstd == INVALID_HANDLE_VALUE) {
-		std::cout << "Won't be able to display ANSI terminal characters.\n";
+		std::cerr << "Won't be able to display ANSI terminal characters.\n";
 		return;
 	}
 	GetConsoleMode(hstd, &l_mode);
@@ -35,5 +35,9 @@ void setup_ansi_terminal() {
 
 int main(int argc, char ** argv) {
 	SETUP_ANSI_TERMINAL
+	for (int i = 0; i < argc; i++) {
+		std::cout << argv[i] << " ";
+	}
+	std::cout << std::endl;
 	return MDXX_run_program(argc, argv);
 }
