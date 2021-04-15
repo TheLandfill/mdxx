@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "run_program.h"
+#include <iostream>
 #ifdef WIN32
 #include <windows.h>
-#include <iostream>
 #define SETUP_ANSI_TERMINAL setup_ansi_terminal();
 void setup_ansi_terminal() {
 	DWORD l_mode;
