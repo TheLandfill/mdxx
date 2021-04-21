@@ -19,6 +19,7 @@
 #include "mdxx_ansi.h"
 #include <string>
 #include <cstring>
+#include <iostream>
 
 void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	std::string output;
@@ -33,7 +34,9 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	output += MDXX_RESET;
 	output += "\n";
 	MDXX_thread_safe_print(stderr, output.c_str());
-	MDXX_print_current_line_and_exit(md);
+	if (md != nullptr) {
+		MDXX_print_current_line_and_exit(md);
+	}
 }
 
 void MDXX_warn(const char * str) {
@@ -54,6 +57,17 @@ void MDXX_warn(const char * str) {
 void MDXX_thread_safe_print(FILE* out, const char * str) {
 	#pragma omp critical(thread_safe_printing)
 	{
+#ifdef WIN32
+		if (out == stderr) {
+			std::wcerr << str;
+		} else if (out == stdout) {
+			std::wcout << str;
+		} else {
+			fprintf(out, "%s", str);
+			std::cerr << "Should not have run.\n";
+		}
+#else
 		fprintf(out, "%s", str);
+#endif
 	}
 }

@@ -77,17 +77,11 @@ namespace mdxx {
 }
 
 void MDXX_py_finalize();
-void usage_message(const char * program_name);
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
 	std::cout << MDXX_RESET;
 	using namespace mdxx;
-	if (argc < 3) {
-		usage_message("md++");
-		std::cout << "\x1b[0m";
-		return 1;
-	}
 	MDXX_GET_EXE_LOCATION
 	std::string main_dir = main_program_dir;
 	delete[] main_program_dir;
@@ -105,6 +99,19 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	#pragma omp parallel for schedule(dynamic)
 	for (int current_file = 2; current_file < argc; current_file++) {
 		fs::path infile(fs::absolute(argv[current_file]));
+		if (!fs::exists(infile)) {
+			std::string error_message;
+			error_message.reserve(1024);
+			error_message += "Input file\n\t";
+			error_message += MDXX_FILE_COLOR;
+			error_message += infile.string();
+			error_message += MDXX_ERROR_COLOR;
+			error_message += "\ndoes not exist. No output generated.";
+			error_message += MDXX_RESET;
+			error_message += "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
+			MDXX_error(nullptr, error_message.c_str());
+			continue;
+		}
 		std::ifstream in{infile};
 		MDXX_Manager mdxx = MDXX_Manager(in);
 		fs::path outfile = infile;
@@ -130,8 +137,4 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	delete[] main_program_dir;
 	std::cout << "\x1b[0m";
 	return 0;
-}
-
-void usage_message(const char * program_name) {
-	std::cerr << program_name << " template_location mdxx_file[s]\n";
 }
