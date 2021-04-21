@@ -26,6 +26,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <string>
 #if WIN32
 #include <Windows.h>
 #define MDXX_GET_EXE_LOCATION \
@@ -80,7 +81,7 @@ void MDXX_py_finalize();
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
-	std::cout << MDXX_RESET;
+	MDXX_thread_safe_print(stdout, MDXX_RESET);
 	using namespace mdxx;
 	MDXX_GET_EXE_LOCATION
 	std::string main_dir = main_program_dir;
@@ -128,13 +129,22 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		#pragma omp critical(num_finished_webpaged)
 		finished_webpages += (!mdxx.had_error() && !template_reader.had_error());
 	}
-	std::cout << std::endl;
+	MDXX_thread_safe_print(stdout, "\n");
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
-	std::cout << "Generated " << finished_webpages << " webpages in " << total_time << " ms\n";
-	std::cout << "Average time per webpage was " << total_time / (argc - 2) << " ms\n";
+	std::string summary;
+	summary.reserve(256);
+	summary += "Generated ";
+	summary += std::to_string(finished_webpages);
+	summary += " webpages in ";
+	summary += std::to_string(total_time);
+	summary += " ms\n"
+		"Average time per webpage was ";
+	summary += std::to_string(total_time / (argc - 2));
+	summary += " ms\n"
+		"\x1b[0m";
+	MDXX_thread_safe_print(stdout, summary.c_str());
 	MDXX_py_finalize();
 	delete[] main_program_dir;
-	std::cout << "\x1b[0m";
 	return 0;
 }

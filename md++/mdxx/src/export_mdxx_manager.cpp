@@ -17,6 +17,7 @@
 #include "mdxx_manager.h"
 #include "context.h"
 #include "c_string_copy.h"
+#include "thread_safe_print.h"
 #include <memory>
 #include <iostream>
 
@@ -32,10 +33,11 @@ char * MDXX_print_current_line(mdxx::MDXX_Manager * mdxx) {
 }
 
 void MDXX_print_current_line_and_exit(mdxx::MDXX_Manager * md) {
-	std::cerr << "\nLine that caused the problem:\n";
-	char * cur_line = MDXX_print_current_line(md);
-	std::cerr << cur_line;
-	delete[] cur_line;
+	std::string output;
+	output.reserve(1024);
+	output += "\nLine that caused the problem:\n";
+	output += md->print_line();
+	MDXX_thread_safe_print(stderr, output.c_str());
 	md->error_exit();
 }
 

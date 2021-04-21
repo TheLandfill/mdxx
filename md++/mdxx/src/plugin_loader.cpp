@@ -18,6 +18,7 @@
 #include "compilation_info.h"
 #include "clear_line.h"
 #include "mdxx_get.h"
+#include "thread_safe_print.h"
 #include <memory>
 #include <string>
 #include <stdexcept>
@@ -88,11 +89,13 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 	{
 		static bool first_plugin_loaded = true;
 		if (first_plugin_loaded) {
-			#pragma omp critical(thread_safe_printing)
-			{
-			std::cout << "ABI info below. If md++ has a problem, check to make sure compiler versions are compatible.\n\n";
-			std::cout << MDXX_BOLD << MDXX_VAR_COLOR << "md++:\t\t" << MDXX_COMPILATION_INFO << ".\n" << MDXX_RESET;
-			}
+			std::string abi_info;
+			abi_info.reserve(512);
+			abi_info += "ABI info below. If md++ has a problem, check to make sure compiler versions are compatible.\n\n";
+			abi_info += MDXX_BOLD MDXX_VAR_COLOR "md++:\t\t";
+			abi_info += MDXX_COMPILATION_INFO;
+			abi_info += ".\n" MDXX_RESET;
+			MDXX_thread_safe_print(stdout, abi_info.c_str());
 			first_plugin_loaded = false;
 		}
 	}
@@ -114,9 +117,9 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 				throw std::runtime_error(error_message);
 			}
 			plugins[full_library_name] = Plugin_Info{plugin_handle, import_plugin_func};
-			std::cout << MDXX_CONTEXT_COLOR;
+			MDXX_thread_safe_print(stdout, MDXX_CONTEXT_COLOR);
 			PRINT_COMPILATION_INFO(plugin_handle, "print_compilation_info");
-			std::cout << MDXX_RESET;
+			MDXX_thread_safe_print(stdout, MDXX_RESET);
 		}
 		plugins[full_library_name].import_plugin(this, mdxx_ptr);
 	}

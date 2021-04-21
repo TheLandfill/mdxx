@@ -22,6 +22,7 @@
 #include "html_utils.h"
 #include "curly_braces_sub.h"
 #include "mdxx_ansi.h"
+#include "thread_safe_print.h"
 #include <algorithm>
 #include <memory>
 #include <stdexcept>
@@ -40,15 +41,15 @@ char * print_expansion(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) 
 char * print_variables(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	(void)args;
 	(void)argc;
-	std::cout << mdxx->list_all_vars() << "\n";
+	MDXX_thread_safe_print(stdout, (mdxx->list_all_vars() + "\n").c_str());
 	return nullptr;
 }
 
 char * print_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	(void)args;
 	(void)argc;
-	std::cout << mdxx->list_context_stack() << "\n";
-	std::cout << mdxx->list_valid_contexts() << "\n";
+	MDXX_thread_safe_print(stdout, (mdxx->list_context_stack() + "\n").c_str());
+	MDXX_thread_safe_print(stdout, (mdxx->list_valid_contexts() + "\n").c_str());
 	return nullptr;
 }
 

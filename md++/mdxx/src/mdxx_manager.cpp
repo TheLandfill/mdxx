@@ -26,9 +26,7 @@
 #include "mdxx_get.h"
 #include "thread_safe_print.h"
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
-#include <iomanip>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -95,10 +93,16 @@ std::string MDXX_Manager::next_line_no_nl() {
 }
 
 std::string MDXX_Manager::print_line() {
-	std::stringstream strstr;
-	strstr << MDXX_LINE_COLOR << "\tLine " << std::setfill('0') << std::setw(5) << line_number;
-	strstr << ":\t" << MDXX_RESET << line_data.line << "\n";
-	return strstr.str();
+	std::string output;
+	output.reserve(64 + line_data.line.length());
+	output += MDXX_LINE_COLOR "\tLine ";
+	std::string line_str = std::to_string(line_number);
+	output += &"00000" [ line_str.length()];
+	output += line_str;
+	output += ":\t" MDXX_RESET;
+	output += line_data.line;
+	output += "\n";
+	return output;
 }
 
 void MDXX_Manager::handle_context(HTML_Manager& html) {
@@ -238,7 +242,7 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 	re2::StringPiece re_line = line;
 	while (RE2::PartialMatch(re_line, variable_regex, &current_sub) && !caused_error) {
 		if (print_expansion) {
-			std::cout << complete_line << line << "\n\n";
+			MDXX_thread_safe_print(stdout, (complete_line + line + "\n\n").c_str());
 		}
 		std::vector<std::string> var_args = split(current_sub.as_string());
 		std::string var = var_args.front();
@@ -290,7 +294,7 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		re_line = line;
 	}
 	if (print_expansion) {
-		std::cout << complete_line << line << "\n\n";
+		MDXX_thread_safe_print(stdout, (complete_line + line + "\n\n").c_str());
 	}
 	return line;
 }

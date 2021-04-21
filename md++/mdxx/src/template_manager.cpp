@@ -77,9 +77,19 @@ void Template_Manager::process_template() {
 		MDXX_error(&template_mdxx, e.what());
 	}
 	if (template_mdxx.had_error() || mdxx.had_error()) {
-		std::cerr << MDXX_CLEAR_LINE << MDXX_ERROR_COLOR << "\nERROR DETECTED" << MDXX_RESET << " in\n\t" << MDXX_FILE_COLOR << content->get_infile() << MDXX_RESET << "\nOutput will be deleted.\n"
-			"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-			<< std::endl;
+		std::string error_message;
+		error_message.reserve(512);
+		error_message += MDXX_CLEAR_LINE
+			MDXX_ERROR_COLOR
+			"\nERROR DETECTED"
+			MDXX_RESET
+			" in\n\t"
+			MDXX_FILE_COLOR;
+		error_message += content->get_infile();
+		error_message += MDXX_RESET
+			 "\nOutput will be deleted.\n"
+			"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+		MDXX_thread_safe_print(stderr, error_message.c_str());
 		html.delete_outfile();
 	}
 	template_mdxx.destroy_contexts();

@@ -27,7 +27,7 @@ void setup_ansi_terminal() {
 	DWORD l_mode;
 	HANDLE hstd = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (hstd == INVALID_HANDLE_VALUE) {
-		std::cerr << "Won't be able to display ANSI terminal characters.\n";
+		MDXX_warn("Won't be able to display ANSI terminal characters.\n");
 		return;
 	}
 	GetConsoleMode(hstd, &l_mode);
