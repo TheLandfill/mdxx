@@ -87,7 +87,7 @@ void usage_message(const char * program_name) {
 	usage_message += "USAGE: ";
 	usage_message += program_name;
 	usage_message += " template_directory mdxx_file[s]\x1b[0m\n";
-	MDXX_thread_safe_print(stderr, usage_message.c_str());
+	MDXX_print(stderr, usage_message.c_str());
 }
 
 void print_copyright_info() {
@@ -114,7 +114,7 @@ void print_copyright_info() {
 		 MDXX_RESET
 		 ">"
 		 "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-	MDXX_thread_safe_print(stdout, copyright_info.c_str());
+	MDXX_print(stdout, copyright_info.c_str());
 }
 
 void print_args(int argc, char ** argv) {
@@ -133,5 +133,5 @@ void print_args(int argc, char ** argv) {
 		output += MDXX_RESET "\n";
 	}
 	output += "\n";
-	MDXX_thread_safe_print(stdout, output.c_str());
+	MDXX_print(stdout, output.c_str());
 }

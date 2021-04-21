@@ -26,7 +26,7 @@ extern "C" {
 
 char * MDXX_html_push(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	if (argc < 1) {
-		MDXX_thread_safe_print(stderr, "push needs an HTML_Manager* as its argument.\n");
+		MDXX_print(stderr, "push needs an HTML_Manager* as its argument.\n");
 		MDXX_print_current_line_and_exit(mdxx);
 		return nullptr;
 	}
@@ -37,7 +37,7 @@ char * MDXX_html_push(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 char * MDXX_html_pop(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	(void)mdxx;
 	if (argc < 1) {
-		MDXX_thread_safe_print(stderr, "pop needs an HTML_Manager* as its argument.\n");
+		MDXX_print(stderr, "pop needs an HTML_Manager* as its argument.\n");
 		MDXX_print_current_line_and_exit(mdxx);
 		return nullptr;
 	}

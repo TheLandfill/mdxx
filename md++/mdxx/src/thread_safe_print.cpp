@@ -35,7 +35,7 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
-	MDXX_thread_safe_print(stderr, output.c_str());
+	MDXX_print(stderr, output.c_str());
 	if (md != nullptr) {
 		MDXX_print_current_line_and_exit(md);
 	}
@@ -53,10 +53,10 @@ void MDXX_warn(const char * str) {
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
-	MDXX_thread_safe_print(stderr, output.c_str());
+	MDXX_print(stderr, output.c_str());
 }
 
-void MDXX_thread_safe_print(FILE* out, const char * str) {
+void MDXX_print(FILE* out, const char * str) {
 	#pragma omp critical(thread_safe_printing)
 	{
 #ifdef WIN32

@@ -23,7 +23,7 @@ namespace mdxx {
 	class MDXX_Manager;
 }
 
-extern "C" DLL_IMPORT_EXPORT void MDXX_thread_safe_print(FILE* out, const char * str);
+extern "C" DLL_IMPORT_EXPORT void MDXX_print(FILE* out, const char * str);
 extern "C" DLL_IMPORT_EXPORT void MDXX_error(mdxx::MDXX_Manager* md, const char * str);
 extern "C" DLL_IMPORT_EXPORT void MDXX_warn(const char * str);
 

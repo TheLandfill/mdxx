@@ -81,7 +81,7 @@ void MDXX_py_finalize();
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
-	MDXX_thread_safe_print(stdout, MDXX_RESET);
+	MDXX_print(stdout, MDXX_RESET);
 	using namespace mdxx;
 	MDXX_GET_EXE_LOCATION
 	std::string main_dir = main_program_dir;
@@ -129,7 +129,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		#pragma omp critical(num_finished_webpaged)
 		finished_webpages += (!mdxx.had_error() && !template_reader.had_error());
 	}
-	MDXX_thread_safe_print(stdout, "\n");
+	MDXX_print(stdout, "\n");
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
 	std::string summary;
@@ -143,7 +143,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	summary += std::to_string(total_time / (argc - 2));
 	summary += " ms\n"
 		"\x1b[0m";
-	MDXX_thread_safe_print(stdout, summary.c_str());
+	MDXX_print(stdout, summary.c_str());
 	MDXX_py_finalize();
 	delete[] main_program_dir;
 	return 0;
