@@ -341,7 +341,7 @@ extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::
 }
 
 extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {
-	std::cout << "code-block:\t" << MDXX_COMPILATION_INFO << "." << std::endl;
+	MDXX_thread_safe_print(stdout, (std::string("code-block:\t") + MDXX_COMPILATION_INFO + ".\n").c_str());
 }
 
 template<>
