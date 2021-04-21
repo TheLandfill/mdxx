@@ -31,7 +31,8 @@ T MDXX_get(mdxx::Expansion_Base * exp) {
 		error_message += exp->get_type();
 		error_message += "`\nwhen the expected type was\n\t`";
 		error_message += typeid(T).name();
-		error_message += "`\nLikely causes include a user redefining a builtin or plugin variable or errors in a plugin.\n";
+		error_message += "`\nLikely causes include a user redefining a builtin variable, a user redefining a\n"
+			"plugin variable, or errors in a plugin.";
 		throw std::runtime_error(error_message);
 	}
 }

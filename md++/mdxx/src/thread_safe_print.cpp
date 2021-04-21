@@ -17,8 +17,11 @@
 #include "thread_safe_print.h"
 #include "mdxx_manager.h"
 #include "mdxx_ansi.h"
+#include <codecvt>
 #include <string>
 #include <cstring>
+#include <iostream>
+#include <locale>
 
 void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	std::string output;
@@ -33,7 +36,9 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	output += MDXX_RESET;
 	output += "\n";
 	MDXX_thread_safe_print(stderr, output.c_str());
-	MDXX_print_current_line_and_exit(md);
+	if (md != nullptr) {
+		MDXX_print_current_line_and_exit(md);
+	}
 }
 
 void MDXX_warn(const char * str) {
@@ -54,6 +59,11 @@ void MDXX_warn(const char * str) {
 void MDXX_thread_safe_print(FILE* out, const char * str) {
 	#pragma omp critical(thread_safe_printing)
 	{
+#ifdef WIN32
+		static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		fwprintf(out, L"%s", converter.from_bytes(str).c_str());
+#else
 		fprintf(out, "%s", str);
+#endif
 	}
 }
