@@ -126,6 +126,6 @@ L"of the plugins in use.\n"
 #else
 		fprintf(out, "%s", str);
 #endif
-		return true;
 	}
+	return true;
 }
