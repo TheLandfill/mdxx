@@ -101,9 +101,13 @@ L"reason. Contact the developers of the plugins in use.\n"
 		try {
 			buffer = new WCHAR[buff_length];
 		} catch (std::bad_alloc& e) {
-			fwprintf(stderr, L"%s",
-L"Could not allocate enough memory to print out the error message that was\n"
-L"supposed to be printed out.\n"
+			std::string cs(e.what());
+			std::wstring ws;
+			std::copy(cs.begin(), cs.end(), std::back_inserter(ws));
+			fwprintf(stderr, L"%s\nException: %s\n",
+				L"Could not allocate enough memory to print out the error message that was\n"
+				L"supposed to be printed out.",
+				ws.c_str()
 			);
 			identify_windows_error();
 			return false;
