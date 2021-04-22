@@ -19,7 +19,6 @@
 #include "c_string_copy.h"
 #include "thread_safe_print.h"
 #include <memory>
-#include <iostream>
 
 extern "C" {
 

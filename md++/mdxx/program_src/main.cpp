@@ -17,7 +17,6 @@
 #include "run_program.h"
 #include "mdxx_ansi.h"
 #include "thread_safe_print.h"
-#include <iostream>
 #include <chrono>
 #include <string>
 #ifdef WIN32
@@ -34,21 +33,10 @@ void setup_ansi_terminal() {
 	SetConsoleMode(hstd, l_mode | DISABLE_NEWLINE_AUTO_RETURN | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
-class UTF8CodePage {
-public:
-	UTF8CodePage() : m_old_code_page(::GetConsoleOutputCP()) {
-		::SetConsoleOutputCP(CP_UTF8);
-		::SetConsoleCP(CP_UTF8);
-	}
-	~UTF8CodePage() { ::SetConsoleOutputCP(m_old_code_page); ::SetConsoleCP(m_old_code_page); }
-
-private:
-	UINT m_old_code_page;
-};
 #include <io.h>
 #include <fcntl.h>
 
-#define SETUP_UTF_8_TERMINAL static UTF8CodePage use_utf8;\
+#define SETUP_UTF_8_TERMINAL \
 _setmode(_fileno(stdout), _O_U8TEXT);\
 _setmode(_fileno(stderr), _O_U8TEXT);
 #else
@@ -66,8 +54,6 @@ void print_args(int argc, char ** argv);
 #undef MDXX_PROGRAM_NAME
 #define MDXX_PROGRAM_NAME "mdxx.exe"
 #endif
-
-typedef std::chrono::system_clock sys_clock;
 
 int main(int argc, char ** argv) {
 	SETUP_ANSI_TERMINAL
@@ -91,6 +77,7 @@ void usage_message(const char * program_name) {
 }
 
 void print_copyright_info() {
+	typedef std::chrono::system_clock sys_clock;
 	auto now = sys_clock::now();
 	std::time_t now_c = sys_clock::to_time_t(now);
 	struct tm *parts = std::localtime(&now_c);

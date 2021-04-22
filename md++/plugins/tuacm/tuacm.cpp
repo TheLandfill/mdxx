@@ -29,7 +29,6 @@
 #include "mdxx_get.h"
 #include "thread_safe_print.h"
 #include "re2/re2.h"
-#include <iostream>
 #include <algorithm>
 #include <string>
 #include <filesystem>
@@ -155,8 +154,8 @@ char * get_author_description(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base** 
 	size_t file_length = in.tellg();
 	in.seekg(0, in.beg);
 	if (file_length > description_length) {
-		std::cerr << "WARNING: File " << author_directory << author_name << description << " has more characters than the template allows.\n"
-		<< "mdxx will stop reading after " << description_length << " characters.\n";
+		MDXX_warn(((std::string("File ") + author_directory + author_name + description + " has more characters than the template allows.\n"
+			"mdxx will stop reading after ") + std::to_string(description_length) + " characters.\n").c_str());
 	}
 	size_t num_to_read = std::min(description_length, file_length);
 	char * output = new char[num_to_read + 1];

@@ -17,13 +17,15 @@
 #include "thread_safe_print.h"
 #include "mdxx_manager.h"
 #include "mdxx_ansi.h"
-#include <codecvt>
 #include <string>
 #include <cstring>
-#include <iostream>
 #include <locale>
+#include <stdexcept>
+#ifdef WIN32
+#include <Windows.h>
+#endif
 
-void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
+bool MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	std::string output;
 	output.reserve(strlen(str) + 128);
 	output += "\n";
@@ -35,13 +37,14 @@ void MDXX_error(mdxx::MDXX_Manager* md, const char * str) {
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
-	MDXX_print(stderr, output.c_str());
+	bool print_success = MDXX_print(stderr, output.c_str());
 	if (md != nullptr) {
 		MDXX_print_current_line_and_exit(md);
 	}
+	return print_success;
 }
 
-void MDXX_warn(const char * str) {
+bool MDXX_warn(const char * str) {
 	std::string output;
 	output.reserve(strlen(str) + 128);
 	output += "\n";
@@ -53,17 +56,72 @@ void MDXX_warn(const char * str) {
 	output += str;
 	output += MDXX_RESET;
 	output += "\n";
-	MDXX_print(stderr, output.c_str());
+	return MDXX_print(stderr, output.c_str());
 }
 
-void MDXX_print(FILE* out, const char * str) {
+#ifdef WIN32
+static void identify_windows_error() {
+	LPWSTR err_str;
+	DWORD last_err = GetLastError();
+	switch (last_err) {
+	case ERROR_INSUFFICIENT_BUFFER:
+		err_str = L"INSUFFICIENT BUFFER";
+		break;
+	case ERROR_INVALID_FLAGS:
+		err_str = L"INVALID FLAGS";
+		break;
+	case ERROR_INVALID_PARAMETER:
+		err_str = L"INVALID PARAMETER";
+		break;
+	case ERROR_NO_UNICODE_TRANSLATION:
+		err_str = L"NO UNICODE TRANSLATION";
+		break;
+	default:
+		err_str = L"UNKNOWN ERROR";
+	}
+	fwprintf(stderr, L"ERROR:       %s\nERROR CODE: %ld", err_str, last_err);
+}
+#endif
+
+bool MDXX_print(FILE* out, const char * str) {
 	#pragma omp critical(thread_safe_printing)
 	{
 #ifdef WIN32
-		static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-		fwprintf(out, L"%s", converter.from_bytes(str).c_str());
+		int buff_length = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+		if (buff_length < 0) {
+			std::wstring error_message;
+			fwprintf(stderr, L"%s",
+L"The message that was supposed to be printed out cannot be printed for some\n"
+L"reason. Contact the developers of the plugins in use.\n"
+			);
+			identify_windows_error();
+			return false;
+		}
+		LPWSTR buffer;
+		try {
+			buffer = new WCHAR[buff_length];
+		} catch (std::bad_alloc& e) {
+			fwprintf(stderr, L"%s",
+L"Could not allocate enough memory to print out the error message that was\n"
+L"supposed to be printed out.\n"
+			);
+			identify_windows_error();
+			return false;
+		}
+		int err_code = MultiByteToWideChar(CP_UTF8, 0, str, -1, buffer, buff_length);
+		if (err_code == 0) {
+			fwprintf(stderr, L"%s",
+L"Unable to convert message to print to wide characters. Contact the developers\n"
+L"of the plugins in use.\n"
+			);
+			identify_windows_error();
+			return false;
+		}
+		fwprintf(out, L"%s", buffer);
+		delete[] buffer;
 #else
 		fprintf(out, "%s", str);
 #endif
+		return true;
 	}
 }

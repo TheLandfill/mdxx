@@ -22,7 +22,6 @@
 #include <stdexcept>
 #include <vector>
 #include <sstream>
-#include <iostream>
 #include <cstdio>
 
 namespace mdxx {

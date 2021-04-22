@@ -23,7 +23,6 @@
 #include "thread_safe_print.h"
 #include <sstream>
 #include <memory>
-#include <iostream>
 #include <stdexcept>
 
 namespace mdxx {

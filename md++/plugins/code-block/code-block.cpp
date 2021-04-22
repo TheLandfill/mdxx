@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <string>
 #define MDXX_EXTERNAL_CONTEXT
 #include "expansion.h"
 #include "context.h"
@@ -26,8 +25,7 @@
 #include "thread_safe_print.h"
 #include "split.h"
 #include "py_init.h"
-#include <iostream>
-#include <stdexcept>
+#include <string>
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #if __has_include(<filesystem>)

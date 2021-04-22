@@ -22,7 +22,6 @@
 #include "sanitize_user_input.h"
 #include "mdxx_get.h"
 #include "thread_safe_print.h"
-#include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
