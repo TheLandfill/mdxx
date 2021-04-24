@@ -23,6 +23,7 @@
 #include "metadata.h"
 #include "mdxx_ansi.h"
 #include "thread_safe_print.h"
+#include "gen_html.h"
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -61,15 +62,7 @@ if (num_bytes_in_filename < 0) { \
 } \
 main_program_dir[num_bytes_in_filename] = '\0';
 #endif
-#if __has_include(<filesystem>)
-  #include <filesystem>
-  namespace fs = std::filesystem;
-#elif __has_include(<experimental/filesystem>)
-  #include <experimental/filesystem>
-  namespace fs = std::experimental::filesystem;
-#else
-  error "Missing the <filesystem> header."
-#endif
+#include "filesys_wrapper.h"
 #include <chrono>
 
 namespace mdxx {
@@ -78,6 +71,23 @@ namespace mdxx {
 }
 
 void MDXX_py_finalize();
+
+static void print_summary(int finished_webpages, int num_attempted, double milliseconds) {
+	std::string summary;
+	summary.reserve(256);
+	summary += "Successfully generated ";
+	summary += std::to_string(finished_webpages);
+	summary += " / ";
+	summary += std::to_string(num_attempted);
+	summary += " webpages in ";
+	summary += std::to_string(milliseconds);
+	summary += " ms\n"
+		"Average time per webpage was ";
+	summary += std::to_string(milliseconds / finished_webpages);
+	summary += " ms\n"
+		"\x1b[0m";
+	MDXX_thread_safe_print(stdout, summary.c_str());
+}
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
@@ -99,51 +109,14 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	int finished_webpages = 0;
 	#pragma omp parallel for schedule(dynamic)
 	for (int current_file = 2; current_file < argc; current_file++) {
-		fs::path infile(fs::absolute(argv[current_file]));
-		if (!fs::exists(infile)) {
-			std::string error_message;
-			error_message.reserve(1024);
-			error_message += "Input file\n\t";
-			error_message += MDXX_FILE_COLOR;
-			error_message += infile.string();
-			error_message += MDXX_ERROR_COLOR;
-			error_message += "\ndoes not exist. No output generated.";
-			error_message += MDXX_RESET;
-			error_message += "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
-			MDXX_error(nullptr, error_message.c_str());
-			continue;
-		}
-		std::ifstream in{infile};
-		MDXX_Manager mdxx = MDXX_Manager(in);
-		fs::path outfile = infile;
-		outfile.replace_extension(".html");
-		HTML_Manager html{outfile.string()};
-		std::shared_ptr<Content_Manager> content = std::make_shared<Content_Manager>(html, mdxx, infile.string());
-		std::string template_file = template_path.string() + mdxx.next_line_no_nl();
-		Template_Manager template_reader(html, content, template_file);
-		fs::path metafile = infile;
-		metafile.replace_extension(".json");
-		mdxx.add_variable_to_context("default", "metafile", c_string_copy(metafile.string().c_str()));
-		mdxx.add_variable_to_context<Plugin_Loader*>("default", "plugin-obj", &pl);
-		template_reader.process_template();
-		#pragma omp critical(num_finished_webpaged)
-		finished_webpages += (!mdxx.had_error() && !template_reader.had_error());
+		bool success = MDXX_gen_html(argv[current_file], template_path, &pl);
+		#pragma omp critical(num_finished_webpages)
+		finished_webpages += success;
 	}
 	MDXX_thread_safe_print(stdout, "\n");
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
-	std::string summary;
-	summary.reserve(256);
-	summary += "Generated ";
-	summary += std::to_string(finished_webpages);
-	summary += " webpages in ";
-	summary += std::to_string(total_time);
-	summary += " ms\n"
-		"Average time per webpage was ";
-	summary += std::to_string(total_time / (argc - 2));
-	summary += " ms\n"
-		"\x1b[0m";
-	MDXX_thread_safe_print(stdout, summary.c_str());
+	print_summary(finished_webpages, argc - 2, total_time);
 	MDXX_py_finalize();
 	delete[] main_program_dir;
 	return 0;
