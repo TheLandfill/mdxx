@@ -23,7 +23,6 @@
 #include "thread_safe_print.h"
 #include <sstream>
 #include <memory>
-#include <iostream>
 #include <stdexcept>
 
 namespace mdxx {
@@ -89,7 +88,7 @@ void Template_Manager::process_template() {
 		error_message += MDXX_RESET
 			 "\nOutput will be deleted.\n"
 			"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-		MDXX_thread_safe_print(stderr, error_message.c_str());
+		MDXX_print(stderr, error_message.c_str());
 		html.delete_outfile();
 	}
 	template_mdxx.destroy_contexts();

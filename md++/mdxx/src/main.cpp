@@ -86,12 +86,12 @@ static void print_summary(int finished_webpages, int num_attempted, double milli
 	summary += std::to_string(milliseconds / finished_webpages);
 	summary += " ms\n"
 		"\x1b[0m";
-	MDXX_thread_safe_print(stdout, summary.c_str());
+	MDXX_print(stdout, summary.c_str());
 }
 
 extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto start_time = std::chrono::high_resolution_clock::now();
-	MDXX_thread_safe_print(stdout, MDXX_RESET);
+	MDXX_print(stdout, MDXX_RESET);
 	using namespace mdxx;
 	MDXX_GET_EXE_LOCATION
 	std::string main_dir = main_program_dir;
@@ -113,7 +113,7 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 		#pragma omp critical(num_finished_webpages)
 		finished_webpages += success;
 	}
-	MDXX_thread_safe_print(stdout, "\n");
+	MDXX_print(stdout, "\n");
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
 	print_summary(finished_webpages, argc - 2, total_time);

@@ -18,7 +18,7 @@
 #include "thread_safe_print.h"
 #include "mdxx_ansi.h"
 #include <Python.h>
-#include <iostream>
+#include <string>
 
 namespace mdxx {
 	extern char * main_program_dir;

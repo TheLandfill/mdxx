@@ -22,7 +22,6 @@
 #include <memory>
 #include <string>
 #include <stdexcept>
-#include <iostream>
 #include <unordered_map>
 #include <vector>
 
@@ -95,7 +94,7 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 			abi_info += MDXX_BOLD MDXX_VAR_COLOR "md++:\t\t";
 			abi_info += MDXX_COMPILATION_INFO;
 			abi_info += ".\n" MDXX_RESET;
-			MDXX_thread_safe_print(stdout, abi_info.c_str());
+			MDXX_print(stdout, abi_info.c_str());
 			first_plugin_loaded = false;
 		}
 	}
@@ -117,9 +116,9 @@ void Plugin_Loader::load_plugin(MDXX_Manager * mdxx_ptr, const char * shared_lib
 				throw std::runtime_error(error_message);
 			}
 			plugins[full_library_name] = Plugin_Info{plugin_handle, import_plugin_func};
-			MDXX_thread_safe_print(stdout, MDXX_CONTEXT_COLOR);
+			MDXX_print(stdout, MDXX_CONTEXT_COLOR);
 			PRINT_COMPILATION_INFO(plugin_handle, "print_compilation_info");
-			MDXX_thread_safe_print(stdout, MDXX_RESET);
+			MDXX_print(stdout, MDXX_RESET);
 		}
 		plugins[full_library_name].import_plugin(this, mdxx_ptr);
 	}

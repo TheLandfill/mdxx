@@ -27,7 +27,6 @@
 #include <cstring>
 #include <stdexcept>
 #include <string>
-#include <iostream>
 #include <unordered_map>
 
 namespace mdxx {

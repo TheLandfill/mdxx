@@ -19,7 +19,6 @@
 #include "c_string_copy.h"
 #include "thread_safe_print.h"
 #include <memory>
-#include <iostream>
 
 extern "C" {
 
@@ -37,7 +36,7 @@ void MDXX_print_current_line_and_exit(mdxx::MDXX_Manager * md) {
 	output.reserve(1024);
 	output += "\nLine that caused the problem:\n";
 	output += md->print_line();
-	MDXX_thread_safe_print(stderr, output.c_str());
+	MDXX_print(stderr, output.c_str());
 	md->error_exit();
 }
 

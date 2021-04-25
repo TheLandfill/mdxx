@@ -246,7 +246,7 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 	re2::StringPiece re_line = line;
 	while (RE2::PartialMatch(re_line, variable_regex, &current_sub) && !caused_error) {
 		if (print_expansion) {
-			MDXX_thread_safe_print(stdout, (complete_line + line + "\n\n").c_str());
+			MDXX_print(stdout, (complete_line + line + "\n\n").c_str());
 		}
 		std::vector<std::string> var_args = split(current_sub.as_string());
 		std::string var = var_args.front();
@@ -298,7 +298,7 @@ std::string MDXX_Manager::expand_line(std::string& line) {
 		re_line = line;
 	}
 	if (print_expansion) {
-		MDXX_thread_safe_print(stdout, (complete_line + line + "\n\n").c_str());
+		MDXX_print(stdout, (complete_line + line + "\n\n").c_str());
 	}
 	return line;
 }

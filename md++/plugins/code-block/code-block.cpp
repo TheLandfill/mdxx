@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <string>
 #define MDXX_EXTERNAL_CONTEXT
 #include "expansion.h"
 #include "context.h"
@@ -26,8 +25,7 @@
 #include "thread_safe_print.h"
 #include "split.h"
 #include "py_init.h"
-#include <iostream>
-#include <stdexcept>
+#include <string>
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #if __has_include(<filesystem>)
@@ -341,7 +339,7 @@ extern "C" DLL_IMPORT_EXPORT void import_plugin(mdxx::Plugin_Loader * pl, mdxx::
 }
 
 extern "C" DLL_IMPORT_EXPORT void print_compilation_info() {
-	std::cout << "code-block:\t" << MDXX_COMPILATION_INFO << "." << std::endl;
+	MDXX_print(stdout, (std::string("code-block:\t") + MDXX_COMPILATION_INFO + ".\n").c_str());
 }
 
 template<>
