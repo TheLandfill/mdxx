@@ -121,6 +121,10 @@ void MDXX_Manager::handle_context(HTML_Manager& html) {
 		if (cur_context()->can_allow_autosubs()) {
 			handle_curly_braces(&line_data.line, *MDXX_GET(HTML_Manager*, get_var("html")), *this);
 		}
+		static const RE2 escaped_left_bracket("\\\\{");
+		RE2::GlobalReplace(&line_data.line, escaped_left_bracket, MDXX_GET(const char *, get_var("\\{")));
+		static const RE2 escaped_right_bracket("}\\\\");
+		RE2::GlobalReplace(&line_data.line, escaped_right_bracket, MDXX_GET(const char *, get_var("}\\")));
 		if (line_data.line != "") {
 			cur_context()->process(html, line_data.line.c_str(), line_data.num_lines);
 		}

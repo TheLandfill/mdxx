@@ -22,6 +22,7 @@
 #include <unordered_map>
 #include <memory>
 #include <fstream>
+#include <unordered_set>
 
 namespace mdxx {
 
@@ -74,7 +75,7 @@ public:
 private:
 	void variable_definition(std::string& line);
 	void immediate_substitution(std::string& line);
-	void check_variable_dependency(const Context& c);
+	void check_variable_dependency();
 	std::string find_context_with_variable(const std::string& var);
 	long convert_string_to_long(const std::string& str);
 	void check_if_index_in_range(long index, size_t size);
@@ -87,6 +88,7 @@ private:
 	size_t cur_line_count = 0;
 	bool print_expansion = false;
 	std::shared_ptr<std::unordered_map<std::string, std::unique_ptr<Context>>> context_dict;
+	std::unordered_map<std::string, std::unordered_set<std::string>> variable_expansion_dependencies;
 	std::string line_stack;
 	Line_Data line_data;
 	bool finished_reading = false;

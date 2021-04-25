@@ -14,26 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef MDXX_GET_H
-#define MDXX_GET_H
-#include "expansion.h"
-#include <stdexcept>
+#include "mdxx_get.h"
 
 namespace mdxx {
 
-std::string MDXX_get_print_error_message(const char * received, const char * actual);
-
+std::string MDXX_get_print_error_message(const char * received, const char * actual) {
+	std::string error_message;
+	error_message.reserve(2048);
+	error_message += "Someone has passed in an argument of type\n\t`";
+	error_message += received;
+	error_message += "`\nwhen the expected type was\n\t`";
+	error_message += actual;
+	error_message += "`\n"
+"Likely causes include a user redefining a builtin variable, a user redefining a\n"
+"plugin variable, or errors in a plugin. If you can't read the types, displayed,\n"
+"use the command\n\t`c++filt -t ";
+	error_message += received;
+	error_message += " ";
+	error_message += actual;
+	error_message += "`\nto see the unmangled typenames.";
+	return error_message;
 }
 
-#define MDXX_GET(T, Y) MDXX_get<T>(Y)
-template<typename T>
-T MDXX_get(mdxx::Expansion_Base * exp) {
-	if (std::string(exp->get_type()) == typeid(T).name()) {
-		return *static_cast<T*>(exp->get_data());
-	} else {
-		std::string error_message = mdxx::MDXX_get_print_error_message(exp->get_type(), typeid(T).name());
-		throw std::runtime_error(error_message);
-	}
 }
-
-#endif

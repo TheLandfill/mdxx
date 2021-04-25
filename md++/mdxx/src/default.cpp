@@ -48,8 +48,7 @@ char * print_variables(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) 
 char * print_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc) {
 	(void)args;
 	(void)argc;
-	MDXX_thread_safe_print(stdout, (mdxx->list_context_stack() + "\n").c_str());
-	MDXX_thread_safe_print(stdout, (mdxx->list_valid_contexts() + "\n").c_str());
+	MDXX_thread_safe_print(stdout, (mdxx->list_context_stack() + "\n" + mdxx->list_valid_contexts() + "\n").c_str());
 	return nullptr;
 }
 
