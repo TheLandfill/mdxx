@@ -41,3 +41,6 @@ endif (NOT WIN32)
 add_executable("${project}" "${SOURCES}")
 target_link_libraries("${project}" mdxx_interface)
 target_compile_definitions(mdxx_interface PRIVATE MDXX_INTERFACE_DLL)
+
+add_executable("variable_parsing_test" "${CMAKE_SOURCE_DIR}/${project}/tests/variable_parsing_test.cpp")
+target_link_libraries("variable_parsing_test" mdxx_interface)
