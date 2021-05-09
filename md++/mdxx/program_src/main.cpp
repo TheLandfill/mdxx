@@ -64,7 +64,8 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 	print_args(argc, argv);
-	return MDXX_run_program(argc, argv);
+	int prog_result = MDXX_run_program(argc, argv);
+	return prog_result;
 }
 
 void usage_message(const char * program_name) {
@@ -77,10 +78,6 @@ void usage_message(const char * program_name) {
 }
 
 void print_copyright_info() {
-	typedef std::chrono::system_clock sys_clock;
-	auto now = sys_clock::now();
-	std::time_t now_c = sys_clock::to_time_t(now);
-	struct tm *parts = std::localtime(&now_c);
 	std::string copyright_info;
 	copyright_info.reserve(1024);
 	copyright_info += MDXX_RESET
@@ -91,7 +88,7 @@ void print_copyright_info() {
 		MDXX_VAR_COLOR
 		MDXX_COPYRIGHT
 		" ";
-	copyright_info += std::to_string(parts->tm_year + 1900);
+	copyright_info += "2021";
 	copyright_info += MDXX_CONTEXT_COLOR
 		 " Joseph Mellor "
 		 MDXX_RESET
