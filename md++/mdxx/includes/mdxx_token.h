@@ -9,6 +9,11 @@ struct MDXX_Token {
 	bool is_variable;
 };
 
+struct MDXX_Variable_Info {
+	std::unordered_set<std::string> dependencies;
+	size_t last_line_modified = 0;
+};
+
 }
 
 #endif

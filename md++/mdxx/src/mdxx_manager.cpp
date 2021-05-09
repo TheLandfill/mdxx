@@ -25,6 +25,8 @@
 #include "curly_braces_sub.h"
 #include "mdxx_get.h"
 #include "thread_safe_print.h"
+#include "variable_parser.h"
+#include <queue>
 #include <stdexcept>
 #include <sstream>
 #include <memory>
@@ -135,6 +137,87 @@ void MDXX_Manager::handle_context(HTML_Manager& html) {
 	}
 }
 
+void MDXX_Manager::get_dependencies(const std::string& text, std::unordered_set<std::string>& set) {
+	parse_line_for_variables(this, text.c_str(), tokens);
+	for (const MDXX_Token& token : tokens) {
+		std::string token_str(token.str);
+		auto token_split = split(token_str);
+		if (
+			token.is_variable
+			&& token_split.size() > 0
+		) {
+			if (std::string(get_var(token_split[0])->get_type()) == typeid(const char *).name()) {
+				set.emplace(token.str);
+			}
+			for (size_t i = 1; i < token_split.size(); i++) {
+				const std::string& arg = token_split[i];
+				if (
+					arg.front() == '('
+					&& arg.back() == ')'
+				) {
+					std::string arg_var{ arg.begin() + 1, arg.end() - 1 };
+					if (std::string(get_var(arg_var)->get_type()) == typeid(const char *).name()) {
+						set.emplace(arg_var);
+					}
+				}
+			}
+		}
+	}
+}
+
+void MDXX_Manager::gen_dependencies_for_var(const std::string& variable) {
+	Expansion_Base * expansion = get_var(variable);
+	if (std::string(expansion->get_type()) != typeid(const char *).name()) {
+		variable_dependencies[context.back()][variable] = { std::unordered_set<std::string>(), line_number };
+		return;
+	}
+	const char * value = MDXX_GET(const char *, expansion);
+	if (!variable_dependencies[context.back()].count(variable)) {
+		variable_dependencies[context.back()][variable] = { std::unordered_set<std::string>(), line_number };
+	}
+	MDXX_Variable_Info& var_dep = variable_dependencies[context.back()][variable];
+	var_dep.dependencies.clear();
+	get_dependencies(value, var_dep.dependencies);
+}
+
+std::unordered_set<std::string> MDXX_Manager::get_all_dependencies(const std::string& variable) {
+	std::unordered_set<std::string> visited{ variable_dependencies[context.back()][variable].dependencies };
+	visited.reserve(256);
+	std::queue<std::string> elements_to_visit;
+	for (const std::string& cur_element : visited) {
+		elements_to_visit.push(cur_element);
+	}
+	while (!elements_to_visit.empty()) {
+		std::string cur_element{ elements_to_visit.front() };
+		elements_to_visit.pop();
+		std::string cur_con{ find_context_with_variable(cur_element) };
+		if (!variable_dependencies[cur_con].count(cur_element)) {
+			gen_dependencies_for_var(cur_element);
+		}
+		const std::unordered_set<std::string>& new_deps{ variable_dependencies[cur_con][cur_element].dependencies };
+		for (const std::string& dep : new_deps) {
+			if (visited.count(dep)) {
+				continue;
+			}
+			elements_to_visit.push(dep);
+		}
+	}
+	return visited;
+}
+
+void MDXX_Manager::check_if_circular_dependency(const std::string& variable) {
+	std::unordered_set<std::string> visited{ get_all_dependencies(variable) };
+	if (visited.count(variable)) {
+		std::string error_message;
+		error_message.reserve(2048);
+		error_message += "Recursive definition when defining variable\n\t`" MDXX_VAR_COLOR;
+		error_message += variable;
+		error_message += MDXX_RESET;
+		MDXX_error(this, error_message.c_str());
+	}
+
+}
+
 void MDXX_Manager::variable_definition(std::string& line) {
 	size_t variable_end = line.find("}}:=\"");
 	size_t variable_start = sizeof("{{") - 1;
@@ -142,6 +225,8 @@ void MDXX_Manager::variable_definition(std::string& line) {
 	std::string variable = line.substr(variable_start, variable_end - variable_start);
 	std::string value = line.substr(value_start, line.length() - value_start - sizeof("\"") + 1);
 	cur_context()->add_variable(variable.c_str(), new Expansion<char *>(c_string_copy(value.c_str())));
+	gen_dependencies_for_var(variable);
+	check_if_circular_dependency(variable);
 }
 
 void MDXX_Manager::immediate_substitution(std::string& line) {
@@ -444,6 +529,7 @@ long MDXX_Manager::convert_string_to_long(const std::string& str) {
 void MDXX_Manager::check_if_index_in_range(long index, size_t size) {
 	if (index > (long)size
 		|| (index + (long)size) < 0
+		|| index == 0
 	) {
 		std::string error_message;
 		error_message.reserve(2048);
@@ -457,7 +543,7 @@ void MDXX_Manager::check_if_index_in_range(long index, size_t size) {
 }
 
 void MDXX_Manager::handle_range_substitutions(std::string& line, const std::vector<std::string>& var_args) {
-	static const RE2 range_arguments_regex("(\\[\\d*:\\d*\\])");
+	static const RE2 range_arguments_regex("(\\[-?\\d*:-?\\d*\\])");
 	re2::StringPiece current_range_sub;
 	while (RE2::PartialMatch(line, range_arguments_regex, &current_range_sub)) {
 		long current_start = 0;
@@ -475,12 +561,8 @@ void MDXX_Manager::handle_range_substitutions(std::string& line, const std::vect
 			current_end = convert_string_to_long(current_end_str);
 			check_if_index_in_range(current_end, var_args.size());
 		}
-		if (current_start < 0) {
-			current_start += var_args.size();
-		}
-		if (current_end < 0) {
-			current_end += var_args.size();
-		}
+		current_start += (current_start < 0) * var_args.size();
+		current_end += (current_end < 0) * var_args.size();
 		long step = 1;
 		if (current_end < current_start) {
 			step = -1;

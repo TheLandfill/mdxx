@@ -81,6 +81,10 @@ private:
 	long convert_string_to_long(const std::string& str);
 	void check_if_index_in_range(long index, size_t size);
 	void handle_range_substitutions(std::string& line, const std::vector<std::string>& num_args);
+	void MDXX_Manager::check_if_circular_dependency(const std::string& variable);
+	void get_dependencies(const std::string& text, std::unordered_set<std::string>& set);
+	std::unordered_set<std::string> get_all_dependencies(const std::string& variable);
+	void gen_dependencies_for_var(const std::string& var);
 private:
 	std::ifstream* in_if_need_to_allocate = nullptr;
 	std::ifstream& in;
@@ -90,6 +94,7 @@ private:
 	bool print_expansion = false;
 	std::shared_ptr<std::unordered_map<std::string, std::unique_ptr<Context>>> context_dict;
 	std::vector<MDXX_Token> tokens;
+	std::unordered_map<std::string, std::unordered_map<std::string, MDXX_Variable_Info>> variable_dependencies;
 	std::string line_stack;
 	Line_Data line_data;
 	bool finished_reading = false;
