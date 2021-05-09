@@ -35,11 +35,13 @@ namespace mdxx {
 
 MDXX_Manager::MDXX_Manager(std::ifstream& i) : in(i) {
 	init_dictionaries();
+	tokens.reserve(256);
 	c_args = new Expansion_Base*[num_c_args];
 }
 
 MDXX_Manager::MDXX_Manager(std::ifstream&& i) : in(i) {
 	init_dictionaries();
+	tokens.reserve(256);
 	c_args = new Expansion_Base*[num_c_args];
 }
 
@@ -48,6 +50,7 @@ MDXX_Manager::MDXX_Manager(std::string filename) :
 	in(*in_if_need_to_allocate)
 {
 	init_dictionaries();
+	tokens.reserve(256);
 	c_args = new Expansion_Base*[num_c_args];
 }
 

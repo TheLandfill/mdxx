@@ -19,6 +19,7 @@
 #include "expansion.h"
 #include "context.h"
 #include "line_data.h"
+#include "mdxx_token.h"
 #include <unordered_map>
 #include <memory>
 #include <fstream>
@@ -88,7 +89,7 @@ private:
 	size_t cur_line_count = 0;
 	bool print_expansion = false;
 	std::shared_ptr<std::unordered_map<std::string, std::unique_ptr<Context>>> context_dict;
-	std::unordered_map<std::string, std::unordered_set<std::string>> variable_expansion_dependencies;
+	std::vector<MDXX_Token> tokens;
 	std::string line_stack;
 	Line_Data line_data;
 	bool finished_reading = false;

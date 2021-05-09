@@ -3,3 +3,6 @@ tuacm-article.mdxx
 {{hr}}
 This should look like an aside, but {{span code-block}}{{span p}}this should look differently{{/span}}{{/span}}
 {{/div}}
+
+{{cb}}:="code-block"
+{{span {{cb}}}}{{span p}}This should look different{{/span}}{{/span}}
