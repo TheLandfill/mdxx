@@ -118,6 +118,8 @@ extern "C" DLL_IMPORT_EXPORT int MDXX_run_program(int argc, char ** argv) {
 	auto total_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count() * 1000.0;
 	print_summary(finished_webpages, argc - 2, total_time);
 	MDXX_py_finalize();
+	MDXX_print(stdout, "\x1b[m");
+	MDXX_print(stderr, "\x1b[m");
 	delete[] main_program_dir;
 	return 0;
 }

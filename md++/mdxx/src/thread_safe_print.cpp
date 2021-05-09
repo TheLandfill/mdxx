@@ -89,7 +89,6 @@ bool MDXX_print(FILE* out, const char * str) {
 #ifdef WIN32
 		int buff_length = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
 		if (buff_length < 0) {
-			std::wstring error_message;
 			fwprintf(stderr, L"%s",
 L"The message that was supposed to be printed out cannot be printed for some\n"
 L"reason. Contact the developers of the plugins in use.\n"
