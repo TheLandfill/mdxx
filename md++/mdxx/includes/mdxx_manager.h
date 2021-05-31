@@ -34,7 +34,7 @@ public:
 	MDXX_Manager(std::ifstream& i);
 	MDXX_Manager(std::ifstream&& i);
 	MDXX_Manager(std::string filename);
-	void init_dictionaries();
+	void init();
 	void print_expansion_flip();
 	const std::vector<std::string>& context_stack() const;
 	std::unique_ptr<Context>& cur_context();
@@ -62,7 +62,7 @@ public:
 	std::string list_valid_contexts();
 	~MDXX_Manager();
 	static char * open_context(MDXX_Manager* mdxx, Expansion_Base** args, size_t argc);
-	static char * close_context(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc);
+	static char * close_context(MDXX_Manager* mdxx, Expansion_Base** args, size_t argc);
 	void destroy_contexts();
 	context_dict_type get_context_dict();
 	void set_context_dict(context_dict_type other_context_dict);
@@ -81,7 +81,7 @@ private:
 	long convert_string_to_long(const std::string& str);
 	void check_if_index_in_range(long index, size_t size);
 	void handle_range_substitutions(std::string& line, const std::vector<std::string>& num_args);
-	void MDXX_Manager::check_if_circular_dependency(const std::string& variable);
+	void check_if_circular_dependency(const std::string& variable);
 	void get_dependencies(const std::string& text, std::unordered_set<std::string>& set);
 	std::unordered_set<std::string> get_all_dependencies(const std::string& variable);
 	void gen_dependencies_for_var(const std::string& var);

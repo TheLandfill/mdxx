@@ -17,6 +17,7 @@
 #ifndef MDXX_GET_H
 #define MDXX_GET_H
 #include "expansion.h"
+#include <cstring>
 #include <stdexcept>
 
 namespace mdxx {
@@ -25,10 +26,15 @@ std::string MDXX_get_print_error_message(const char * received, const char * act
 
 }
 
+template<typename T>
+bool MDXX_is_type(mdxx::Expansion_Base * exp) {
+	return !strcmp(exp->get_type(), typeid(T).name());
+}
+
 #define MDXX_GET(T, Y) MDXX_get<T>(Y)
 template<typename T>
 T MDXX_get(mdxx::Expansion_Base * exp) {
-	if (std::string(exp->get_type()) == typeid(T).name()) {
+	if (MDXX_is_type<T>(exp)) {
 		return *static_cast<T*>(exp->get_data());
 	} else {
 		std::string error_message = mdxx::MDXX_get_print_error_message(exp->get_type(), typeid(T).name());

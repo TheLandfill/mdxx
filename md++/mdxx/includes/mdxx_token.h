@@ -1,6 +1,8 @@
 #ifndef MDXX_MDXX_TOKEN_H
 #define MDXX_MDXX_TOKEN_H
 #include <string_view>
+#include <string>
+#include <unordered_set>
 
 namespace mdxx {
 

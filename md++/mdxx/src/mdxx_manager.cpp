@@ -36,28 +36,24 @@
 namespace mdxx {
 
 MDXX_Manager::MDXX_Manager(std::ifstream& i) : in(i) {
-	init_dictionaries();
-	tokens.reserve(256);
-	c_args = new Expansion_Base*[num_c_args];
+	init();
 }
 
 MDXX_Manager::MDXX_Manager(std::ifstream&& i) : in(i) {
-	init_dictionaries();
-	tokens.reserve(256);
-	c_args = new Expansion_Base*[num_c_args];
+	init();
 }
 
 MDXX_Manager::MDXX_Manager(std::string filename) :
 	in_if_need_to_allocate(new std::ifstream(filename)),
 	in(*in_if_need_to_allocate)
 {
-	init_dictionaries();
-	tokens.reserve(256);
-	c_args = new Expansion_Base*[num_c_args];
+	init();
 }
 
-void MDXX_Manager::init_dictionaries() {
+void MDXX_Manager::init() {
 	context_dict = std::make_shared<std::unordered_map<std::string, std::unique_ptr<Context>>>();
+	tokens.reserve(256);
+	c_args = new Expansion_Base*[num_c_args];
 }
 
 void MDXX_Manager::print_expansion_flip() {
@@ -146,7 +142,8 @@ void MDXX_Manager::get_dependencies(const std::string& text, std::unordered_set<
 			token.is_variable
 			&& token_split.size() > 0
 		) {
-			if (std::string(get_var(token_split[0])->get_type()) == typeid(const char *).name()) {
+			Expansion_Base * var = get_var(token_split[0]);
+			if (MDXX_is_type<const char *>(var) || MDXX_is_type<gen_func>(var)) {
 				set.emplace(token.str);
 			}
 			for (size_t i = 1; i < token_split.size(); i++) {
@@ -156,7 +153,7 @@ void MDXX_Manager::get_dependencies(const std::string& text, std::unordered_set<
 					&& arg.back() == ')'
 				) {
 					std::string arg_var{ arg.begin() + 1, arg.end() - 1 };
-					if (std::string(get_var(arg_var)->get_type()) == typeid(const char *).name()) {
+					if (MDXX_is_type<const char *>(get_var(arg_var))) {
 						set.emplace(arg_var);
 					}
 				}
@@ -167,7 +164,7 @@ void MDXX_Manager::get_dependencies(const std::string& text, std::unordered_set<
 
 void MDXX_Manager::gen_dependencies_for_var(const std::string& variable) {
 	Expansion_Base * expansion = get_var(variable);
-	if (std::string(expansion->get_type()) != typeid(const char *).name()) {
+	if (MDXX_is_type<const char *>(expansion)) {
 		variable_dependencies[context.back()][variable] = { std::unordered_set<std::string>(), line_number };
 		return;
 	}
@@ -215,7 +212,6 @@ void MDXX_Manager::check_if_circular_dependency(const std::string& variable) {
 		error_message += MDXX_RESET;
 		MDXX_error(this, error_message.c_str());
 	}
-
 }
 
 void MDXX_Manager::variable_definition(std::string& line) {
