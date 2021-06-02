@@ -60,7 +60,7 @@ Expansion_Base* Expansion<gen_func>::make_deep_copy() {
 }
 
 void * Expansion<gen_func>::get_data() {
-	return &name;
+	return &func;
 }
 
 template<>

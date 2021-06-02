@@ -61,6 +61,9 @@ void X::add_variable(const char * variable, const char * value) {\
 \
 const char * X::list_variables_as_text() { \
 	return MDXX_list_vars(variables, all_vars_as_text); \
+} \
+const mdxx::variable_map * X::get_variable_map() { \
+	return variables; \
 }
 #else
 #define MDXX_VARIABLE_MAP mdxx::variable_map variables;
@@ -95,6 +98,9 @@ void X::add_variable(const char * variable, const char * value) {\
 \
 const char * X::list_variables_as_text() { \
 	return MDXX_list_vars(&variables, all_vars_as_text); \
+} \
+const variable_map * X::get_variable_map() { \
+	return &variables; \
 }
 #endif
 
@@ -117,6 +123,7 @@ void add_variable(const char * variable, T* value) { \
 } \
 void add_variable(const char * variable_name, mdxx::gen_func value); \
 void add_variable(const char * variable_name, const char * value); \
+const mdxx::variable_map * get_variable_map(); \
 private: \
 	std::string name; \
 	MDXX_VARIABLE_MAP \
@@ -137,6 +144,7 @@ public:
 	virtual void add_variable(const char * variable_name, Expansion_Base * variable_value) = 0;
 	virtual const char * get_name() = 0;
 	virtual bool can_allow_autosubs() = 0;
+	virtual const variable_map * get_variable_map() = 0;
 };
 
 }

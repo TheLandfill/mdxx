@@ -119,6 +119,9 @@ template<>
 Expansion<char *>::Expansion(char * data);
 
 template<>
+Expansion<char *>::~Expansion();
+
+template<>
 const char * Expansion<char *>::to_string();
 
 template<>

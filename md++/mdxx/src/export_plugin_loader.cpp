@@ -26,8 +26,8 @@ char * MDXX_load_plugins(MDXX_Manager * mdxx, Expansion_Base** args, size_t argc
 	if (argc < 2) {
 		MDXX_error(mdxx,
 "MDXX_load_plugins expects at least one argument with the rest of the arguments\n"
-"being the names of the plugins you want to load as text. The first\n"
-"argument should be a Plugin_Loader* (should be {{plugin-obj}}).\n"
+"being the names of the plugins you want to load as text. The first argument should be\n"
+"a Plugin_Loader* (should be {{plugin-obj}}).\n"
 		);
 		return nullptr;
 	}

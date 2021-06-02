@@ -18,10 +18,15 @@
 #define MDXX_SPLIT_H
 #include <vector>
 #include <string>
+#include <string_view>
 
 namespace mdxx {
 
 std::vector<std::string> split(const std::string& s, const char& c = ' ');
+
+std::vector<std::string_view> split(const std::string_view& s, const char& c = ' ');
+
+std::vector<std::string_view> split(const char * s, const char& c = ' ');
 
 }
 

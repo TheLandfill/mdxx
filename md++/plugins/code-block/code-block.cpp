@@ -65,7 +65,7 @@ public:
 
 	void open(mdxx::HTML_Manager& html, const char * arg_ptr) override {
 		(void)html;
-		std::vector<std::string> args = mdxx::split(arg_ptr);
+		std::vector<std::string_view> args = mdxx::split(arg_ptr);
 		if (args.size() < 2) {
 			MDXX_error(md,
 				"Need to specify the programming language for the code-block context. Proper usage would be\n"

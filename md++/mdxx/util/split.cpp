@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "split.h"
+#include <algorithm>
+#include <iterator>
 #include <vector>
 #include <string>
 
@@ -30,13 +32,34 @@ std::vector<std::string> split(const std::string& s, const char& c) {
 			buff+=n;
 		} else if(n == c && buff != "") {
 			v.push_back(buff);
-			buff = "";
+			buff.clear();
 		}
 	}
 	if(buff != "") {
 		v.push_back(buff);
 	}
 	return v;
+}
+
+std::vector<std::string_view> split(const std::string_view& s, const char& c) {
+	std::vector<std::string_view> v;
+	auto first = std::cbegin(s);
+	while (first != std::cend(s)) {
+		const auto second = std::find(first, std::cend(s), c);
+		if (first != second) {
+			v.emplace_back(s.substr(std::distance(s.cbegin(), first), std::distance(first, second)));
+		}
+		if (second == s.cend()) {
+			break;
+		}
+		first = std::next(second);
+	}
+	
+	return v;
+}
+
+std::vector<std::string_view> split(const char * s, const char& c) {
+	return split(std::string_view{s}, c);
 }
 
 }

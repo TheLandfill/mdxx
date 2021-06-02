@@ -248,7 +248,7 @@ char * prefix_suffix_loop_func(mdxx::MDXX_Manager * mdxx, mdxx::Expansion_Base**
 	const char * suffix = MDXX_GET(const char *, args[2]);
 	for (size_t i = 3; i < argc; i++) {
 		const char * arg = MDXX_GET(const char *, args[i]);
-		auto sheets = mdxx::split(arg);
+		auto sheets = mdxx::split(std::string(arg));
 		for (auto& sheet : sheets) {
 			MDXX_html_add_no_nl(html, prefix);
 			RE2::GlobalReplace(&sheet, dot_dot_sub, "");

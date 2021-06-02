@@ -111,7 +111,7 @@ void HTML_Manager::open_paragraph() {
 void HTML_Manager::delete_outfile() {
 	valid = false;
 	out.close();
-	remove(outfile_name.c_str());
+	// remove(outfile_name.c_str());
 }
 
 template<>

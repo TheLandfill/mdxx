@@ -20,10 +20,10 @@
 #include "context.h"
 #include "line_data.h"
 #include "mdxx_token.h"
+#include "variable_parser.h"
 #include <unordered_map>
 #include <memory>
 #include <fstream>
-#include <unordered_set>
 
 namespace mdxx {
 
@@ -31,9 +31,9 @@ typedef std::shared_ptr<std::unordered_map<std::string, std::unique_ptr<Context>
 
 class MDXX_Manager {
 public:
-	MDXX_Manager(std::ifstream& i);
-	MDXX_Manager(std::ifstream&& i);
-	MDXX_Manager(std::string filename);
+	MDXX_Manager(std::ifstream& i, size_t depth = 16);
+	MDXX_Manager(std::ifstream&& i, size_t depth = 16);
+	MDXX_Manager(std::string filename, size_t depth = 16);
 	void init();
 	void print_expansion_flip();
 	const std::vector<std::string>& context_stack() const;
@@ -76,15 +76,10 @@ public:
 private:
 	void variable_definition(std::string& line);
 	void immediate_substitution(std::string& line);
-	void check_variable_dependency();
 	std::string find_context_with_variable(const std::string& var);
 	long convert_string_to_long(const std::string& str);
 	void check_if_index_in_range(long index, size_t size);
 	void handle_range_substitutions(std::string& line, const std::vector<std::string>& num_args);
-	void check_if_circular_dependency(const std::string& variable);
-	void get_dependencies(const std::string& text, std::unordered_set<std::string>& set);
-	std::unordered_set<std::string> get_all_dependencies(const std::string& variable);
-	void gen_dependencies_for_var(const std::string& var);
 private:
 	std::ifstream* in_if_need_to_allocate = nullptr;
 	std::ifstream& in;
@@ -93,14 +88,11 @@ private:
 	size_t cur_line_count = 0;
 	bool print_expansion = false;
 	std::shared_ptr<std::unordered_map<std::string, std::unique_ptr<Context>>> context_dict;
-	std::vector<MDXX_Token> tokens;
-	std::unordered_map<std::string, std::unordered_map<std::string, MDXX_Variable_Info>> variable_dependencies;
 	std::string line_stack;
 	Line_Data line_data;
 	bool finished_reading = false;
 	bool caused_error = false;
-	Expansion_Base ** c_args;
-	size_t num_c_args = 256;
+	Parser parser;
 };
 
 template<typename T>
